@@ -112,9 +112,6 @@ dist
 # VSCode workspace file
 *.code-workspace
 
-# macOS files
-.DS_Store
-
 # end of github suggested gitignore
 
 # project-specific gitignore
@@ -123,3 +120,7 @@ local
 dist
 out
 build
+
+# npm package.json and package-lock.json
+package.json
+package-lock.json

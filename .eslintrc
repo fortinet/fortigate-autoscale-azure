@@ -1,0 +1,4 @@
+{
+    "extends": "./node_modules/ftnt-devops-ci/templates/.eslintrc",
+    "rules": {}
+}

@@ -1,0 +1,74 @@
+{
+    "function": [
+        {
+            "name": "fgt-as-handler",
+            "source": {
+                "filename": "index.ts",
+                "location": "functions/fgt-as-handler"
+            },
+            "output": {
+                "filename": "fgt-as-handler",
+                "location": "functions"
+            },
+            "copyList": [
+                {
+                    "name": "license",
+                    "location": "./LICENSE",
+                    "fromSourceDir": true
+                },
+                {
+                    "name": "package.json",
+                    "location": "./package.json",
+                    "fromSourceDir": true
+                }
+            ],
+            "syncVersion": true
+        }
+    ],
+    "bundle": {
+        "filenamePrefix": "",
+        "filenameSuffix": "-bundle"
+    },
+    "package": [
+        {
+            "name": "azure-template-deployment",
+            "staticFile": [
+                {
+                    "name": "core-configset",
+                    "copyFrom": "node_modules/autoscale-core/fortigate-autoscale/assets/configset",
+                    "saveTo": "./assets/configset",
+                    "includeSubDir": false
+                },
+                {
+                    "name": "azure-configset",
+                    "copyFrom": "node_modules/autoscale-core/fortigate-autoscale/assets/configset/azure",
+                    "saveTo": "./assets/configset",
+                    "includeSubDir": false
+                },
+                {
+                    "name": "templates",
+                    "copyFrom": "templates",
+                    "saveTo": "./"
+                },
+                {
+                    "name": "readme",
+                    "copyFrom": "README.md",
+                    "saveTo": "./README.md"
+                }
+            ],
+            "function": [
+                {
+                    "name": "fgt-as-handler",
+                    "ref": "fgt-as-handler"
+                }
+            ],
+            "saveFunctionSource": false,
+            "functionPackageDir": "./functions/packages",
+            "functionSourceDir": "./functions/sources"
+        }
+    ],
+    "output": {
+        "outDir": "build/bundled",
+        "packageDir": "dist/artifacts"
+    }
+}

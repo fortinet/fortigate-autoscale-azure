@@ -1,0 +1,246 @@
+# Will be triggered either by 'pushing any tag' or 'manual trigger' with additional inputs
+# Must place it in the default branch
+# Manual trigger can be found under 'GitHub Actions'
+# Important behaviors:
+# 1. When triggered by pushing tags
+#   a. It will create a real release and upload release artifacts.
+#   b. Release artifacts will be uploaded to the release.
+# 2. When triggered by a manual run
+#   a. Besides being able to create a real release, it can optionally create a draft release, a pre-release.
+#   b. If creating a pre-release, release artifacts will be uploaded to the pre-release.
+#   c. If creating a draft, no release artifacts will be uploaded.
+# 3. When publishing a draft release
+#   a. It won't get triggerred by publishing a draft release at this moment.
+name: >-
+  Release pipeline workflow to create and publish a new release with a proper version bump [manual trigger requires inputs]
+
+on:
+  # Run whenever a tag is pushed or created.
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - '*' # any tag
+  # Run whenever a release is published.
+  release:
+    types: [published]
+  # Run by manual trigger
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: >-
+          The type of the semver version. Accepted inputs: major, minor, patch.
+        required: true
+        default: patch
+      prerelease:
+        description: >-
+          If to create a pre-release instead. GitHub 'pre-release' flag will also be set accordingly. Accepted inputs: true, false.
+        required: false
+        default: 'false'
+      pre_id:
+        description: >-
+          Provide a valid semver pre-release id when wishing to bump to a pre-release version.
+        required: false
+      draft:
+        description: >-
+          If to create a draft release instead. Accepted inputs: true, false.
+        required: false
+        default: 'false'
+jobs:
+  preparation:
+    name: preparation
+    runs-on: ubuntu-latest
+    steps:
+      - id: prep_vars
+        name: Prepare workflow shared variables
+        run: |
+          echo "trigger_type=${{ github.event_name == 'workflow_dispatch' && 'manual' || 'auto'}}" >> $GITHUB_ENV
+          echo "source_branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "source_tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      - id: set_vars_m
+        name: Set shared variables (manual trigger)
+        if: >-
+          ${{
+            env.trigger_type == 'manual' &&
+            (
+              github.event.inputs.version_type == 'major'
+              || github.event.inputs.version_type == 'minor'
+              || github.event.inputs.version_type == 'patch'
+            )
+          }}
+        run: |
+          echo "bump_version=true" >> $GITHUB_ENV
+          echo "prerelease=${{ github.event.inputs.prerelease == 'true' && 'true' || 'false'}}" >> $GITHUB_ENV
+          echo "draft=${{ github.event.inputs.draft == 'true' && 'true' || 'false'}}" >> $GITHUB_ENV
+          echo "version_type=${{ github.event.inputs.version_type}}" >> $GITHUB_ENV
+          echo "pre_id=${{ github.event.inputs.pre_id}}" >> $GITHUB_ENV
+          echo "custom_version=${{ github.event.inputs.custom_version}}" >> $GITHUB_ENV
+      - id: set_vars_a
+        name: Set shared variables (auto trigger)
+        if: >-
+          ${{ env.trigger_type == 'auto' }}
+        run: |
+          echo "bump_version=false" >> $GITHUB_ENV
+          echo "prerelease=false" >> $GITHUB_ENV
+          echo "draft=false" >> $GITHUB_ENV
+          echo "version_type=" >> $GITHUB_ENV
+          echo "pre_id=" >> $GITHUB_ENV
+          echo "custom_version=${{env.source_tag}}" >> $GITHUB_ENV
+      - id: validation
+        name: Found invalid workflow parameters
+        if: >-
+          env.trigger_type == 'manual' && env.version_type == '' && env.custom_version == ''
+          || env.trigger_type == 'auto' && env.custom_version == ''
+        # job will fail if it doesn't match the given condition
+        run: |
+          exit 1
+    outputs:
+      bump_version: ${{ env.bump_version }}
+      prerelease: ${{ env.prerelease }}
+      draft: ${{ env.draft }}
+      version_type: ${{ env.version_type }}
+      pre_id: ${{ env.pre_id }}
+      custom_version: ${{ env.custom_version }}
+  # some mandatory code checking and testing steps before bumping the version / creating release
+  check_and_test:
+    name: check and test
+    runs-on: ubuntu-latest
+    needs: preparation
+    steps:
+      # checkout the branch
+      - name: Checkout code
+        uses: actions/checkout@v2
+      # (required) install dependencies
+      - name: Install
+        run: npm ci
+      # check node package dependency vulneraility on production level
+      - name: NPM audit (production)
+        run: npm audit --production
+      # check code style and format against pre-defined eslint rules
+      - name: Check code format
+        run: npm run lint-check
+      # run all required tests
+      - name: Run tests
+        run: npm test
+      # check build process
+      - name: Verify building
+        run: npm run build
+  versioning:
+    name: versioning
+    runs-on: ubuntu-latest
+    needs: ['preparation', 'check_and_test']
+    env:
+      bump_version: ${{ needs.preparation.outputs.bump_version }}
+      prerelease: ${{ needs.preparation.outputs.prerelease }}
+      draft: ${{ needs.preparation.outputs.draft }}
+      version_type: ${{ needs.preparation.outputs.version_type }}
+      pre_id: ${{ needs.preparation.outputs.pre_id }}
+      custom_version: ${{ needs.preparation.outputs.custom_version }}
+    steps:
+      # checkout the branch
+      - name: Checkout code
+        uses: actions/checkout@v2
+      # setup git users for npm to create a version bump commit
+      - name: Setup git credential
+        # if needs to bump version and create tag
+        if: >-
+          ${{ needs.preparation.outputs.bump_version == 'true'}}
+        run: |
+          git config user.name "Fortinet(GitHub Automation)"
+          git config user.email github@fortinet.com
+      # (required) install dependencies
+      - name: Install
+        # if needs to bump version and create tag
+        if: >-
+          ${{ needs.preparation.outputs.bump_version == 'true'}}
+        run: npm ci
+      # fetch remote tags
+      - name: Fetch tags
+        # if needs to bump version and create tag
+        if: >-
+          ${{ needs.preparation.outputs.bump_version == 'true'}}
+        run: git fetch --tags
+      - id: set_vars
+        name: Set variables (job)
+        # if needs to bump version and create tag
+        if: >-
+          ${{ needs.preparation.outputs.bump_version == 'true'}}
+        run: |
+          echo "prerel_prefix=${{ env.prerelease == 'true' && env.version_type != '' && 'pre' || '' }}" >> $GITHUB_ENV
+          echo "version_type=${{ env.version_type != '' && env.version_type || env.custom_version }}" >> $GITHUB_ENV
+          echo "prerel_arg=${{ env.pre_id != '' && ' --preid=' || '' }}" >> $GITHUB_ENV
+      # bump the version using `npm version` command
+      # this command explicitly disallows creating the same version of an existing one
+      - id: bump_version
+        name: Bump version
+        # if needs to bump version and create tag
+        if: >-
+          ${{ needs.preparation.outputs.bump_version == 'true'}}
+        run: |
+          npm version ${{ env.prerel_prefix }}${{ env.version_type }}${{ needs.preparation.outputs.prerel_arg }}${{ needs.preparation.outputs.pre_id }} --allow-same-version=false
+          echo "custom_version=$(git describe)" >> $GITHUB_ENV
+      - id: push_changes
+        name: Push new changes to repository
+        # if needs to bump version and create tag
+        if: >-
+          ${{ needs.preparation.outputs.bump_version == 'true'}}
+        run: |
+          git push origin HEAD
+          git push origin ${{ env.custom_version }}
+    outputs:
+      bump_version: ${{ env.bump_version }}
+      prerelease: ${{ env.prerelease }}
+      draft: ${{ env.draft }}
+      version_type: ${{ env.version_type }}
+      pre_id: ${{ env.pre_id }}
+      tag_name: ${{ env.custom_version }}
+  show_outputs:
+    name: show parameters (release)
+    runs-on: ubuntu-latest
+    needs: ['versioning']
+    steps:
+      - name: show parameters
+        run: |
+          echo ${{ needs.versioning.outputs.bump_version }}
+          echo ${{ needs.versioning.outputs.prerelease }}
+          echo ${{ needs.versioning.outputs.draft }}
+          echo ${{ needs.versioning.outputs.version_type }}
+          echo ${{ needs.versioning.outputs.pre_id }}
+          echo ${{ needs.versioning.outputs.tag_name }}
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    needs: ['versioning']
+    steps:
+      # checkout the branch
+      - name: Checkout code
+        uses: actions/checkout@v2
+      # (required) install dependencies
+      - name: Install
+        run: npm ci
+      # run build process for the new release
+      - name: Build
+        run: npm run build
+      # create a release
+      - id: create_release
+        name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ needs.versioning.outputs.tag_name }}
+          release_name: ${{ needs.versioning.outputs.tag_name }}
+          draft: ${{ needs.versioning.outputs.draft == 'true' }}
+          prerelease: ${{ needs.versioning.outputs.prerelease == 'true' }}
+      # upload release artifacts to the release
+      # warning: uploading release artifacts to a draft release will turn it into an real release
+      - id: upload_release_asset
+        name: Upload release assets
+        if: ${{ needs.preparation.outputs.draft != 'true'  }}
+        uses: svenstaro/upload-release-action@2.2.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.versioning.outputs.tag_name }}
+          prerelease: ${{ needs.versioning.outputs.prerelease == 'true' }}
+          file: ./dist/*
+          file_glob: true
+          overwrite: true
