@@ -118,8 +118,17 @@ dist
 # end of github suggested gitignore
 
 # project-specific gitignore
-# local dev directory
-local
+
+# TypeScript output
 dist
 out
+
+# Azure Functions artifacts
+bin
+obj
+appsettings.json
+local.settings.json
+
+# local dev directory
+local
 build

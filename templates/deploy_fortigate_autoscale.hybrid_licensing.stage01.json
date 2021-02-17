@@ -375,7 +375,7 @@
         "licenseAssetKeyPrefix": "fgt-asg-license",
         "enableHybridLicensing": true,
         "enableFortiAnalyzer": false,
-        "databaseTableNameList": "[concat('FortiGateAutoscale, FortiGatePrimaryElection, Settings, CustomLog, VmInfoCache', if(variables('enableHybridLicensing'), ', LicenseStock, LicenseUsage', ''), if(variables('enableFortiAnalyzer'), ', FortiAnalyzer', ''))]",
+        "databaseTableNameList": "[concat('FortiGateAutoscale, FortiGatePrimaryElection, Settings, CustomLog, ApiRequestCache', if(variables('enableHybridLicensing'), ', LicenseStock, LicenseUsage', ''), if(variables('enableFortiAnalyzer'), ', FortiAnalyzer', ''))]",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "accessRestrictionIPString": "[if(empty(parameters('AccessRestrictionIPRange')), '', concat(parameters('AccessRestrictionIPRange'), ','))]",
         "accessRestrictionIPArray": "[split(parameters('AccessRestrictionIPRange'), ',')]",
@@ -1243,9 +1243,9 @@
             ],
             "properties": {
                 "resource": {
-                    "id": "FortiGateAutoscale",
+                    "id": "Autoscale",
                     "partitionKey": {
-                        "paths": ["/instanceId"],
+                        "paths": ["/vmId"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1286,7 +1286,7 @@
             ],
             "properties": {
                 "resource": {
-                    "id": "FortiGatePrimaryElection",
+                    "id": "PrimaryElection",
                     "partitionKey": {
                         "paths": ["/scalingGroupName"],
                         "kind": "Hash"
@@ -1331,7 +1331,7 @@
                 "resource": {
                     "id": "FortiAnalyzer",
                     "partitionKey": {
-                        "paths": ["/instanceId"],
+                        "paths": ["/vmId"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1498,13 +1498,13 @@
         {
             "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
             "apiVersion": "2016-03-31",
-            "name": "[concat(variables('databaseAccountName'), '/sql/', variables('databaseName'), '/VmInfoCache')]",
+            "name": "[concat(variables('databaseAccountName'), '/sql/', variables('databaseName'), '/ApiRequestCache')]",
             "dependsOn": [
                 "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', variables('databaseAccountName'), 'sql', variables('databaseName'))]"
             ],
             "properties": {
                 "resource": {
-                    "id": "VmInfoCache",
+                    "id": "ApiRequestCache",
                     "partitionKey": {
                         "paths": ["/id"],
                         "kind": "Hash"
@@ -1675,6 +1675,10 @@
                         {
                             "name": "AUTOSCALE_DB_ACCOUNT",
                             "value": "[variables('databaseAccountName')]"
+                        },
+                        {
+                            "name": "AUTOSCALE_DB_NAME",
+                            "value": "[variables('databaseName')]"
                         },
                         {
                             "name": "SCRIPT_TIMEOUT",

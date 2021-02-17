@@ -4,25 +4,52 @@
             "name": "fgt-as-handler",
             "source": {
                 "filename": "index.ts",
-                "location": "functions/fgt-as-handler"
+                "location": "fgt-as-handler"
             },
             "output": {
                 "filename": "fgt-as-handler",
-                "location": "functions"
+                "location": "func-app/fgt-as-handler"
             },
             "copyList": [
                 {
-                    "name": "license",
-                    "location": "./LICENSE",
-                    "fromSourceDir": true
-                },
+                    "name": "function.json",
+                    "location": "./function.json",
+                    "relativeDir": "source"
+                }
+            ]
+        }
+    ],
+    "functionGroup": [
+        {
+            "name": "func-app",
+            "functions": [
                 {
-                    "name": "package.json",
-                    "location": "./package.json",
-                    "fromSourceDir": true
+                    "name": "fgt-as-handler",
+                    "ref": "fgt-as-handler"
                 }
             ],
-            "syncVersion": true
+            "copyList": [
+                {
+                    "name": "all-bundled-files",
+                    "location": "./build",
+                    "relativeDir": "project"
+                },
+                {
+                    "name": "host.json",
+                    "location": "./host.json",
+                    "relativeDir": "project"
+                },
+                {
+                    "name": "local.settings.json",
+                    "location": "./local.settings.json",
+                    "relativeDir": "project"
+                },
+                {
+                    "name": "proxies.json",
+                    "location": "./proxies.json",
+                    "relativeDir": "project"
+                }
+            ]
         }
     ],
     "bundle": {
@@ -44,25 +71,16 @@
                     "copyFrom": "node_modules/autoscale-core/fortigate-autoscale/assets/configset/azure",
                     "saveTo": "./assets/configset",
                     "includeSubDir": false
-                },
-                {
-                    "name": "templates",
-                    "copyFrom": "templates",
-                    "saveTo": "./"
-                },
-                {
-                    "name": "readme",
-                    "copyFrom": "README.md",
-                    "saveTo": "./README.md"
                 }
             ],
-            "function": [
+            "function": [],
+            "functionGroup": [
                 {
-                    "name": "fgt-as-handler",
-                    "ref": "fgt-as-handler"
+                    "name": "autoscale-func-app",
+                    "ref": "func-app"
                 }
             ],
-            "saveFunctionSource": false,
+            "saveFunctionSource": true,
             "functionPackageDir": "./functions/packages",
             "functionSourceDir": "./functions/sources"
         }
