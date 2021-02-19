@@ -252,18 +252,10 @@
             }
         },
         "PrimaryElectionTimeout": {
-            "defaultValue": 90,
+            "defaultValue": 600,
             "type": "Int",
             "metadata": {
                 "description": "The maximum time (in seconds) to wait for a primary election to complete."
-            }
-        },
-        "GetLicenseGracePeriod": {
-            "defaultValue": 600,
-            "minValue": 300,
-            "type": "Int",
-            "metadata": {
-                "description": "The minimum time (in seconds) permitted before a distributed license can be revoked from a non-responsive FortiGate and re-distributed. Minimum is 300."
             }
         },
         "HeartBeatInterval": {
@@ -276,7 +268,7 @@
             }
         },
         "HeartBeatLossCount": {
-            "defaultValue": 3,
+            "defaultValue": 10,
             "minValue": 3,
             "type": "Int",
             "metadata": {
@@ -289,15 +281,6 @@
             "type": "Int",
             "metadata": {
                 "description": "The maximum amount of time (in seconds) allowed for network latency of the FortiGate heartbeat arriving at the Autoscale handler function. Minimum is 30."
-            }
-        },
-        "ScriptTimeout": {
-            "defaultValue": 230,
-            "minValue": 30,
-            "maxValue": 230,
-            "type": "Int",
-            "metadata": {
-                "description": "Timeout value (in seconds) for the Azure function script. Minimum is 30. Maximum is 230."
             }
         },
         "ServicePlanTier": {
@@ -371,8 +354,8 @@
         "databaseSharedThroughputBase": 500,
         "storageAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'sta001')]",
         "storageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('resourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-        "configsetAssetKeyPrefix": "configset",
-        "licenseAssetKeyPrefix": "fgt-asg-license",
+        "autoscaleAssetContainerName": "fortigate-autoscale",
+        "licenseFileDirectory": "license-files",
         "enableHybridLicensing": true,
         "enableFortiAnalyzer": false,
         "databaseTableNameList": "[concat('FortiGateAutoscale, FortiGatePrimaryElection, Settings, CustomLog, VmInfoCache', if(variables('enableHybridLicensing'), ', LicenseStock, LicenseUsage', ''), if(variables('enableFortiAnalyzer'), ', FortiAnalyzer', ''))]",
@@ -1044,9 +1027,9 @@
             "type": "String",
             "value": "[variables('storageAccountName')]"
         },
-        "configsetAssetKeyPrefix": {
+        "autoscaleAssetContainerName": {
             "type": "String",
-            "value": "[variables('configsetAssetKeyPrefix')]"
+            "value": "[variables('autoscaleAssetContainerName')]"
         },
         "byolScaleSetName": {
             "type": "String",
@@ -1064,9 +1047,9 @@
             "type": "String",
             "value": "[variables('vmssNamePAYG')]"
         },
-        "licenseAssetKeyPrefix": {
+        "licenseFileDirectory": {
             "type": "String",
-            "value": "[variables('licenseAssetKeyPrefix')]"
+            "value": "[variables('licenseFileDirectory')]"
         },
         "byolScaleSetDefaultSize": {
             "type": "Int",

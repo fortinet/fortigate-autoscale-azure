@@ -11,7 +11,7 @@
         "VnetResourceGroupName": {
             "value": ""
         },
-        "VNetName": {
+        "VnetName": {
             "value": ""
         },
         "VnetAddressSpace": {
@@ -57,7 +57,7 @@
             "value": "Standard_F4"
         },
         "FOSVersion": {
-            "value": "6.2.3"
+            "value": "6.2.5"
         },
         "FortiGatePSKSecret": {
             "value": ""
@@ -68,13 +68,19 @@
         "AdminPassword": {
             "value": ""
         },
+        "AccessRestrictionIPRange": {
+            "value": ""
+        },
         "StorageAccountType": {
             "value": "Standard_LRS"
         },
-        "RestAppID": {
+        "ServicePrincipalObjectID": {
             "value": ""
         },
-        "RestAppSecret": {
+        "ServicePrincipalAppID": {
+            "value": ""
+        },
+        "ServicePrincipalAppSecret": {
             "value": ""
         },
         "BYOLInstanceCount": {
@@ -104,9 +110,6 @@
         "PrimaryElectionTimeout": {
             "value": 90
         },
-        "GetLicenseGracePeriod": {
-            "value": 600
-        },
         "HeartBeatInterval": {
             "value": 60
         },
@@ -116,10 +119,19 @@
         "HeartBeatDelayAllowance": {
             "value": 30
         },
-        "ScriptTimeout": {
-            "value": 230
-        },
         "PackageResURL": {
+            "value": ""
+        },
+        "FortiAnalyzerIntegrationOptions": {
+            "value": "yes"
+        },
+        "FortiAnalyzerVersion": {
+            "value": "6.4.4"
+        },
+        "FortiAnalyzerAutoscaleAdminUsername": {
+            "value": ""
+        },
+        "FortiAnalyzerAutoscaleAdminPassword": {
             "value": ""
         }
     }
