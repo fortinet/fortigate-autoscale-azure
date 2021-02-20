@@ -136,8 +136,8 @@
             }
         },
         "FOSVersion": {
-            "defaultValue": "6.2.3",
-            "allowedValues": ["6.2.3", "6.0.9"],
+            "defaultValue": "6.4.3",
+            "allowedValues": ["6.4.3"],
             "type": "String",
             "metadata": {
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
@@ -177,16 +177,22 @@
                 "description": "Storage account type."
             }
         },
-        "RestAppID": {
+        "ServicePrincipalObjectID": {
             "type": "String",
             "metadata": {
-                "description": "Application ID for the Registered app. This is under Azure Active Directory > App registrations > {your app}."
+                "description": "Object ID for the Registered app used as Autosccale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
         },
-        "RestAppSecret": {
+        "ServicePrincipalAppID": {
             "type": "String",
             "metadata": {
-                "description": "Password (Authentication key) for the Registered app."
+                "description": "Application ID for the Registered app used as Autosccale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
+            }
+        },
+        "ServicePrincipalAppSecret": {
+            "type": "String",
+            "metadata": {
+                "description": "Password (Authentication key) for the Registered app used as Autosccale Function App API request service principal."
             }
         },
         "BYOLInstanceCount": {
@@ -296,6 +302,40 @@
             "metadata": {
                 "description": "The public URL of the function source file named 'fortigate-autoscale-azure-funcapp.zip', and can be found inside 'fortigate-autoscale-azure-template-deployment.zip'. The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure."
             }
+        },
+        "FortiAnalyzerIntegrationOptions": {
+            "defaultValue": "yes",
+            "allowedValues": ["yes", "no"],
+            "type": "String",
+            "metadata": {
+                "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
+            }
+        },
+        "FortiAnalyzerVersion": {
+            "defaultValue": "6.4.4",
+            "allowedValues": ["6.4.4", "6.2.5"],
+            "type": "String",
+            "metadata": {
+                "description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling."
+            }
+        },
+        "FortiAnalyzerCustomPrivateIpAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
+            }
+        },
+        "FortiAnalyzerAutoscaleAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+            }
+        },
+        "FortiAnalyzerAutoscaleAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
+            }
         }
     },
     "variables": {
@@ -354,11 +394,11 @@
         "databaseSharedThroughputBase": 500,
         "storageAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'sta001')]",
         "storageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('resourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "keyVaultName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'kv001')]",
         "autoscaleAssetContainerName": "fortigate-autoscale",
         "licenseFileDirectory": "license-files",
         "enableHybridLicensing": true,
         "enableFortiAnalyzer": false,
-        "databaseTableNameList": "[concat('FortiGateAutoscale, FortiGatePrimaryElection, Settings, CustomLog, VmInfoCache', if(variables('enableHybridLicensing'), ', LicenseStock, LicenseUsage', ''), if(variables('enableFortiAnalyzer'), ', FortiAnalyzer', ''))]",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "accessRestrictionIPString": "[if(empty(parameters('AccessRestrictionIPRange')), '', concat(parameters('AccessRestrictionIPRange'), ','))]",
         "accessRestrictionIPArray": "[split(parameters('AccessRestrictionIPRange'), ',')]",
@@ -470,7 +510,7 @@
         },
         "funcappURL": "[concat('https://', variables('functionAppName'), '.azurewebsites.net')]",
         "LicenseEndPoints": "[concat(variables('funcappURL'), '/api/byol-license')]",
-        "autoscaleEndPoints": "[concat(variables('funcappURL'), '/api/fgt-asg-handler')]",
+        "autoscaleEndPoints": "[concat(variables('funcappURL'), '/api/fgt-as-handler')]",
         "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
         "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
         "autoscaleSettingsPresets": {
@@ -702,7 +742,7 @@
                     "osProfile": {
                         "computerNamePrefix": "[variables('vmssNameBYOL')]",
                         "adminUsername": "[parameters('adminUsername')]",
-                        "customData": "[base64(concat('{\"license-url\": \"', variables('LicenseEndPoints'), '?code=', listKeys(resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.Web/sites/functions', variables('functionAppName'),  'byol-license'), '2019-08-01').default, '\",\"config-url\": \"', variables('autoscaleEndPoints'), '?code=', listKeys(resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.Web/sites/functions', variables('functionAppName'),  'fgt-asg-handler'), '2019-08-01').default, '\"}\n'))]",
+                        "customData": "[base64(concat('{\"license-url\": \"', variables('LicenseEndPoints'), '?code=', listKeys(resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.Web/sites/functions', variables('functionAppName'),  'byol-license'), '2019-08-01').default, '\",\"config-url\": \"', variables('autoscaleEndPoints'), '?code=', listKeys(resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.Web/sites/functions', variables('functionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
                         "adminPassword": "[parameters('adminPassword')]"
                     },
                     "networkProfile": {
@@ -853,7 +893,7 @@
                     "evictionPolicy": "delete",
                     "osProfile": {
                         "computerNamePrefix": "[variables('vmssNamePAYG')]",
-                        "customData": "[base64(concat('{\"config-url\": \"', variables('autoscaleEndPoints'), '?code=', listKeys(resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.Web/sites/functions', variables('functionAppName'),  'fgt-asg-handler'), '2019-08-01').default, '\"}\n'))]",
+                        "customData": "[base64(concat('{\"config-url\": \"', variables('autoscaleEndPoints'), '?code=', listKeys(resourceId(subscription().subscriptionId, variables('resourceGroupName'), 'Microsoft.Web/sites/functions', variables('functionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
                         "adminUsername": "[parameters('adminUsername')]",
                         "adminPassword": "[parameters('adminPassword')]"
                     },

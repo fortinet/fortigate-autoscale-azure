@@ -57,7 +57,7 @@
             "value": "Standard_F4"
         },
         "FOSVersion": {
-            "value": "6.2.5"
+            "value": "6.2.3"
         },
         "FortiGatePSKSecret": {
             "value": ""
@@ -127,6 +127,9 @@
         },
         "FortiAnalyzerVersion": {
             "value": "6.4.4"
+        },
+        "FortiAnalyzerCustomPrivateIpAddress": {
+            "value": ""
         },
         "FortiAnalyzerAutoscaleAdminUsername": {
             "value": ""
