@@ -14,7 +14,7 @@ export async function autoscaleHandler(
     context: Context,
     req: HttpRequest
 ): Promise<AzureFunctionResponse> {
-    console.log(req);
+    context.log(req);
     const env = {} as AutoscaleEnvironment;
     const proxy = new AzureFunctionInvocationProxy(req, context);
     const platform = new AzurePlatformAdapter(new AzurePlatformAdaptee(), proxy);

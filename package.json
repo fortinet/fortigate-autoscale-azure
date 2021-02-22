@@ -23,7 +23,10 @@
     "lint-check": "npm run lint-check-code && npm run lint-check-template",
     "lint-fix-code": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -fl  -F .eslintignore -L .eslintignore \"**/*{.js,.json,.ts}\"",
     "lint-fix-template": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -f -F .eslintignore -L .eslintignore \"**/*.json\" --parser \"json\"",
-    "lint-fix": "npm run lint-fix-code"
+    "lint-fix": "npm run lint-fix-code",
+    "build-core": "cd node_modules/autoscale-core && npm install && npm prune --production && npm run build && cd ..",
+    "funcapp-zip": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler node_modules scripts templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
+    "funcapp-pack": "rm -f package-lock.json && rm -rf node_modules/ && npm install && npm run build-core && npm run build && npm prune --production && npm run funcapp-zip"
   },
   "husky": {
     "hooks": {
@@ -45,13 +48,13 @@
   "dependencies": {
     "@azure/functions": "^1.2.3",
     "@types/node": "^13.9.2",
-    "autoscale-core": "file:../autoscale-core",
+    "autoscale-core": "git+https://github.com/fortinet/autoscale-core.git#feat_azure_core_implementation",
     "http-status-codes": "^1.4.0",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
     "@types/comment-json": "^1.1.1",
-    "@types/mocha": "^7.0.2",
+    "@types/mocha": "^8.2.1",
     "@types/shelljs": "^0.8.7",
     "@types/sinon": "^7.5.2",
     "@typescript-eslint/eslint-plugin": "^2.28.0",
@@ -70,7 +73,8 @@
     "ftnt-devops-ci": "github:fortinet/ftnt-devops-ci",
     "husky": "^4.3.0",
     "json-loader": "^0.5.7",
-    "mocha": "^7.1.1",
+    "mocha": "^8.3.0",
+    "mocha-loader": "^5.1.5",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
     "shelljs": "^0.8.3",
