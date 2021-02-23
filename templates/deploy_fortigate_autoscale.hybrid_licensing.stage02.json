@@ -153,13 +153,13 @@
             "defaultValue": "azureadmin",
             "type": "String",
             "metadata": {
-                "description": "FortiGate administrator username on all VMs."
+                "description": "FortiGate administrator username on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration enabled."
             }
         },
         "AdminPassword": {
             "type": "SecureString",
             "metadata": {
-                "description": "FortiGate administrator password on all VMs. This field must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
+                "description": "FortiGate administrator password on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration enabled. This field must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
             }
         },
         "AccessRestrictionIPRange": {
@@ -309,6 +309,14 @@
             "type": "String",
             "metadata": {
                 "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
+            }
+        },
+        "FortiAnalyzerInstanceType": {
+            "defaultValue": "Standard_D2",
+            "allowedValues": ["Standard_D2"],
+            "type": "String",
+            "metadata": {
+                "description": "Size of the FortiAnalyzer VM."
             }
         },
         "FortiAnalyzerVersion": {

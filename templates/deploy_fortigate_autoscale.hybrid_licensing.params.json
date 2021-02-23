@@ -125,6 +125,9 @@
         "FortiAnalyzerIntegrationOptions": {
             "value": "yes"
         },
+        "FortiAnalyzerInstanceType": {
+            "value": "Standard_D2"
+        },
         "FortiAnalyzerVersion": {
             "value": "6.4.4"
         },

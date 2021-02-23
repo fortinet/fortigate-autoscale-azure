@@ -153,13 +153,13 @@
             "defaultValue": "azureadmin",
             "type": "String",
             "metadata": {
-                "description": "FortiGate administrator username on all VMs."
+                "description": "FortiGate administrator username on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration enabled."
             }
         },
         "AdminPassword": {
             "type": "SecureString",
             "metadata": {
-                "description": "FortiGate administrator password on all VMs. This field must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
+                "description": "FortiGate administrator password on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration enabled. This field must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
             }
         },
         "AccessRestrictionIPRange": {
@@ -311,9 +311,17 @@
                 "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
             }
         },
+        "FortiAnalyzerInstanceType": {
+            "defaultValue": "Standard_D2",
+            "allowedValues": ["Standard_D2"],
+            "type": "String",
+            "metadata": {
+                "description": "Size of the FortiAnalyzer VM."
+            }
+        },
         "FortiAnalyzerVersion": {
-            "defaultValue": "6.4.4",
-            "allowedValues": ["6.4.4", "6.2.5"],
+            "defaultValue": "6.4.2",
+            "allowedValues": ["6.4.2", "6.2.5"],
             "type": "String",
             "metadata": {
                 "description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling."
@@ -398,7 +406,11 @@
         "autoscaleAssetContainerName": "fortigate-autoscale",
         "licenseFileDirectory": "license-files",
         "enableHybridLicensing": true,
-        "enableFortiAnalyzer": false,
+        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
+        "fazName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'faz001')]",
+        "fazNic0Name": "[concat(toLower(variables('fazName')),'-nic0')]",
+        "fazPubIpName": "[concat(toLower(variables('fazName')),'-public-ip')]",
+        "fazPubIpId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName'))]",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "accessRestrictionIPString": "[if(empty(parameters('AccessRestrictionIPRange')), '', concat(parameters('AccessRestrictionIPRange'), ','))]",
         "accessRestrictionIPArray": "[split(parameters('AccessRestrictionIPRange'), ',')]",
@@ -444,6 +456,7 @@
         "subnet2Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet2'), parameters('Subnet2Name'))]",
         "subnet3Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet3'), parameters('Subnet3Name'))]",
         "subnet4Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet4'), parameters('Subnet4Name'))]",
+        "subnet1Id": "[concat(variables('vnetID'), '/subnets/', variables('subnet1Name'))]",
         "subnet2Id": "[concat(variables('vnetID'),'/Subnets/', variables('subnet2Name'))]",
         "subnet3Id": "[concat(variables('vnetID'),'/Subnets/', variables('subnet3Name'))]",
         "subnet4Id": "[concat(variables('vnetID'),'/Subnets/', variables('subnet4Name'))]",
@@ -2031,6 +2044,112 @@
                                     }
                                 ]
                             }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[variables('resourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "FortiAnalyzerIntegration",
+            "condition": "[variables('enableFortiAnalyzer')]",
+            "dependsOn": ["VNetRelatedResources"],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/publicIPAddresses",
+                            "apiVersion": "2020-07-01",
+                            "name": "[variables('fazPubIpName')]",
+                            "location": "[variables('location')]",
+                            "sku": {
+                                "name": "Standard",
+                                "tier": "Regional"
+                            },
+                            "properties": {
+                                "publicIPAllocationMethod": "Static"
+                            }
+                        },
+                        {
+                            "apiVersion": "2020-07-01",
+                            "type": "Microsoft.Network/networkInterfaces",
+                            "name": "[variables('fazNic0Name')]",
+                            "location": "[variables('location')]",
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "[concat(toLower(variables('fazNic0Name')), '-ipconfig')]",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Static",
+                                            "privateIPAddress": "[parameters('FortiAnalyzerCustomPrivateIpAddress')]",
+                                            "subnet": {
+                                                "id": "[variables('subnet1Id')]"
+                                            },
+                                            "publicIPAddress": {
+                                                "id": "[variables('fazPubIpId')]"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "enableIPForwarding": false
+                            },
+                            "dependsOn": ["[variables('fazPubIpName')]"]
+                        },
+                        {
+                            "apiVersion": "2020-06-01",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[variables('fazName')]",
+                            "location": "[variables('location')]",
+                            "properties": {
+                                "osProfile": {
+                                    "computerName": "[variables('fazName')]",
+                                    "adminUsername": "[parameters('AdminUsername')]",
+                                    "adminPassword": "[parameters('AdminPassword')]",
+                                    "customData": "[base64(concat('config system admin user\nedit ', parameters('FortiAnalyzerAutoscaleAdminUsername'), '\nset password ', parameters('FortiAnalyzerAutoscaleAdminPassword'), '\nset profileid \"Super_User\"\nset adom \"all_adoms\"\nset rpc-permit read-write\nnext\nend\n'))]"
+                                },
+                                "hardwareProfile": {
+                                    "vmSize": "[parameters('FortiAnalyzerInstanceType')]"
+                                },
+                                "storageProfile": {
+                                    "imageReference": {
+                                        "publisher": "fortinet",
+                                        "offer": "fortinet-fortianalyzer",
+                                        "sku": "fortinet-fortianalyzer",
+                                        "version": "[parameters('FortiAnalyzerVersion')]"
+                                    },
+                                    "osDisk": {
+                                        "createOption": "FromImage"
+                                    },
+                                    "dataDisks": [
+                                        {
+                                            "createOption": "Empty",
+                                            "diskSizeGB": 1023,
+                                            "lun": 0
+                                        }
+                                    ]
+                                },
+                                "networkProfile": {
+                                    "networkInterfaces": [
+                                        {
+                                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('fazNic0Name'))]"
+                                        }
+                                    ]
+                                }
+                            },
+                            "plan": {
+                                "name": "fortinet-fortianalyzer",
+                                "publisher": "fortinet",
+                                "product": "fortinet-fortianalyzer"
+                            },
+                            "dependsOn": ["[variables('fazNic0Name')]"]
                         }
                     ]
                 }
