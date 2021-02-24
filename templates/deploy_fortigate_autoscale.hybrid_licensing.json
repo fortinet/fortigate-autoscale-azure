@@ -107,7 +107,7 @@
         },
         "FrontendIPDeploymentMethod": {
             "defaultValue": "create new public IP address",
-            "allowedValues": [ "create new public IP address", "use existing public IP address" ],
+            "allowedValues": ["create new public IP address", "use existing public IP address"],
             "type": "String",
             "metadata": {
                 "description": "Deployment method for the Frontend Public IP address for the external load balancer. If set to 'create new public IP address', the IP address will be deployed to the resource group where the VNet is located. If set to 'use existing public IP address', the existing IP address must reside in the same resource group as the VNet and it must be of the 'standard' SKU in order to match the VMSS."
@@ -129,7 +129,7 @@
         },
         "InstanceType": {
             "defaultValue": "Standard_F4",
-            "allowedValues": [ "Standard_F4s_v2", "Standard_F4s", "Standard_F4" ],
+            "allowedValues": ["Standard_F4s_v2", "Standard_F4s", "Standard_F4"],
             "type": "String",
             "metadata": {
                 "description": "Size of the VMs in the VMSS."
@@ -137,7 +137,7 @@
         },
         "FOSVersion": {
             "defaultValue": "6.4.3",
-            "allowedValues": [ "6.4.3" ],
+            "allowedValues": ["6.4.3"],
             "type": "String",
             "metadata": {
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
@@ -171,7 +171,7 @@
         },
         "StorageAccountType": {
             "defaultValue": "Standard_LRS",
-            "allowedValues": [ "Standard_LRS", "Standard_GRS", "Standard_RAGRS" ],
+            "allowedValues": ["Standard_LRS", "Standard_GRS", "Standard_RAGRS"],
             "type": "String",
             "metadata": {
                 "description": "Storage account type."
@@ -291,7 +291,7 @@
         },
         "ServicePlanTier": {
             "defaultValue": "Premium (P1V2)",
-            "allowedValues": [ "Premium (P1V2)", "Free (for demo only)" ],
+            "allowedValues": ["Premium (P1V2)", "Free (for demo only)"],
             "type": "String",
             "metadata": {
                 "description": "The pricing tier for the function service plan. Note: the Free plan is for trial and demo only. Do not use it in production."
@@ -305,7 +305,7 @@
         },
         "FortiAnalyzerIntegrationOptions": {
             "defaultValue": "yes",
-            "allowedValues": [ "yes", "no" ],
+            "allowedValues": ["yes", "no"],
             "type": "String",
             "metadata": {
                 "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
@@ -313,7 +313,6 @@
         },
         "FortiAnalyzerInstanceType": {
             "defaultValue": "Standard_D2",
-            "allowedValues": [ "Standard_D2" ],
             "type": "String",
             "metadata": {
                 "description": "Size of the FortiAnalyzer VM."
@@ -321,7 +320,7 @@
         },
         "FortiAnalyzerVersion": {
             "defaultValue": "6.4.2",
-            "allowedValues": [ "6.4.2", "6.2.5" ],
+            "allowedValues": ["6.4.2", "6.2.5"],
             "type": "String",
             "metadata": {
                 "description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling."
@@ -352,26 +351,6 @@
         "resourceGroupName": "[resourceGroup().name]",
         "location": "[resourceGroup().location]",
         "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
-        "hostingPlanName": "[concat(variables('functionAppName'),'-service-plan')]",
-        "servicePlanTierPresets": {
-            "Free (for demo only)": {
-                "sku": "Free",
-                "skucode": "F1",
-                "workerSize": "0",
-                "workerSizeId": "0",
-                "numberOfWorkers": "1",
-                "reserved": false
-            },
-            "Premium (P1V2)": {
-                "sku": "PremiumV2",
-                "skucode": "P1v2",
-                "workerSize": "3",
-                "workerSizeId": "3",
-                "numberOfWorkers": "1",
-                "reserved": false
-            }
-        },
-        "functionAppInsightName": "[concat(variables('functionAppName'),'-insights')]",
         "functionAppInsightAvailableLocations": [
             "australiaeast",
             "australiasoutheast",
@@ -708,7 +687,8 @@
         "cmdDeleteVNetRelatedComponents": "[if(and(not(variables('ifCreateVNetInSameRSG')), variables('ifCreateVNet')), concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteVMSS'), variables('cmdDeleteLBS'), variables('cmdDeleteVNet'), variables('cmdDeleteNetworkSecurityGroup'), variables('cmdDeletePublicIP'), variables('cmdDeleteRouteTableAll'), variables('cmdDeleteAutoscaleSettings')), '')]",
         "cmdDeleteAutoscaleComponents": "[concat('az account set -s ', subscription().subscriptionId, ';', 'az group delete -y -n ', variables('resourceGroupName'), ';')]",
         "cmdDeleteAutoscaleAll": "[concat(variables('cmdDeleteVNetRelatedComponents'), variables('cmdDeleteAutoscaleComponents'))]",
-        "cmdVNetCleanUp": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteAutoscaleSettings'))]"
+        "cmdVNetCleanUp": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteAutoscaleSettings'))]",
+        "functionNameList": ["byol-license", "fgt-as-handler"]
     },
     "resources": [
         {
@@ -737,8 +717,8 @@
                         "objectId": "[parameters('ServicePrincipalObjectID')]",
                         "tenantId": "[subscription().tenantId]",
                         "permissions": {
-                            "keys": [ "List", "Get" ],
-                            "secrets": [ "List", "Get" ]
+                            "keys": ["List", "Get"],
+                            "secrets": ["List", "Get"]
                         }
                     }
                 ],
@@ -757,7 +737,7 @@
             "apiVersion": "2019-09-01",
             "name": "[concat(variables('keyVaultName'), '/', parameters('FortiAnalyzerAutoscaleAdminUsername'))]",
             "location": "[variables('location')]",
-            "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]" ],
+            "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
             "properties": {
                 "value": "[parameters('FortiAnalyzerAutoscaleAdminPassword')]"
             }
@@ -766,13 +746,13 @@
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2019-06-01",
             "name": "[concat(variables('storageAccountName'), '/default/', variables('autoscaleAssetContainerName'))]",
-            "dependsOn": [ "[variables('storageAccountName')]" ]
+            "dependsOn": ["[variables('storageAccountName')]"]
         },
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "VNetRelatedResources",
-            "dependsOn": [ "[variables('storageAccountName')]", "[variables('functionAppName')]" ],
+            "dependsOn": ["[variables('storageAccountName')]"],
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -939,7 +919,7 @@
                             "location": "[variables('location')]",
                             "properties": {
                                 "addressSpace": {
-                                    "addressPrefixes": [ "[variables('vNetAddressPrefix')]" ]
+                                    "addressPrefixes": ["[variables('vNetAddressPrefix')]"]
                                 },
                                 "Subnets": [
                                     {
@@ -952,11 +932,11 @@
                                             "serviceEndpoints": [
                                                 {
                                                     "service": "Microsoft.AzureCosmosDB",
-                                                    "locations": [ "*" ]
+                                                    "locations": ["*"]
                                                 },
                                                 {
                                                     "service": "Microsoft.Web",
-                                                    "locations": [ "*" ]
+                                                    "locations": ["*"]
                                                 }
                                             ]
                                         }
@@ -1024,7 +1004,7 @@
                             "sku": {
                                 "name": "Standard"
                             },
-                            "dependsOn": [ "[variables('vNetName')]" ],
+                            "dependsOn": ["[variables('vNetName')]"],
                             "properties": {
                                 "frontendIPConfigurations": [
                                     {
@@ -1149,7 +1129,7 @@
                             "sku": {
                                 "name": "Standard"
                             },
-                            "dependsOn": [ "[variables('publicIPAddressId')]" ],
+                            "dependsOn": ["[variables('publicIPAddressId')]"],
                             "properties": {
                                 "frontendIPConfigurations": [
                                     {
@@ -1294,7 +1274,7 @@
             "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
             "apiVersion": "2016-03-31",
             "name": "[concat(variables('databaseAccountName'), '/sql/', variables('databaseName'))]",
-            "dependsOn": [ "[variables('databaseAccountName')]" ],
+            "dependsOn": ["[variables('databaseAccountName')]"],
             "properties": {
                 "resource": {
                     "id": "[variables('databaseName')]"
@@ -1315,7 +1295,7 @@
                 "resource": {
                     "id": "Autoscale",
                     "partitionKey": {
-                        "paths": [ "/vmId" ],
+                        "paths": ["/vmId"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1358,7 +1338,7 @@
                 "resource": {
                     "id": "PrimaryElection",
                     "partitionKey": {
-                        "paths": [ "/id" ],
+                        "paths": ["/id"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1401,7 +1381,7 @@
                 "resource": {
                     "id": "FortiAnalyzer",
                     "partitionKey": {
-                        "paths": [ "/vmId" ],
+                        "paths": ["/vmId"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1445,7 +1425,7 @@
                 "resource": {
                     "id": "LicenseStock",
                     "partitionKey": {
-                        "paths": [ "/checksum" ],
+                        "paths": ["/checksum"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1489,7 +1469,7 @@
                 "resource": {
                     "id": "LicenseUsage",
                     "partitionKey": {
-                        "paths": [ "/id" ],
+                        "paths": ["/id"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1533,7 +1513,7 @@
                 "resource": {
                     "id": "CustomLog",
                     "partitionKey": {
-                        "paths": [ "/id" ],
+                        "paths": ["/id"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1576,7 +1556,7 @@
                 "resource": {
                     "id": "ApiRequestCache",
                     "partitionKey": {
-                        "paths": [ "/id" ],
+                        "paths": ["/id"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1619,7 +1599,7 @@
                 "resource": {
                     "id": "Settings",
                     "partitionKey": {
-                        "paths": [ "/settingKey" ],
+                        "paths": ["/settingKey"],
                         "kind": "Hash"
                     },
                     "indexingPolicy": {
@@ -1652,55 +1632,12 @@
             }
         },
         {
-            "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2018-02-01",
-            "name": "[variables('hostingPlanName')]",
-            "location": "[variables('location')]",
-            "sku": {
-                "Name": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].skucode]"
-            },
-            "properties": {
-                "name": "[variables('hostingPlanName')]",
-                "workerSize": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].workerSize]",
-                "numberOfWorkers": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].numberOfWorkers]",
-                "reserved": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].reserved]"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2018-11-01",
-            "name": "[variables('functionAppName')]",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[variables('hostingPlanName')]",
-                "[variables('databaseAccountName')]",
-                "[variables('storageAccountName')]",
-                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', variables('databaseAccountName'), 'sql', variables('databaseName'))]"
-            ],
-            "kind": "functionapp",
-            "properties": {
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
-            }
-        },
-        {
-            "type": "Microsoft.Insights/components",
-            "apiVersion": "2018-05-01-preview",
-            "name": "[variables('functionAppInsightName')]",
-            "location": "[variables('location')]",
-            "kind": "web",
-            "properties": {
-                "Application_Type": "web",
-                "ApplicationId": "[variables('functionAppName')]"
-            },
-            "condition": "[variables('enableAzureAppInsights')]"
-        },
-        {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "SetupFuncAppIpRestrictions",
             "dependsOn": [
                 "[variables('databaseAccountName')]",
-                "[variables('functionAppName')]",
+                "SetupFunctionApp",
                 "VNetRelatedResources"
             ],
             "properties": {
@@ -1733,7 +1670,11 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "SetupDBAccessRestrictions",
-            "dependsOn": [ "[variables('databaseAccountName')]", "VNetRelatedResources" ],
+            "dependsOn": [
+                "[variables('databaseAccountName')]",
+                "VNetRelatedResources",
+                "SetupFunctionApp"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -1749,7 +1690,7 @@
                             "location": "[variables('location')]",
                             "properties": {
                                 "databaseAccountOfferType": "Standard",
-                                "ipRangeFilter": "[concat(variables('accessRestrictionIPString'), reference(resourceId(variables('resourceGroupName'), 'Microsoft.Web/sites', variables('functionAppName')), '2016-08-01').possibleOutboundIpAddresses)]",
+                                "ipRangeFilter": "[concat(variables('accessRestrictionIPString'), reference('CreateFunctionApp').outputs.functionAppPossibleOutboundIpAddresses.value)]",
                                 "isVirtualNetworkFilterEnabled": true,
                                 "virtualNetworkRules": [
                                     {
@@ -1775,107 +1716,76 @@
             "apiVersion": "2018-05-01",
             "name": "FortiAnalyzerIntegrationResources",
             "condition": "[variables('enableFortiAnalyzer')]",
-            "dependsOn": [ "VNetRelatedResources" ],
+            "dependsOn": ["VNetRelatedResources"],
             "properties": {
                 "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "type": "Microsoft.Network/publicIPAddresses",
-                            "apiVersion": "2020-07-01",
-                            "name": "[variables('fazPubIpName')]",
-                            "location": "[variables('location')]",
-                            "sku": {
-                                "name": "Standard",
-                                "tier": "Regional"
-                            },
-                            "properties": {
-                                "publicIPAllocationMethod": "Static"
-                            }
-                        },
-                        {
-                            "apiVersion": "2020-07-01",
-                            "type": "Microsoft.Network/networkInterfaces",
-                            "name": "[variables('fazNic0Name')]",
-                            "location": "[variables('location')]",
-                            "properties": {
-                                "ipConfigurations": [
-                                    {
-                                        "name": "[concat(toLower(variables('fazNic0Name')), '-ipconfig')]",
-                                        "properties": {
-                                            "privateIPAllocationMethod": "Static",
-                                            "privateIPAddress": "[parameters('FortiAnalyzerCustomPrivateIpAddress')]",
-                                            "subnet": {
-                                                "id": "[variables('subnet1Id')]"
-                                            },
-                                            "publicIPAddress": {
-                                                "id": "[variables('fazPubIpId')]"
-                                            }
-                                        }
-                                    }
-                                ],
-                                "enableIPForwarding": false
-                            },
-                            "dependsOn": [ "[variables('fazPubIpName')]" ]
-                        },
-                        {
-                            "apiVersion": "2020-06-01",
-                            "type": "Microsoft.Compute/virtualMachines",
-                            "name": "[variables('fazName')]",
-                            "location": "[variables('location')]",
-                            "properties": {
-                                "osProfile": {
-                                    "computerName": "[variables('fazName')]",
-                                    "adminUsername": "[parameters('AdminUsername')]",
-                                    "adminPassword": "[parameters('AdminPassword')]",
-                                    "customData": "[base64(concat('config system admin user\nedit ', parameters('FortiAnalyzerAutoscaleAdminUsername'), '\nset password ', parameters('FortiAnalyzerAutoscaleAdminPassword'), '\nset profileid \"Super_User\"\nset adom \"all_adoms\"\nset rpc-permit read-write\nnext\nend\n'))]"
-                                },
-                                "hardwareProfile": {
-                                    "vmSize": "[parameters('FortiAnalyzerInstanceType')]"
-                                },
-                                "storageProfile": {
-                                    "imageReference": {
-                                        "publisher": "fortinet",
-                                        "offer": "fortinet-fortianalyzer",
-                                        "sku": "fortinet-fortianalyzer",
-                                        "version": "[parameters('FortiAnalyzerVersion')]"
-                                    },
-                                    "osDisk": {
-                                        "createOption": "FromImage"
-                                    },
-                                    "dataDisks": [
-                                        {
-                                            "createOption": "Empty",
-                                            "diskSizeGB": 1023,
-                                            "lun": 0
-                                        }
-                                    ]
-                                },
-                                "networkProfile": {
-                                    "networkInterfaces": [
-                                        {
-                                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('fazNic0Name'))]"
-                                        }
-                                    ]
-                                }
-                            },
-                            "plan": {
-                                "name": "fortinet-fortianalyzer",
-                                "publisher": "fortinet",
-                                "product": "fortinet-fortianalyzer"
-                            },
-                            "dependsOn": [ "[variables('fazNic0Name')]" ]
-                        }
-                    ],
-                    "outputs": {
-                        "fazPublicIp": {
-                            "type": "string",
-                            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses/', variables('fazPubIpName')), '2020-07-01').IpAddress]"
-                        }
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/feat_project_fundamental/templates/linked_template.faz_integration.json"
+                },
+                "parameters": {
+                    "UniqueResourceNamePrefix": {
+                        "value": "[variables('uniqueResourceNamePrefix')]"
+                    },
+                    "SubnetId": {
+                        "value": "[variables('subnet1Id')]"
+                    },
+                    "FortiAnalyzerInstanceType": {
+                        "value": "[parameters('FortiAnalyzerInstanceType')]"
+                    },
+                    "FortiAnalyzerVersion": {
+                        "value": "[parameters('FortiAnalyzerVersion')]"
+                    },
+                    "FortiAnalyzerCustomPrivateIpAddress": {
+                        "value": "[parameters('FortiAnalyzerCustomPrivateIpAddress')]"
+                    },
+                    "AdminUsername": {
+                        "value": "[parameters('AdminUsername')]"
+                    },
+                    "AdminPassword": {
+                        "value": "[parameters('AdminPassword')]"
+                    },
+                    "FortiAnalyzerAutoscaleAdminUsername": {
+                        "value": "[parameters('FortiAnalyzerAutoscaleAdminUsername')]"
+                    },
+                    "FortiAnalyzerAutoscaleAdminPassword": {
+                        "value": "[parameters('FortiAnalyzerAutoscaleAdminPassword')]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[variables('resourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "CreateFunctionApp",
+            "dependsOn": ["[variables('storageAccountName')]"],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/feat_project_fundamental/templates/linked_template.function_app.json"
+                },
+                "parameters": {
+                    "FunctionAppName": {
+                        "value": "[variables('functionAppName')]"
+                    },
+                    "FunctionExtensionVersion": {
+                        "value": "~3"
+                    },
+                    "FunctionNameList": {
+                        "value": "[variables('functionNameList')]"
+                    },
+                    "NodeJSRuntimeVersion": {
+                        "value": "~12"
+                    },
+                    "PackageResURL": {
+                        "value": "[parameters('PackageResURL')]"
+                    },
+                    "ServicePlanTier": {
+                        "value": "[parameters('ServicePlanTier')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[variables('storageAccountName')]"
                     }
                 }
             },
@@ -1886,10 +1796,9 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "SetupFunctionApp",
-            "condition": "[variables('enableFortiAnalyzer')]",
             "dependsOn": [
-                "[variables('functionAppName')]",
                 "VNetRelatedResources",
+                "CreateFunctionApp",
                 "FortiAnalyzerIntegrationResources"
             ],
             "properties": {
@@ -1919,7 +1828,7 @@
                                         },
                                         {
                                             "name": "[if(variables('enableAzureAppInsights'), 'APPINSIGHTS_INSTRUMENTATIONKEY', 'DEPLOYED_APPINSIGHTS')]",
-                                            "value": "[if(variables('enableAzureAppInsights'), reference(resourceId('Microsoft.Insights/components/', variables('functionAppInsightName')), '2018-05-01-preview').InstrumentationKey, 'false')]"
+                                            "value": "[if(variables('enableAzureAppInsights'), reference('CreateFunctionApp').outputs.functionAppInsightsInstrumentationKey.value, 'false')]"
                                         },
                                         {
                                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -2185,18 +2094,381 @@
                                             "name": "vpn-bgp-asn",
                                             "value": "n/a"
                                         }
-                                    ],
-                                    "alwaysOn": true
+                                    ]
                                 }
                             }
                         }
-                    ],
-                    "outputs": {
-                        "fazPublicIp": {
-                            "type": "string",
-                            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses/', variables('fazPubIpName')), '2020-07-01').IpAddress]"
+                    ]
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[variables('resourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "CreateVirtualMachineScaleSet",
+            "dependsOn": ["CreateFunctionApp"],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Compute/virtualMachineScaleSets",
+                            "apiVersion": "2019-07-01",
+                            "name": "[variables('vmssNameBYOL')]",
+                            "location": "[variables('location')]",
+                            "plan": {
+                                "name": "[variables('fgtvmImageBYOL').sku]",
+                                "publisher": "[variables('fgtvmImageBYOL').publisher]",
+                                "product": "[variables('fgtvmImageBYOL').offer]"
+                            },
+                            "sku": {
+                                "name": "[parameters('InstanceType')]",
+                                "tier": "Standard",
+                                "capacity": 0
+                            },
+                            "properties": {
+                                "overprovision": false,
+                                "upgradePolicy": {
+                                    "mode": "Manual"
+                                },
+                                "virtualMachineProfile": {
+                                    "storageProfile": {
+                                        "osDisk": {
+                                            "createOption": "FromImage",
+                                            "caching": "ReadWrite"
+                                        },
+                                        "dataDisks": [
+                                            {
+                                                "diskSizeGB": 30,
+                                                "lun": 1,
+                                                "createOption": "Empty"
+                                            }
+                                        ],
+                                        "imageReference": "[variables('fgtvmImageBYOL')]"
+                                    },
+                                    "diagnosticsProfile": {
+                                        "bootDiagnostics": {
+                                            "enabled": true,
+                                            "storageUri": "[concat('https://', variables('storageAccountName'), '.blob.core.windows.net')]"
+                                        }
+                                    },
+                                    "osProfile": {
+                                        "computerNamePrefix": "[variables('vmssNameBYOL')]",
+                                        "adminUsername": "[parameters('adminUsername')]",
+                                        "customData": "[base64(concat('{\"license-url\": \"', variables('LicenseEndPoints'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[0].value, '\",\"config-url\": \"', variables('autoscaleEndPoints'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[1].value, '\"}\n'))]",
+                                        "adminPassword": "[parameters('adminPassword')]"
+                                    },
+                                    "networkProfile": {
+                                        "networkInterfaceConfigurations": [
+                                            {
+                                                "name": "[concat(variables('vmssNameBYOL'),'-nic-subnet1')]",
+                                                "properties": {
+                                                    "primary": true,
+                                                    "enableIPForwarding": true,
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('subnet1IPConfigName')]",
+                                                            "properties": {
+                                                                "Subnet": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('subnet1Name'))]"
+                                                                },
+                                                                "loadBalancerBackendAddressPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', variables('externalLoadBalancerName'), variables('loadBalancerBackendIPPoolNameSubnet1'))]"
+                                                                    }
+                                                                ],
+                                                                "loadBalancerInboundNatPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('extLBInboundNatPoolSSHBYOL'))]"
+                                                                    },
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('extLBInboundNatPoolHTTPSBYOL'))]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "name": "[concat(variables('vmssNameBYOL'),'-nic-subnet2')]",
+                                                "properties": {
+                                                    "primary": false,
+                                                    "enableIPForwarding": true,
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('subnet2IPConfigName')]",
+                                                            "properties": {
+                                                                "Subnet": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('subnet2Name'))]"
+                                                                },
+                                                                "loadBalancerBackendAddressPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', variables('internalLoadBalancerName'), variables('loadBalancerBackendIPPoolNameSubnet2'))]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "name": "[concat(variables('vmssNameBYOL'),'-nic-subnet3')]",
+                                                "properties": {
+                                                    "primary": false,
+                                                    "enableIPForwarding": true,
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('subnet3IPConfigName')]",
+                                                            "properties": {
+                                                                "Subnet": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('subnet3Name'))]"
+                                                                },
+                                                                "loadBalancerBackendAddressPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', variables('internalLoadBalancerName'), variables('loadBalancerBackendIPPoolNameSubnet3'))]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "name": "[concat(variables('vmssNameBYOL'),'-nic-subnet4')]",
+                                                "properties": {
+                                                    "primary": false,
+                                                    "enableIPForwarding": true,
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('subnet4IPConfigName')]",
+                                                            "properties": {
+                                                                "Subnet": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('subnet4Name'))]"
+                                                                },
+                                                                "loadBalancerBackendAddressPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', variables('internalLoadBalancerName'), variables('loadBalancerBackendIPPoolNameSubnet4'))]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Compute/virtualMachineScaleSets",
+                            "name": "[variables('vmssNamePAYG')]",
+                            "location": "[variables('location')]",
+                            "apiVersion": "2019-07-01",
+                            "plan": {
+                                "name": "[variables('fgtvmImagePAYG').sku]",
+                                "publisher": "[variables('fgtvmImagePAYG').publisher]",
+                                "product": "[variables('fgtvmImagePAYG').offer]"
+                            },
+                            "sku": {
+                                "name": "[parameters('InstanceType')]",
+                                "tier": "Standard",
+                                "capacity": 0
+                            },
+                            "properties": {
+                                "overprovision": false,
+                                "upgradePolicy": {
+                                    "mode": "Manual"
+                                },
+                                "virtualMachineProfile": {
+                                    "storageProfile": {
+                                        "osDisk": {
+                                            "createOption": "FromImage",
+                                            "caching": "ReadWrite"
+                                        },
+                                        "dataDisks": [
+                                            {
+                                                "diskSizeGB": 30,
+                                                "lun": 1,
+                                                "createOption": "Empty"
+                                            }
+                                        ],
+                                        "imageReference": "[variables('fgtvmImagePAYG')]"
+                                    },
+                                    "diagnosticsProfile": {
+                                        "bootDiagnostics": {
+                                            "enabled": true,
+                                            "storageUri": "[concat('https://', variables('storageAccountName'), '.blob.core.windows.net')]"
+                                        }
+                                    },
+                                    "priority": "Low",
+                                    "evictionPolicy": "delete",
+                                    "osProfile": {
+                                        "computerNamePrefix": "[variables('vmssNamePAYG')]",
+                                        "customData": "[base64(concat('{\"config-url\": \"', variables('autoscaleEndPoints'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[1].value, '\"}\n'))]",
+                                        "adminUsername": "[parameters('adminUsername')]",
+                                        "adminPassword": "[parameters('adminPassword')]"
+                                    },
+                                    "networkProfile": {
+                                        "networkInterfaceConfigurations": [
+                                            {
+                                                "name": "[concat(variables('vmssNamePAYG'),'-nic-subnet1')]",
+                                                "properties": {
+                                                    "primary": true,
+                                                    "enableIPForwarding": true,
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('subnet1IPConfigName')]",
+                                                            "properties": {
+                                                                "Subnet": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('subnet1Name'))]"
+                                                                },
+                                                                "loadBalancerBackendAddressPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', variables('externalLoadBalancerName'), variables('loadBalancerBackendIPPoolNameSubnet1'))]"
+                                                                    }
+                                                                ],
+                                                                "loadBalancerInboundNatPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('extLBInboundNatPoolSSHPAYG'))]"
+                                                                    },
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('extLBInboundNatPoolHTTPSPAYG'))]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "name": "[concat(variables('vmssNamePAYG'),'-nic-subnet2')]",
+                                                "properties": {
+                                                    "primary": false,
+                                                    "enableIPForwarding": true,
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('subnet2IPConfigName')]",
+                                                            "properties": {
+                                                                "Subnet": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('subnet2Name'))]"
+                                                                },
+                                                                "loadBalancerBackendAddressPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', variables('internalLoadBalancerName'), variables('loadBalancerBackendIPPoolNameSubnet2'))]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "name": "[concat(variables('vmssNamePAYG'),'-nic-subnet3')]",
+                                                "properties": {
+                                                    "primary": false,
+                                                    "enableIPForwarding": true,
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('subnet3IPConfigName')]",
+                                                            "properties": {
+                                                                "Subnet": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('subnet3Name'))]"
+                                                                },
+                                                                "loadBalancerBackendAddressPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', variables('internalLoadBalancerName'), variables('loadBalancerBackendIPPoolNameSubnet3'))]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "name": "[concat(variables('vmssNamePAYG'),'-nic-subnet4')]",
+                                                "properties": {
+                                                    "primary": false,
+                                                    "enableIPForwarding": true,
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('subnet4IPConfigName')]",
+                                                            "properties": {
+                                                                "Subnet": {
+                                                                    "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('subnet4Name'))]"
+                                                                },
+                                                                "loadBalancerBackendAddressPools": [
+                                                                    {
+                                                                        "id": "[resourceId(subscription().subscriptionId, variables('vNetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', variables('internalLoadBalancerName'), variables('loadBalancerBackendIPPoolNameSubnet4'))]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "dependsOn": ["[variables('vmssNameBYOL')]"],
+                            "type": "Microsoft.Insights/autoscaleSettings",
+                            "apiVersion": "2014-04-01",
+                            "name": "[variables('autoscaleSettingsNameBYOL')]",
+                            "location": "[variables('location')]",
+                            "properties": {
+                                "name": "[variables('autoscaleSettingsNameBYOL')]",
+                                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  variables('vNetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('vmssNameBYOL'))]",
+                                "enabled": false,
+                                "profiles": [
+                                    {
+                                        "name": "[concat(variables('uniqueResourceNamePrefix'),'-deployed-profile')]",
+                                        "capacity": {
+                                            "minimum": "[parameters('MinBYOLInstanceCount')]",
+                                            "maximum": "[parameters('MaxBYOLInstanceCount')]",
+                                            "default": "[parameters('BYOLInstanceCount')]"
+                                        },
+                                        "rules": "[variables('autoscaleSettingsPresets')[variables('licensingModel')].byol]"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "dependsOn": [
+                                "[variables('vmssNamePAYG')]",
+                                "[variables('autoscaleSettingsNameBYOL')]"
+                            ],
+                            "type": "Microsoft.Insights/autoscaleSettings",
+                            "apiVersion": "2014-04-01",
+                            "name": "[variables('autoscaleSettingsNamePAYG')]",
+                            "location": "[variables('location')]",
+                            "properties": {
+                                "name": "[variables('autoscaleSettingsNamePAYG')]",
+                                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  variables('vNetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('vmssNamePAYG'))]",
+                                "enabled": false,
+                                "profiles": [
+                                    {
+                                        "name": "[concat(variables('uniqueResourceNamePrefix'),'-deployed-profile')]",
+                                        "capacity": {
+                                            "minimum": "[parameters('MinPAYGInstanceCount')]",
+                                            "maximum": "[parameters('MaxPAYGInstanceCount')]",
+                                            "default": "[parameters('PAYGInstanceCount')]"
+                                        },
+                                        "rules": "[variables('autoscaleSettingsPresets')[variables('licensingModel')].payg]"
+                                    }
+                                ]
+                            }
                         }
-                    }
+                    ]
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
