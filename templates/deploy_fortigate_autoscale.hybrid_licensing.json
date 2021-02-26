@@ -502,7 +502,7 @@
         },
         "funcappURL": "[concat('https://', variables('functionAppName'), '.azurewebsites.net')]",
         "LicenseEndPoints": "[concat(variables('funcappURL'), '/api/byol-license')]",
-        "autoscaleEndPoints": "[concat(variables('funcappURL'), '/api/fgt-asg-handler')]",
+        "autoscaleEndPoints": "[concat(variables('funcappURL'), '/api/fgt-as-handler')]",
         "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
         "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
         "autoscaleSettingsPresets": {
@@ -1932,7 +1932,7 @@
                                         },
                                         {
                                             "name": "autoscale-handler-url",
-                                            "value": "[concat('https://', variables('functionAppName'), '.azurewebsites.net/api/fgt-asg-handler')]"
+                                            "value": "[concat('https://', variables('functionAppName'), '.azurewebsites.net/api/fgt-as-handler')]"
                                         },
                                         {
                                             "name": "byol-scaling-group-desired-capacity",
