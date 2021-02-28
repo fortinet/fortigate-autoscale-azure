@@ -63,11 +63,11 @@
         }
     },
     "variables": {
-        "location": "[resourceGroup().location]",
         "fazName": "[concat(toLower(parameters('UniqueResourceNamePrefix')),'faz001')]",
         "fazNic0Name": "[concat(toLower(variables('fazName')),'-nic0')]",
+        "fazPubIpId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName'))]",
         "fazPubIpName": "[concat(toLower(variables('fazName')),'-public-ip')]",
-        "fazPubIpId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName'))]"
+        "location": "[resourceGroup().location]"
     },
     "resources": [
         {

@@ -55,8 +55,6 @@
     },
     "variables": {
         "enableAzureAppInsights": "[contains(variables('functionAppInsightAvailableLocations'), variables('location'))]",
-        "hostingPlanName": "[concat(parameters('FunctionAppName'),'-service-plan')]",
-        "functionAppInsightName": "[concat(parameters('FunctionAppName'),'-insights')]",
         "functionAppInsightAvailableLocations": [
             "australiaeast",
             "australiasoutheast",
@@ -81,6 +79,8 @@
             "westus",
             "westus2"
         ],
+        "functionAppInsightName": "[concat(parameters('FunctionAppName'),'-insights')]",
+        "hostingPlanName": "[concat(parameters('FunctionAppName'),'-service-plan')]",
         "location": "[resourceGroup().location]",
         "servicePlanTierPresets": {
             "Free (for demo only)": {
