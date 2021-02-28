@@ -386,10 +386,6 @@
         "licenseFileDirectory": "license-files",
         "enableHybridLicensing": true,
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
-        "fazName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'faz001')]",
-        "fazNic0Name": "[concat(toLower(variables('fazName')),'-nic0')]",
-        "fazPubIpName": "[concat(toLower(variables('fazName')),'-public-ip')]",
-        "fazPubIpId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName'))]",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "accessRestrictionIPString": "[if(empty(parameters('AccessRestrictionIPRange')), '', concat(parameters('AccessRestrictionIPRange'), ','))]",
         "accessRestrictionIPArray": "[split(parameters('AccessRestrictionIPRange'), ',')]",
@@ -501,8 +497,9 @@
             "version": "[parameters('fosversion')]"
         },
         "funcappURL": "[concat('https://', variables('functionAppName'), '.azurewebsites.net')]",
-        "LicenseEndPoints": "[concat(variables('funcappURL'), '/api/byol-license')]",
-        "autoscaleEndPoints": "[concat(variables('funcappURL'), '/api/fgt-as-handler')]",
+        "autoscaleEndpointByolLicense": "[concat(variables('funcappURL'), '/api/byol-license')]",
+        "autoscaleEndpointFgtAsHandler": "[concat(variables('funcappURL'), '/api/fgt-as-handler')]",
+        "autoscaleEndpointFazHandler": "[concat(variables('funcappURL'), '/api/faz-auth-handler')]",
         "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
         "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
         "autoscaleSettingsPresets": {
@@ -688,7 +685,7 @@
         "cmdDeleteAutoscaleComponents": "[concat('az account set -s ', subscription().subscriptionId, ';', 'az group delete -y -n ', variables('resourceGroupName'), ';')]",
         "cmdDeleteAutoscaleAll": "[concat(variables('cmdDeleteVNetRelatedComponents'), variables('cmdDeleteAutoscaleComponents'))]",
         "cmdVNetCleanUp": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteAutoscaleSettings'))]",
-        "functionNameList": ["byol-license", "fgt-as-handler"]
+        "autoscaleHandlerNameList": ["byol-license", "faz-handler", "fgt-as-handler"]
     },
     "resources": [
         {
@@ -735,7 +732,17 @@
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2019-09-01",
-            "name": "[concat(variables('keyVaultName'), '/', parameters('FortiAnalyzerAutoscaleAdminUsername'))]",
+            "name": "[concat(variables('keyVaultName'), '/', 'faz-autoscale-admin-username')]",
+            "location": "[variables('location')]",
+            "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
+            "properties": {
+                "value": "[parameters('FortiAnalyzerAutoscaleAdminUsername')]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2019-09-01",
+            "name": "[concat(variables('keyVaultName'), '/', 'faz-autoscale-admin-password')]",
             "location": "[variables('location')]",
             "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
             "properties": {
@@ -1773,7 +1780,7 @@
                         "value": "~3"
                     },
                     "FunctionNameList": {
-                        "value": "[variables('functionNameList')]"
+                        "value": "[variables('autoscaleHandlerNameList')]"
                     },
                     "NodeJSRuntimeVersion": {
                         "value": "~12"
@@ -1868,7 +1875,7 @@
                                         },
                                         {
                                             "name": "AUTOSCALE_KEY_VAULT_NAME",
-                                            "value": "<TO BE EDITED>"
+                                            "value": "[variables('keyVaultName')]"
                                         },
                                         {
                                             "name": "AZURE_STORAGE_ACCESS_KEY",
@@ -1968,7 +1975,7 @@
                                         },
                                         {
                                             "name": "enable-fortianalyzer-integration",
-                                            "value": "false"
+                                            "value": "[if(variables('enableFortiAnalyzer'),'true', 'false')]"
                                         },
                                         {
                                             "name": "enable-hybrid-licensing",
@@ -1988,7 +1995,7 @@
                                         },
                                         {
                                             "name": "faz-handler-name",
-                                            "value": ""
+                                            "value": "[concat(variables('autoscaleEndpointFazHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[1].value)]"
                                         },
                                         {
                                             "name": "faz-ip",
@@ -2161,7 +2168,7 @@
                                     "osProfile": {
                                         "computerNamePrefix": "[variables('vmssNameBYOL')]",
                                         "adminUsername": "[parameters('adminUsername')]",
-                                        "customData": "[base64(concat('{\"license-url\": \"', variables('LicenseEndPoints'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[0].value, '\",\"config-url\": \"', variables('autoscaleEndPoints'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[1].value, '\"}\n'))]",
+                                        "customData": "[base64(concat('{\"license-url\": \"', variables('autoscaleEndpointByolLicense'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[0].value, '\",\"config-url\": \"', variables('autoscaleEndpointFgtAsHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[2].value, '\"}\n'))]",
                                         "adminPassword": "[parameters('adminPassword')]"
                                     },
                                     "networkProfile": {
@@ -2312,7 +2319,7 @@
                                     "evictionPolicy": "delete",
                                     "osProfile": {
                                         "computerNamePrefix": "[variables('vmssNamePAYG')]",
-                                        "customData": "[base64(concat('{\"config-url\": \"', variables('autoscaleEndPoints'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[1].value, '\"}\n'))]",
+                                        "customData": "[base64(concat('{\"config-url\": \"', variables('autoscaleEndpointFgtAsHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[2].value, '\"}\n'))]",
                                         "adminUsername": "[parameters('adminUsername')]",
                                         "adminPassword": "[parameters('adminPassword')]"
                                     },

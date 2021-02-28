@@ -2,7 +2,7 @@ import { Context, HttpRequest } from '@azure/functions';
 import {
     AutoscaleEnvironment,
     AzureFortiGateAutoscale,
-    AzureFunctionInvocationProxy,
+    AzureFunctionHttpTriggerProxy,
     AzureFunctionResponse,
     AzurePlatformAdaptee,
     AzurePlatformAdapter
@@ -14,16 +14,15 @@ export async function autoscaleHandler(
     context: Context,
     req: HttpRequest
 ): Promise<AzureFunctionResponse> {
-    context.log(req);
     const env = {} as AutoscaleEnvironment;
-    const proxy = new AzureFunctionInvocationProxy(req, context);
+    const proxy = new AzureFunctionHttpTriggerProxy(req, context);
     const platform = new AzurePlatformAdapter(new AzurePlatformAdaptee(), proxy);
     const autoscale = new AzureFortiGateAutoscale<HttpRequest, Context, AzureFunctionResponse>(
         platform,
         env,
         proxy
     );
-
+    proxy.logAsInfo('Request:', req);
     const res = await autoscale.handleAutoscaleRequest(proxy, platform, env);
     // NOTE: it requires the following env var to save logs
     if (process.env.DEBUG_SAVE_CUSTOM_LOG) {

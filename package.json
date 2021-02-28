@@ -26,7 +26,7 @@
     "lint-fix-template": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -f -F .eslintignore -L .eslintignore \"**/*.json\" --parser \"json\"",
     "lint-fix": "npm run lint-fix-code",
     "build-core": "cd node_modules/autoscale-core && npm install && npm run build && cd ../../",
-    "funcapp-zip": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler node_modules scripts templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
+    "funcapp-zip": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler faz-auth-handler faz-auth-scheduler node_modules scripts templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
     "funcapp-pack": "rm -f package-lock.json && rm -rf node_modules/ && npm install && npm run build && npm prune --production && npm run funcapp-zip"
   },
   "husky": {
