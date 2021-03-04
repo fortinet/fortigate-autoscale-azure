@@ -27,7 +27,8 @@
     "lint-fix": "npm run lint-fix-code",
     "build-core": "cd node_modules/autoscale-core && npm install && npm run build && cd ../../",
     "funcapp-zip": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler faz-auth-handler faz-auth-scheduler node_modules scripts templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
-    "funcapp-pack": "rm -f package-lock.json && rm -rf node_modules/ && npm install && npm run build && npm prune --production && npm run funcapp-zip"
+    "funcapp-pack": "rm -f package-lock.json && rm -rf node_modules/ && npm install && npm run build && npm prune --production && npm run funcapp-zip",
+    "sync-version": "node dist/scripts/sync-version.js"
   },
   "husky": {
     "hooks": {

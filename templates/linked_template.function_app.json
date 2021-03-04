@@ -1,10 +1,10 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.12",
+    "contentVersion": "1.0.0.0",
     "parameters": {
         "FunctionAppName": {
             "type": "String",
-            "defaultValue": "jl01aske5lygpbfuncapp",
+            "defaultValue": "",
             "metadata": {
                 "description": "The name of the Azure Function app."
             }
@@ -32,7 +32,6 @@
         },
         "PackageResURL": {
             "type": "String",
-            "defaultValue": "https://jliang01-azure-assets.s3-us-west-2.amazonaws.com/fortigate-autoscale/3.2.0-dev/fortigate-autoscale-azure-funcapp.zip",
             "metadata": {
                 "description": "The public URL of the function source file named 'fortigate-autoscale-azure-funcapp.zip', and can be found inside 'fortigate-autoscale-azure-template-deployment.zip'. The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure."
             }
@@ -47,7 +46,6 @@
         },
         "StorageAccountName": {
             "type": "String",
-            "defaultValue": "jl01aske5lygpbsta001",
             "metadata": {
                 "description": "The storage account name to be used in this function app."
             }
