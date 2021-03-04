@@ -1,0 +1,166 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "UniqueResourceNamePrefix": {
+            "maxLength": 18,
+            "type": "String",
+            "metadata": {
+                "description": "The unique prefix for all applicable resource names. Can only contain uppercase letters, lowercase letters, and numbers. Maximum length is 18."
+            }
+        },
+        "SubnetId": {
+            "type": "String",
+            "metadata": {
+                "description": "The subnet of a virtual network to deploy the FortiAnalyzer."
+            }
+        },
+        "FortiAnalyzerInstanceType": {
+            "defaultValue": "Standard_DS2_v2",
+            "type": "String",
+            "metadata": {
+                "description": "Size of the FortiAnalyzer VM."
+            }
+        },
+        "FortiAnalyzerVersion": {
+            "defaultValue": "6.4.2",
+            "allowedValues": ["6.4.2", "6.2.5"],
+            "type": "String",
+            "metadata": {
+                "description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling."
+            }
+        },
+        "FortiAnalyzerCustomPrivateIpAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
+            }
+        },
+        "AdminUsername": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "FortiAnalyzer administrator username."
+            }
+        },
+        "AdminPassword": {
+            "type": "SecureString",
+            "metadata": {
+                "description": "FortiAnalyzer administrator password. This field must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
+            }
+        },
+        "FortiAnalyzerAutoscaleAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+            }
+        },
+        "FortiAnalyzerAutoscaleAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
+            }
+        }
+    },
+    "variables": {
+        "fazName": "[concat(toLower(parameters('UniqueResourceNamePrefix')),'faz001')]",
+        "fazNic0Name": "[concat(toLower(variables('fazName')),'-nic0')]",
+        "fazPubIpId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName'))]",
+        "fazPubIpName": "[concat(toLower(variables('fazName')),'-public-ip')]",
+        "location": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-07-01",
+            "name": "[variables('fazPubIpName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "apiVersion": "2020-07-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('fazNic0Name')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[concat(toLower(variables('fazNic0Name')), '-ipconfig')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('FortiAnalyzerCustomPrivateIpAddress')]",
+                            "subnet": {
+                                "id": "[parameters('SubnetId')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[variables('fazPubIpId')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": false
+            },
+            "dependsOn": ["[variables('fazPubIpName')]"]
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('fazName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "osProfile": {
+                    "computerName": "[variables('fazName')]",
+                    "adminUsername": "[parameters('AdminUsername')]",
+                    "adminPassword": "[parameters('AdminPassword')]",
+                    "customData": "[base64(concat('config system admin user\nedit ', parameters('FortiAnalyzerAutoscaleAdminUsername'), '\nset password ', parameters('FortiAnalyzerAutoscaleAdminPassword'), '\nset profileid \"Super_User\"\nset adom \"all_adoms\"\nset rpc-permit read-write\nnext\nend\n'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('FortiAnalyzerInstanceType')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "fortinet",
+                        "offer": "fortinet-fortianalyzer",
+                        "sku": "fortinet-fortianalyzer",
+                        "version": "[parameters('FortiAnalyzerVersion')]"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "createOption": "Empty",
+                            "diskSizeGB": 1023,
+                            "lun": 0
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('fazNic0Name'))]"
+                        }
+                    ]
+                }
+            },
+            "plan": {
+                "name": "fortinet-fortianalyzer",
+                "publisher": "fortinet",
+                "product": "fortinet-fortianalyzer"
+            },
+            "dependsOn": ["[variables('fazNic0Name')]"]
+        }
+    ],
+    "outputs": {
+        "fazPublicIp": {
+            "type": "String",
+            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses/', variables('fazPubIpName')), '2020-07-01').IpAddress]"
+        }
+    }
+}

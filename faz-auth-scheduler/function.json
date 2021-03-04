@@ -1,0 +1,11 @@
+{
+    "bindings": [
+        {
+            "name": "req",
+            "type": "timerTrigger",
+            "direction": "in",
+            "schedule": "0 */12 * * * *"
+        }
+    ],
+    "scriptFile": "../dist/faz-auth-scheduler/index.js"
+}

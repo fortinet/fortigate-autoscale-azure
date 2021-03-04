@@ -1,0 +1,92 @@
+{
+    "function": [
+        {
+            "name": "fgt-as-handler",
+            "source": {
+                "filename": "index.ts",
+                "location": "fgt-as-handler"
+            },
+            "output": {
+                "filename": "fgt-as-handler",
+                "location": "func-app/fgt-as-handler"
+            },
+            "copyList": [
+                {
+                    "name": "function.json",
+                    "location": "./function.json",
+                    "relativeDir": "source"
+                }
+            ]
+        }
+    ],
+    "functionGroup": [
+        {
+            "name": "func-app",
+            "functions": [
+                {
+                    "name": "fgt-as-handler",
+                    "ref": "fgt-as-handler"
+                }
+            ],
+            "copyList": [
+                {
+                    "name": "all-bundled-files",
+                    "location": "./build",
+                    "relativeDir": "project"
+                },
+                {
+                    "name": "host.json",
+                    "location": "./host.json",
+                    "relativeDir": "project"
+                },
+                {
+                    "name": "local.settings.json",
+                    "location": "./local.settings.json",
+                    "relativeDir": "project"
+                },
+                {
+                    "name": "proxies.json",
+                    "location": "./proxies.json",
+                    "relativeDir": "project"
+                }
+            ]
+        }
+    ],
+    "bundle": {
+        "filenamePrefix": "",
+        "filenameSuffix": "-bundle"
+    },
+    "package": [
+        {
+            "name": "azure-template-deployment",
+            "staticFile": [
+                {
+                    "name": "core-configset",
+                    "copyFrom": "node_modules/autoscale-core/fortigate-autoscale/assets/configset",
+                    "saveTo": "./assets/configset",
+                    "includeSubDir": false
+                },
+                {
+                    "name": "azure-configset",
+                    "copyFrom": "node_modules/autoscale-core/fortigate-autoscale/assets/configset/azure",
+                    "saveTo": "./assets/configset",
+                    "includeSubDir": false
+                }
+            ],
+            "function": [],
+            "functionGroup": [
+                {
+                    "name": "autoscale-func-app",
+                    "ref": "func-app"
+                }
+            ],
+            "saveFunctionSource": true,
+            "functionPackageDir": "./functions/packages",
+            "functionSourceDir": "./functions/sources"
+        }
+    ],
+    "output": {
+        "outDir": "build/bundled",
+        "packageDir": "dist/artifacts"
+    }
+}

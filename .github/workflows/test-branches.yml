@@ -1,0 +1,38 @@
+on:
+  # Run whenever new commits are pushed to the target branches defined as gibelow.
+  push:
+    branches:
+      - 'bugfix_*' # bugfix branches
+      - 'feat_*' # feature branches
+      - 'staging_*' # staging branches
+  # Run whenever a pull request event occurs and the target branches defined as below.
+  pull_request:
+    branches:
+      - 'main' # main branch
+      - 'staging_*' # staging branches
+
+name: Check all requirements for accepting changes to a branch
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Check - install
+        run: npm ci
+      - name: Check - audit (production)
+        run: npm audit --production
+      - name: Check - format
+        run: npm run lint-check
+      - name: Check - build
+        run: npm run build
+      - name: Run tests
+        run: npm test
