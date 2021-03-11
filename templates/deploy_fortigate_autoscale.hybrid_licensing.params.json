@@ -57,7 +57,7 @@
             "value": "Standard_F4"
         },
         "FOSVersion": {
-            "value": "6.2.3"
+            "value": "6.4.3"
         },
         "FortiGatePSKSecret": {
             "value": ""
