@@ -1,5 +1,5 @@
 import { Context, HttpRequest } from '@azure/functions';
-// import { AutoscaleEnvironment } from '@fortinet/fortigate-autoscale';
+// import { AutoscaleEnvironment } from '..';
 import {
     AutoscaleEnvironment,
     AzureFortiGateAutoscale,
@@ -7,7 +7,7 @@ import {
     AzureFunctionResponse,
     AzurePlatformAdaptee,
     AzurePlatformAdapter
-} from '@fortinet/fortigate-autoscale/fortigate-autoscale/azure';
+} from '@fortinet/fortigate-autoscale/azure';
 
 // Azure Function request handler for http requests coming from FortiGate callback
 // see: https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-node?tabs=v2

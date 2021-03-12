@@ -19,7 +19,9 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',
-                options: { onlyCompileBundledFiles: true, allowTsInNodeModules: true }
+                options: {
+                    /* onlyCompileBundledFiles: true, allowTsInNodeModules: true, */
+                }
             },
             {
                 test: /\.node$/,
@@ -27,11 +29,13 @@ module.exports = {
                 generator: {
                     filename: 'static/[base]'
                 }
-            }
+            },
+            // https://github.com/webpack/webpack/issues/11467#issuecomment-691873586
+            { test: f => /\.m?js/, resolve: { fullySpecified: false } }
         ]
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js']
+        extensions: ['.js', '.tsx', '.ts']
     },
     optimization: {
         minimizer: [

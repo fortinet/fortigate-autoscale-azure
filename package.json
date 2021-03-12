@@ -8,7 +8,6 @@
     "doc": "docs"
   },
   "scripts": {
-    "postinstall": "npm run build-core",
     "pre-push": "npm-run-all lint-check audit-production test build",
     "audit-production": "npm audit --production",
     "bundle": "webpack --mode=production",
@@ -49,8 +48,8 @@
   "homepage": "https://github.com/fortinet/fortigate-autoscale-azure#readme",
   "dependencies": {
     "@azure/functions": "^1.2.3",
-    "@types/node": "^13.9.2",
     "@fortinet/fortigate-autoscale": "https://github.com/fortinet/autoscale-core/releases/download/3.2.0/fortinet-fortigate-autoscale-3.2.0.tgz",
+    "@types/node": "^13.9.2",
     "http-status-codes": "^1.4.0",
     "rimraf": "^3.0.2"
   },
@@ -86,7 +85,7 @@
     "ts-node": "^8.8.2",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^3.9.2",
-    "webpack": "^5.20.2",
+    "webpack": "^5.24.4",
     "webpack-cli": "^4.5.0"
   }
 }
