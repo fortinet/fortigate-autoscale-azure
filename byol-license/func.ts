@@ -7,7 +7,7 @@ import {
     AzureFunctionResponse,
     AzurePlatformAdaptee,
     AzurePlatformAdapter
-} from 'autoscale-core/fortigate-autoscale/azure';
+} from '@fortinet/fortigate-autoscale/fortigate-autoscale/azure';
 
 // Azure Function request handler for http requests coming from FortiGate callback
 // see: https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-node?tabs=v2
