@@ -10,7 +10,7 @@ import {
     FortiGateAutoscaleServiceRequestSource,
     FortiGateAutoscaleServiceType,
     JSONable
-} from '@fortinet/fortigate-autoscale/azure';
+} from '@fortinet/autoscale/fortigate-autoscale/azure';
 
 // NOTE: Azure function Typscript has not yet defined interface for Timer trigger type.
 // A custom TimeInfo is therefore defined here.

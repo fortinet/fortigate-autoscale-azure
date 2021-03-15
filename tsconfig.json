@@ -60,13 +60,13 @@
             // shouldn't need to do this, but ts hasn't implemented package.json exports:
             // https://github.com/microsoft/TypeScript/issues/33079
             "@fortinet/fortigate-autoscale/azure": [
-                "node_modules/@fortinet/fortigate-autoscale/dist/azure/index.js"
+                "node_modules/@fortinet/autoscale/fortigate-autoscale/dist/azure/index.js"
             ],
             "@fortinet/fortigate-autoscale": [
-                "node_modules/@fortinet/fortigate-autoscale/dist/index.js"
+                "node_modules/@fortinet/autoscale/fortigate-autoscale/dist/index.js"
             ],
             "@fortinet/autoscale-core/db-definitions": [
-                "node_modules/@fortinet/fortigate-autoscale/node_modules/@fortinet/autoscale-core/dist/db-definitions.js"
+                "node_modules/@fortinet/autoscale/fortigate-autoscale/node_modules/@fortinet/autoscale-core/dist/db-definitions.js"
             ]
         } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,
         // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */

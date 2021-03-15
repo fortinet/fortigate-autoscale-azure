@@ -8,7 +8,7 @@ import {
     AzurePlatformAdaptee,
     AzurePlatformAdapter,
     JSONable
-} from '@fortinet/fortigate-autoscale/azure';
+} from '@fortinet/autoscale/fortigate-autoscale/azure';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Azure Function request handler for http requests coming from FortiGate callback
 // see: https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-node?tabs=v2
