@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-var-requires */
+const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
-const config = require('./packman.config.json');
-
-const entries = {};
-config.function.forEach(f => {
-    entries[f.name] = path.resolve(__dirname, f.source.location);
-});
 
 module.exports = {
-    entry: entries,
+    entry: {
+        'autoscale-shared': './autoscale-shared/index.ts'
+    },
     devtool: 'inline-source-map',
     mode: 'production',
     module: {
@@ -36,11 +33,21 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.tsx', '.ts']
     },
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    keep_fnames: /AbortSignal/
+                },
+                extractComments: false
+            })
+        ]
+    },
     output: {
         filename: () => {
-            return `${config.bundle.filenamePrefix}[name]${config.bundle.filenameSuffix}.js`;
+            return 'index.js';
         },
-        path: path.resolve(__dirname, config.output.outDir),
+        path: path.resolve(__dirname, 'dist/autoscale-shared'),
         libraryTarget: 'commonjs'
     },
     target: 'node'
