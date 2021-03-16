@@ -8,7 +8,6 @@
     "doc": "docs"
   },
   "scripts": {
-    "postinstall": "npm run build-core",
     "pre-push": "npm-run-all lint-check audit-production test build",
     "audit-production": "npm audit --production",
     "bundle": "webpack --mode=production",
@@ -25,7 +24,6 @@
     "lint-fix-code": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -fl  -F .eslintignore -L .eslintignore \"**/*{.js,.json,.ts}\"",
     "lint-fix-template": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -f -F .eslintignore -L .eslintignore \"**/*.json\" --parser \"json\"",
     "lint-fix": "npm run lint-fix-code",
-    "build-core": "cd node_modules/autoscale-core && npm install && npm run build && cd ../../",
     "funcapp-zip": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler faz-auth-handler faz-auth-scheduler node_modules scripts templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
     "funcapp-pack": "rm -f package-lock.json && rm -rf node_modules/ && npm install && npm run build && npm prune --production && npm run funcapp-zip",
     "sync-version": "node dist/scripts/sync-version.js"
@@ -49,8 +47,8 @@
   "homepage": "https://github.com/fortinet/fortigate-autoscale-azure#readme",
   "dependencies": {
     "@azure/functions": "^1.2.3",
+    "@fortinet/fortigate-autoscale": "https://github.com/fortinet/autoscale-core/releases/download/3.3.0-dev.0/fortinet-fortigate-autoscale-3.2.0.tgz",
     "@types/node": "^13.9.2",
-    "autoscale-core": "git+https://github.com/fortinet/autoscale-core.git#main",
     "http-status-codes": "^1.4.0",
     "rimraf": "^3.0.2"
   },
@@ -86,7 +84,7 @@
     "ts-node": "^8.8.2",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^3.9.2",
-    "webpack": "^5.20.2",
+    "webpack": "^5.24.4",
     "webpack-cli": "^4.5.0"
   }
 }

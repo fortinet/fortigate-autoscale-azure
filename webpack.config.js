@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
 const config = require('./packman.config.json');
 
 const entries = {};
@@ -19,7 +18,9 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',
-                options: { onlyCompileBundledFiles: true, allowTsInNodeModules: true }
+                options: {
+                    /* onlyCompileBundledFiles: true, allowTsInNodeModules: true, */
+                }
             },
             {
                 test: /\.node$/,
@@ -27,21 +28,13 @@ module.exports = {
                 generator: {
                     filename: 'static/[base]'
                 }
-            }
+            },
+            // https://github.com/webpack/webpack/issues/11467#issuecomment-691873586
+            { test: () => /\.m?js/, resolve: { fullySpecified: false } }
         ]
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js']
-    },
-    optimization: {
-        minimizer: [
-            new TerserPlugin({
-                terserOptions: {
-                    keep_fnames: /AbortSignal/
-                },
-                extractComments: false
-            })
-        ]
+        extensions: ['.js', '.tsx', '.ts']
     },
     output: {
         filename: () => {

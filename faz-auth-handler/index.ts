@@ -1,4 +1,4 @@
-import { fazAuthHandler } from './func';
+import { fazAuthHandler } from '../autoscale-shared';
 
 // NOTE: this exports style is for Azure Function compatibility
 // see: https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-node?tabs=v2#exporting-an-async-function
