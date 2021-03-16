@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
 const config = require('./packman.config.json');
 
 const entries = {};
@@ -36,16 +35,6 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.tsx', '.ts']
-    },
-    optimization: {
-        minimizer: [
-            new TerserPlugin({
-                terserOptions: {
-                    keep_fnames: /AbortSignal/
-                },
-                extractComments: false
-            })
-        ]
     },
     output: {
         filename: () => {
