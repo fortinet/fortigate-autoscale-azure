@@ -1,6 +1,6 @@
 {
   "name": "fortigate-autoscale-azure",
-  "version": "1.0.0",
+  "version": "3.3.0-dev.0",
   "description": "Fortinet FortiGate Autoscale for Azure",
   "main": "dist/transpiled/index.js",
   "types": "dist/types/index.d.ts",
@@ -8,25 +8,22 @@
     "doc": "docs"
   },
   "scripts": {
-    "pre-push": "npm-run-all lint-check audit-production test build",
     "audit-production": "npm audit --production",
-    "bundle": "webpack --mode=production",
-    "compile": "tsc",
-    "clear-dist": "rimraf dist",
     "build": "npm run clear-dist && npm run compile",
-    "make-dist": "npm run build && npm run bundle && node dist/transpiled/scripts/make-dist-v2.js build-all --project-root './'",
-    "build-artifacts": "npm-run-all build make-dist",
-    "unzip-artifacts": "unzip dist/artifacts/azure-template-deployment.zip -d dist/azure-template-deployment",
-    "test": "mocha --timeout 3600000 -r ts-node/register test/*.spec.ts",
+    "bundle": "webpack --mode=production",
+    "clear-dist": "rimraf dist",
+    "compile": "tsc",
     "lint-check-code": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js c -fl  -F .eslintignore -L .eslintignore \"{*,**/*}{.js,.json,.ts}\"",
     "lint-check-template": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js c -f -F .eslintignore -L .eslintignore \"**/*.json\" --parser \"json\"",
     "lint-check": "npm run lint-check-code && npm run lint-check-template",
     "lint-fix-code": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -fl  -F .eslintignore -L .eslintignore \"**/*{.js,.json,.ts}\"",
     "lint-fix-template": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -f -F .eslintignore -L .eslintignore \"**/*.json\" --parser \"json\"",
     "lint-fix": "npm run lint-fix-code",
-    "funcapp-zip": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler faz-auth-handler faz-auth-scheduler node_modules scripts templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
-    "funcapp-pack": "rm -f package-lock.json && rm -rf node_modules/ && npm install && npm run build && npm prune --production && npm run funcapp-zip",
-    "sync-version": "node dist/scripts/sync-version.js"
+    "make-dist": "npm-run-all build bundle sync-version pack-funcapp",
+    "pack-funcapp": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler faz-auth-handler faz-auth-scheduler templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
+    "pre-push": "npm-run-all lint-check audit-production test build",
+    "sync-version": "node dist/scripts/sync-version.js",
+    "test": "mocha --timeout 3600000 -r ts-node/register test/*.spec.ts"
   },
   "husky": {
     "hooks": {
