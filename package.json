@@ -23,7 +23,8 @@
     "pack-funcapp": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler faz-auth-handler faz-auth-scheduler templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
     "pre-push": "npm-run-all lint-check audit-production test build",
     "sync-version": "node dist/scripts/sync-version.js",
-    "test": "mocha --timeout 3600000 -r ts-node/register test/*.spec.ts"
+    "test": "mocha --timeout 3600000 -r ts-node/register test/*.spec.ts",
+    "version": "npm run sync-version && npm run lint-fix && git add -u"
   },
   "husky": {
     "hooks": {
