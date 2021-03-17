@@ -13,5 +13,6 @@
             "name": "res"
         }
     ],
-    "scriptFile": "../dist/byol-license/index.js"
+    "scriptFile": "../dist/autoscale-shared/index-bundle.js",
+    "entryPoint": "licenseHandler"
 }

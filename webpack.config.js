@@ -15,9 +15,7 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',
-                options: {
-                    /* onlyCompileBundledFiles: true, allowTsInNodeModules: true, */
-                }
+                options: {}
             },
             {
                 test: /\.node$/,
@@ -45,9 +43,9 @@ module.exports = {
     },
     output: {
         filename: () => {
-            return 'index.js';
+            return './[name]/index-bundle.js';
         },
-        path: path.resolve(__dirname, 'dist/autoscale-shared'),
+        path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'commonjs'
     },
     target: 'node'

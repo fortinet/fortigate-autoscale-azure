@@ -13,5 +13,6 @@
             "name": "res"
         }
     ],
-    "scriptFile": "../dist/fgt-as-handler/index.js"
+    "scriptFile": "../dist/autoscale-shared/index-bundle.js",
+    "entryPoint": "autoscaleHandler"
 }

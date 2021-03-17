@@ -12,5 +12,5 @@
         "id": "Microsoft.Azure.Functions.ExtensionBundle",
         "version": "[2.*, 3.0.0)"
     },
-    "watchDirectories": ["build/bundled", "dist"]
+    "watchDirectories": ["dist"]
 }
