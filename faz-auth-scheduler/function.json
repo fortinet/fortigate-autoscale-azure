@@ -7,6 +7,6 @@
             "schedule": "0 */12 * * * *"
         }
     ],
-    "scriptFile": "../dist/autoscale-shared/index-bundle.js",
+    "scriptFile": "../dist/index.js",
     "entryPoint": "fazAuthScheduler"
 }

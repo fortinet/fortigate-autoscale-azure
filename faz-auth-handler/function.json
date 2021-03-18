@@ -13,6 +13,6 @@
             "name": "res"
         }
     ],
-    "scriptFile": "../dist/autoscale-shared/index-bundle.js",
+    "scriptFile": "../dist/index.js",
     "entryPoint": "fazAuthHandler"
 }

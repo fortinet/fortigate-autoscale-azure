@@ -14,12 +14,24 @@ if (!semver.valid(verStr)) {
     throw new Error(`${verStr} isn't a valid semver. Expect a valid semver from the 1st argument.`);
 }
 
+let workingDir = './templates';
+
+if (process.argv.length > 2 && process.argv[1] === '--dir' && process.argv[2]) {
+    if (path.resolve(rootDir, process.argv[2]).startsWith(rootDir) === false) {
+        throw new Error(
+            `Working directory: ${process.argv[2]} does not reside in the project root.`
+        );
+    } else {
+        workingDir = process.argv[2];
+    }
+}
+
 const version = semver.parse(verStr);
 
 console.log(`Package version:, ${chalk.green(version.version)}`);
 
 // update Azure templates version
-const templateDir = path.resolve(rootDir, 'templates');
+const templateDir = path.resolve(rootDir, workingDir);
 
 const files = fs.readdirSync(templateDir);
 files

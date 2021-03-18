@@ -43,7 +43,7 @@ module.exports = {
     },
     output: {
         filename: () => {
-            return './[name]/index-bundle.js';
+            return './index.js';
         },
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'commonjs'
