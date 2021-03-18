@@ -5,11 +5,11 @@ import path from 'path';
 import shelljs from 'shelljs';
 
 // WARNING: this script expects to run after the project src being built.
-// NOTE: this script will use the script directory as root directory
+// NOTE: this script will use the node process current working directory as root directory
 const rootDir = process.cwd();
 console.log(`${chalk.blueBright('Set current working directory:')} ${rootDir}`);
 
-// NOTE: this script will look for the dist folder under the current working directory
+// NOTE: this script will look for the dist folder on the top level of the root directory
 // unless --distdir is specified. However, the distdir MUST reside in the current working directory.
 let distDir = 'dist';
 if (process.argv.length > 1 && process.argv.includes('--distdir')) {
