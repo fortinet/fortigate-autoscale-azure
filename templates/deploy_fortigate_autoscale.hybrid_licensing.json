@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
+    "contentVersion": "3.3.0.0",
     "parameters": {
         "ResourceNamePrefix": {
             "maxLength": 10,
@@ -299,6 +299,7 @@
         },
         "PackageResURL": {
             "type": "String",
+            "defaultValue": "",
             "metadata": {
                 "description": "The public URL of the function source file named 'fortigate-autoscale-azure-funcapp.zip', and can be found inside 'fortigate-autoscale-azure-template-deployment.zip'. The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure."
             }
@@ -1732,7 +1733,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/feat_project_fundamental/templates/linked_template.faz_integration.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.0-dev.0/templates/linked_template.faz_integration.json"
                 },
                 "parameters": {
                     "UniqueResourceNamePrefix": {
@@ -1775,7 +1776,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/feat_project_fundamental/templates/linked_template.function_app.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.0-dev.0/templates/linked_template.function_app.json"
                 },
                 "parameters": {
                     "FunctionAppName": {

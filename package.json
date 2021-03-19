@@ -1,6 +1,6 @@
 {
   "name": "fortigate-autoscale-azure",
-  "version": "1.0.0",
+  "version": "3.3.0-dev.0",
   "description": "Fortinet FortiGate Autoscale for Azure",
   "main": "dist/transpiled/index.js",
   "types": "dist/types/index.d.ts",
@@ -8,27 +8,22 @@
     "doc": "docs"
   },
   "scripts": {
-    "postinstall": "npm run build-core",
-    "pre-push": "npm-run-all lint-check audit-production test build",
     "audit-production": "npm audit --production",
-    "bundle": "webpack --mode=production",
-    "compile": "tsc",
-    "clear-dist": "rimraf dist",
     "build": "npm run clear-dist && npm run compile",
-    "make-dist": "npm run build && npm run bundle && node dist/transpiled/scripts/make-dist-v2.js build-all --project-root './'",
-    "build-artifacts": "npm-run-all build make-dist",
-    "unzip-artifacts": "unzip dist/artifacts/azure-template-deployment.zip -d dist/azure-template-deployment",
-    "test": "mocha --timeout 3600000 -r ts-node/register test/*.spec.ts",
+    "bundle": "webpack --mode=production",
+    "clear-dist": "shx rm -rf dist",
+    "compile": "tsc",
     "lint-check-code": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js c -fl  -F .eslintignore -L .eslintignore \"{*,**/*}{.js,.json,.ts}\"",
     "lint-check-template": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js c -f -F .eslintignore -L .eslintignore \"**/*.json\" --parser \"json\"",
     "lint-check": "npm run lint-check-code && npm run lint-check-template",
     "lint-fix-code": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -fl  -F .eslintignore -L .eslintignore \"**/*{.js,.json,.ts}\"",
     "lint-fix-template": "node node_modules/ftnt-devops-ci/bin/ftnt-devops-ci.js f -f -F .eslintignore -L .eslintignore \"**/*.json\" --parser \"json\"",
     "lint-fix": "npm run lint-fix-code",
-    "build-core": "cd node_modules/autoscale-core && npm install && npm run build && cd ../../",
-    "funcapp-zip": "rm -f fortigate-autoscale-azure-funcapp.zip && zip -rq fortigate-autoscale-azure-funcapp.zip dist byol-license fgt-as-handler faz-auth-handler faz-auth-scheduler node_modules scripts templates .gitignore host.json package-lock.json packge.json proxies.json README.md tsconfig.json",
-    "funcapp-pack": "rm -f package-lock.json && rm -rf node_modules/ && npm install && npm run build && npm prune --production && npm run funcapp-zip",
-    "sync-version": "node dist/scripts/sync-version.js"
+    "make-dist": "npm-run-all build bundle && node build/scripts/make-dist.js",
+    "pre-push": "npm-run-all lint-check audit-production test build",
+    "sync-version": "node build/scripts/sync-version.js",
+    "test": "mocha --timeout 3600000 -r ts-node/register test/*.spec.ts",
+    "version": "npm run sync-version && npm run lint-fix && git add -u"
   },
   "husky": {
     "hooks": {
@@ -49,25 +44,23 @@
   "homepage": "https://github.com/fortinet/fortigate-autoscale-azure#readme",
   "dependencies": {
     "@azure/functions": "^1.2.3",
+    "@fortinet/fortigate-autoscale": "https://github.com/fortinet/autoscale-core/releases/download/3.3.0-dev.0/fortinet-fortigate-autoscale-3.2.0.tgz",
     "@types/node": "^13.9.2",
-    "autoscale-core": "git+https://github.com/fortinet/autoscale-core.git#main",
-    "http-status-codes": "^1.4.0",
-    "rimraf": "^3.0.2"
+    "http-status-codes": "^1.4.0"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.4.33",
     "@types/comment-json": "^1.1.1",
     "@types/mocha": "^8.2.1",
-    "@types/shelljs": "^0.8.7",
     "@types/sinon": "^7.5.2",
     "@typescript-eslint/eslint-plugin": "^2.28.0",
     "@typescript-eslint/parser": "^2.28.0",
-    "archiver": "^4.0.1",
+    "adm-zip": "^0.5.4",
     "azure-functions-core-tools": "^2.7.3188",
     "chalk": "^4.0.0",
     "commander": "^5.1.0",
     "comment-json": "^3.0.2",
     "copy-webpack-plugin": "^7.0.0",
-    "decompress": "^4.2.1",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-mocha": "^6.3.0",
@@ -80,13 +73,13 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
     "semver": "^7.3.4",
-    "shelljs": "^0.8.3",
+    "shx": "^0.3.3",
     "sinon": "^9.0.2",
     "ts-loader": "^7.0.5",
     "ts-node": "^8.8.2",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^3.9.2",
-    "webpack": "^5.20.2",
+    "webpack": "^5.24.4",
     "webpack-cli": "^4.5.0"
   }
 }

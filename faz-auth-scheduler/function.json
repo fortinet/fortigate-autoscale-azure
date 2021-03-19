@@ -7,5 +7,6 @@
             "schedule": "0 */12 * * * *"
         }
     ],
-    "scriptFile": "../dist/faz-auth-scheduler/index.js"
+    "scriptFile": "../dist/index.js",
+    "entryPoint": "fazAuthScheduler"
 }

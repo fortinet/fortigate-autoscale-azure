@@ -21,7 +21,7 @@
         "declarationMap": true /* Generates a sourcemap for each corresponding '.d.ts' file. */,
         "sourceMap": true /* Generates corresponding '.map' file. */,
         // "outFile": "./",                       /* Concatenate and emit output to single file. */
-        "outDir": "dist",
+        "outDir": "build",
         /* Redirect output structure to the directory. */
         // "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
         // "composite": true,                     /* Enable project compilation */
@@ -56,7 +56,17 @@
         /* Module Resolution Options */
         // "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
         "baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
-        // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+        "paths": {
+            // shouldn't need to do this, but ts hasn't implemented package.json exports:
+            // https://github.com/microsoft/TypeScript/issues/33079
+            "@fortinet/fortigate-autoscale/azure/*": [
+                "node_modules/@fortinet/fortigate-autoscale/dist/azure/*"
+            ],
+            "@fortinet/fortigate-autoscale/*": [
+                "node_modules/@fortinet/fortigate-autoscale/dist/*"
+            ],
+            "autoscale-shared": ["./autoscale-shared"]
+        } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,
         // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
         "typeRoots": [
             "node_modules/@types"
@@ -79,5 +89,5 @@
         "!*.d.ts",
         "node_modules/fortigate-autoscale/node_modules/@azure/arm-network/src"
     ],
-    "exclude": ["dist", "out", "local"]
+    "exclude": ["dist", "out", "local", "node_modules/**"]
 }

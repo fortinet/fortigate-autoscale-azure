@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
+    "contentVersion": "3.3.0.0",
     "parameters": {
         "ResourceNamePrefix": {
             "value": ""
@@ -57,7 +57,7 @@
             "value": "Standard_F4"
         },
         "FOSVersion": {
-            "value": "6.2.3"
+            "value": "6.4.3"
         },
         "FortiGatePSKSecret": {
             "value": ""
