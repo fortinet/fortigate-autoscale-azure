@@ -2,7 +2,6 @@ import AdmZip from 'adm-zip';
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import shelljs from 'shelljs';
 
 // WARNING: this script expects to run after the project src being built.
 // NOTE: this script will use the node process current working directory as root directory
@@ -67,7 +66,9 @@ const deploymentPackageRequiredFileLocations = [
 // zip function app first
 console.log(chalk.blueBright('( ͡° ͜ʖ ͡°)'), ' processing function app.');
 // remove the zip file if exists.
-shelljs.rm('-f', fileFuncapp);
+if (fs.existsSync(fileFuncapp)) {
+    fs.unlinkSync(fileFuncapp);
+}
 console.log(`${chalk.cyan('Removed file:')} ${fileFuncapp}`);
 // copy Azure function app related files to dist
 azureFunctionAppRequiredFileLocations.forEach(name => add(name, zipFuncapp));
@@ -77,7 +78,9 @@ console.log(`${chalk.cyan('Created zip file:')} ${fileFuncapp}`);
 // zip deployment package
 console.log(chalk.blueBright('( ͡° ͜ʖ ͡°)'), ' processing deployment package.');
 // remove the zip file if exists.
-shelljs.rm('-f', filePackage);
+if (fs.existsSync(filePackage)) {
+    fs.unlinkSync(filePackage);
+}
 console.log(`${chalk.cyan('Removed file:')} ${filePackage}`);
 // copy project related files
 deploymentPackageRequiredFileLocations.forEach(name => add(name, zipPackage));
