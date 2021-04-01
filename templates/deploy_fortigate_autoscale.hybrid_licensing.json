@@ -354,12 +354,6 @@
         "autoscaleEndpointByolLicense": "[concat(variables('funcappURL'), '/api/byol-license')]",
         "autoscaleEndpointFazHandler": "[concat(variables('funcappURL'), '/api/faz-auth-handler')]",
         "autoscaleEndpointFgtAsHandler": "[concat(variables('funcappURL'), '/api/fgt-as-handler')]",
-        "autoscaleHandlerNameList": [
-            "byol-license",
-            "faz-auth-handler",
-            "faz-auth-scheduler",
-            "fgt-as-handler"
-        ],
         "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
         "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
         "autoscaleSettingsPresets": {
@@ -1785,9 +1779,6 @@
                     "FunctionExtensionVersion": {
                         "value": "~3"
                     },
-                    "FunctionNameList": {
-                        "value": "[variables('autoscaleHandlerNameList')]"
-                    },
                     "NodeJSRuntimeVersion": {
                         "value": "~12"
                     },
@@ -2001,7 +1992,7 @@
                                         },
                                         {
                                             "name": "faz-handler-name",
-                                            "value": "[concat(variables('autoscaleEndpointFazHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[1].value)]"
+                                            "value": "[concat(variables('autoscaleEndpointFazHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value['faz-auth-handler'])]"
                                         },
                                         {
                                             "name": "faz-ip",
@@ -2174,7 +2165,7 @@
                                     "osProfile": {
                                         "computerNamePrefix": "[variables('vmssNameBYOL')]",
                                         "adminUsername": "[parameters('adminUsername')]",
-                                        "customData": "[base64(concat('{\"license-url\": \"', variables('autoscaleEndpointByolLicense'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[0].value, '\",\"config-url\": \"', variables('autoscaleEndpointFgtAsHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[2].value, '\"}\n'))]",
+                                        "customData": "[base64(concat('{\"license-url\": \"', variables('autoscaleEndpointByolLicense'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value['byol-license'], '\",\"config-url\": \"', variables('autoscaleEndpointFgtAsHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value['fgt-as-handler'], '\"}\n'))]",
                                         "adminPassword": "[parameters('adminPassword')]"
                                     },
                                     "networkProfile": {
@@ -2325,7 +2316,7 @@
                                     "evictionPolicy": "delete",
                                     "osProfile": {
                                         "computerNamePrefix": "[variables('vmssNamePAYG')]",
-                                        "customData": "[base64(concat('{\"config-url\": \"', variables('autoscaleEndpointFgtAsHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value[2].value, '\"}\n'))]",
+                                        "customData": "[base64(concat('{\"config-url\": \"', variables('autoscaleEndpointFgtAsHandler'), '?code=', reference('CreateFunctionApp').outputs.functionKeyList.value['fgt-as-handler'], '\"}\n'))]",
                                         "adminUsername": "[parameters('adminUsername')]",
                                         "adminPassword": "[parameters('adminPassword')]"
                                     },
