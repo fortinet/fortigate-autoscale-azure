@@ -21,17 +21,14 @@ jobs:
       pre-id: dev
     name: main job
     steps:
-      - name: preparation
-        id: prep
-        run: echo "::set-output name=base-branch::${GITHUB_REF#refs/heads/}" # output the ref of the trigger event as the base-branch
       - name: create release branch
         id: create-branch
         uses: fortinet/github-action-version-branch@1.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          base-branch: ${{ steps['prep'].outputs['base-branch'] }}
+          base-branch: ${{ github.event.inputs['base-branch'] }}
           name-prefix: devrel_
-          custom-version: ${{ github.event.inputs.custom-version }}
+          custom-version: ${{ github.event.inputs['custom-version'] }}
       - name: checkout dev release branch
         uses: actions/checkout@v2
         with:
