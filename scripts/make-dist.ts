@@ -3,6 +3,11 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 
+interface ZipMapping {
+    src: string;
+    des: string;
+}
+
 // WARNING: this script expects to run after the project src being built.
 // NOTE: this script will use the node process current working directory as root directory
 const rootDir = process.cwd();
@@ -23,15 +28,26 @@ if (process.argv.length > 1 && process.argv.includes('--distdir')) {
     distDir = fullPath.replace(rootDir, '');
 }
 
-const add = (name: string, zip: AdmZip): void => {
-    const fPath = path.resolve(rootDir, name);
+const add = (name: string | ZipMapping, zip: AdmZip): void => {
+    const fPath = path.resolve(
+        rootDir,
+        typeof name === 'object' && name.src ? name.src : (name as string)
+    );
+    const zPath = typeof name === 'object' && name.des ? name.des : '';
     const stat = fs.statSync(fPath);
     if (stat.isDirectory()) {
-        zip.addLocalFolder(fPath, name);
-        console.log(`${chalk.blueBright('Added folder:')} ${fPath}.`);
+        zip.addLocalFolder(
+            fPath,
+            typeof name === 'object' && name.des ? name.des : (name as string)
+        );
+        console.log(
+            `${chalk.blueBright('Added folder:')} ${fPath} ${chalk.blueBright('to:')} ${zPath}.`
+        );
     } else if (stat.isFile()) {
-        zip.addLocalFile(fPath);
-        console.log(`${chalk.blueBright('Added file:')} ${fPath}.`);
+        zip.addLocalFile(fPath, typeof name === 'object' && name.des ? name.des : '');
+        console.log(
+            `${chalk.blueBright('Added file:')} ${fPath} ${chalk.blueBright('to:')} ${zPath}.`
+        );
     } else {
         console.warn(`${chalk.yellow('skipped (neither a directory nor file):')} ${path}`);
     }
@@ -60,7 +76,23 @@ const deploymentPackageRequiredFileLocations = [
     'templates',
     'package.json',
     'README.md',
-    'LICENSE'
+    'LICENSE',
+    {
+        src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/baseconfig',
+        des: 'assets/configset'
+    },
+    {
+        src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/fazintegration',
+        des: 'assets/configset'
+    },
+    {
+        src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/port2config',
+        des: 'assets/configset'
+    },
+    {
+        src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/azure/extraports',
+        des: 'assets/configset'
+    }
 ];
 
 // zip function app first
