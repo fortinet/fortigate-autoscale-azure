@@ -1,0 +1,80 @@
+name: >-
+  Publish a dev release (prerelease) on a selected branch.
+
+on:
+  # Run by manual trigger
+  workflow_dispatch:
+    inputs:
+      custom-version:
+        description: >-
+          The custom version to be used for branch, tag, and release. Do not use an existing tag in the repo.
+        required: true
+jobs:
+  main_job:
+    runs-on: ubuntu-latest
+    env:
+      version-level: prerelease
+      pre-id: dev
+    name: main job
+    steps:
+      - name: preparation
+        id: prep
+        run: echo "::set-output name=base-branch::${GITHUB_REF#refs/heads/}" # output the ref of the trigger event as the base-branch
+      - name: create release branch
+        id: create-branch
+        uses: fortinet/github-action-version-branch@1.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-branch: ${{ steps['prep'].outputs['base-branch'] }}
+          name-prefix: devrel_
+          custom-version: ${{ github.event.inputs.custom-version }}
+      - name: checkout dev release branch
+        uses: actions/checkout@v2
+        with:
+          # set ref to the head branch (newly created) from the output of step: create-branch
+          ref: ${{ steps['create-branch'].outputs['head-branch'] }}
+      # configure the commit author for the version bump commit
+      # use the github-bot account
+      - name: config commit author (bot)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      # install all dependencies
+      - name: install project dependencies
+        run: npm ci
+      # bump version by running `npm version`
+      - name: bump version
+        id: bump-version
+        # use the head version from the output of step: create-branch
+        # use allow-same-version option
+        run: |
+          npm version ${{ steps['create-branch'].outputs['head-version'] }} -m "dev release: %s"
+      - name: push changes
+        # push commits only. Even though a tag is created, it will not be pushed.
+        run: git push
+      - name: build project
+        run: npm run build
+      # prepare release assets
+      - name: make release assets
+        run: npm run make-release
+      # create a release
+      - id: create-release
+        name: create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps['create-branch'].outputs['head-version'] }} # Use the head version from the output of the `create-branch` step
+          release_name: "dev release: ${{ steps['create-branch'].outputs['head-version'] }}" # Use the head version from the output of the `create-branch` step
+          draft: false
+          prerelease: ${{ steps['create-branch'].outputs['is-prerelease'] == 'true' }} # Use the output from the `create-branch` step
+      - id: upload-release-asset
+        name: upload release assets
+        uses: svenstaro/upload-release-action@2.2.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps['create-branch'].outputs['head-version'] }} # Use the output from the `create-branch` step
+          prerelease: ${{ steps['create-branch'].outputs['is-prerelease'] == 'true' }} # Use the output from the `create-branch` step
+          file: ./release/*
+          file_glob: true
+          overwrite: true
