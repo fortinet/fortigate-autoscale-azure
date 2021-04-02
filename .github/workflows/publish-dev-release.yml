@@ -46,18 +46,21 @@ jobs:
       # install all dependencies
       - name: install project dependencies
         run: npm ci
+      # build to compile the source code
+      - name: build project
+        run: npm run build
       # bump version by running `npm version`
       - name: bump version
         id: bump-version
         # use the head version from the output of step: create-branch
         # use allow-same-version option
         run: |
+          npm config set sign-git-commit false
+          npm config set sign-git-tag false
           npm version ${{ steps['create-branch'].outputs['head-version'] }} -m "dev release: %s"
       - name: push changes
         # push commits only. Even though a tag is created, it will not be pushed.
         run: git push
-      - name: build project
-        run: npm run build
       # prepare release assets
       - name: make release assets
         run: npm run make-release
