@@ -5,6 +5,10 @@ on:
   # Run by manual trigger
   workflow_dispatch:
     inputs:
+      base-branch:
+        description: >-
+          The base branch to base a new branch for dev release.
+        required: true
       custom-version:
         description: >-
           The custom version to be used for branch, tag, and release. Do not use an existing tag in the repo.
