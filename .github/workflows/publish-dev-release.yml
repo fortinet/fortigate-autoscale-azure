@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: create release branch
         id: create-branch
-        uses: fortinet/github-action-version-branch@1.0.1
+        uses: fortinet/github-action-version-branch@1.0.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           base-branch: ${{ github.event.inputs['base-branch'] }}
@@ -52,16 +52,17 @@ jobs:
         # use the head version from the output of step: create-branch
         # use allow-same-version option
         run: |
-          git config commit.gpgsign false
-          npm config set sign-git-commit false
           npm config set sign-git-tag false
-          npm version ${{ steps['create-branch'].outputs['head-version'] }} -m "dev release: %s"
+          npm config set sign-git-commit false
+          npm version ${{ steps['create-branch'].outputs['head-version'] }} --no-git-tag-version
+          git add -u
+          git commit -m "dev release: ${{ steps['create-branch'].outputs['head-version'] }}" --no-gpg-sign
       - name: push changes
         # push commits only. Even though a tag is created, it will not be pushed.
         run: git push
       # prepare release assets
-      - name: make release assets
-        run: npm run make-release
+      - name: make dist
+        run: npm run make-dist
       # create a release
       - id: create-release
         name: create release
@@ -80,6 +81,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps['create-branch'].outputs['head-version'] }} # Use the output from the `create-branch` step
           prerelease: ${{ steps['create-branch'].outputs['is-prerelease'] == 'true' }} # Use the output from the `create-branch` step
-          file: ./release/*
+          file: ./fortigate-autoscale-azure*.zip
           file_glob: true
           overwrite: true
