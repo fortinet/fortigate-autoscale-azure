@@ -52,6 +52,7 @@ jobs:
         # use the head version from the output of step: create-branch
         # use allow-same-version option
         run: |
+          git config commit.gpgsign false
           npm config set sign-git-commit false
           npm config set sign-git-tag false
           npm version ${{ steps['create-branch'].outputs['head-version'] }} -m "dev release: %s"
