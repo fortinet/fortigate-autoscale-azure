@@ -16,13 +16,6 @@
                 "description": "The Azure Function extension version."
             }
         },
-        "FunctionNameList": {
-            "type": "Array",
-            "defaultValue": ["byol-license", "fgt-as-handler"],
-            "metadata": {
-                "description": "The Azure Function extension version."
-            }
-        },
         "NodeJSRuntimeVersion": {
             "type": "String",
             "defaultValue": "~12",
@@ -207,13 +200,11 @@
             "value": "[if(variables('enableAzureAppInsights'), reference(resourceId('Microsoft.Insights/components', variables('functionAppInsightName')), '2018-05-01-preview').InstrumentationKey, '')]"
         },
         "functionKeyList": {
-            "type": "Array",
-            "copy": {
-                "count": "[length(parameters('FunctionNameList'))]",
-                "input": {
-                    "key": "[parameters('FunctionNameList')[copyIndex()]]",
-                    "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  parameters('FunctionNameList')[copyIndex()]), '2019-08-01').default]"
-                }
+            "type": "secureObject",
+            "value": {
+                "byol-license": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'byol-license'), '2019-08-01').default]",
+                "fgt-as-handler": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default]",
+                "faz-auth-handler": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'faz-auth-handler'), '2019-08-01').default]"
             }
         }
     }
