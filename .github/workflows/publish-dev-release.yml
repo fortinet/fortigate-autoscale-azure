@@ -55,10 +55,11 @@ jobs:
           git add -u
           git commit -m "dev release: ${{ steps['create-branch'].outputs['head-version'] }}" --no-gpg-sign
       - name: push changes
+        id: push-changes
         # push commits only. Even though a tag is created, it will not be pushed.
         run: |
           git push
-          echo "tag_commit=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "::set-output name=tag-commit::$(git rev-parse HEAD)"
       # prepare release assets
       - name: make dist
         run: npm run make-dist
@@ -73,7 +74,7 @@ jobs:
           release_name: "dev release: ${{ steps['create-branch'].outputs['head-version'] }}" # Use the head version from the output of the `create-branch` step
           draft: false
           prerelease: ${{ steps['create-branch'].outputs['is-prerelease'] == 'true' }} # Use the output from the `create-branch` step
-          commitish: ${{ tag_commit }} # Use the output: `tag_commit` from a prev step
+          commitish: ${{ steps['push-changes'].outputs['tag-commit'] }} # Use the output: `tag-commit` from a prev step
       - id: upload-release-asset
         name: upload release assets
         uses: svenstaro/upload-release-action@2.2.0
