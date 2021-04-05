@@ -301,7 +301,7 @@
             "type": "String",
             "defaultValue": "",
             "metadata": {
-                "description": "The public URL of the function source file named 'fortigate-autoscale-azure-funcapp.zip', and can be found inside 'fortigate-autoscale-azure-template-deployment.zip'. The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure."
+                "description": "The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure. The default URL points to the GitHub release corresponding to this ARM template contentVersion."
             }
         },
         "FortiAnalyzerIntegrationOptions": {
@@ -2480,6 +2480,10 @@
         }
     ],
     "outputs": {
+        "deploymentPackageVersion": {
+            "type": "string",
+            "value": "3.3.0"
+        },
         "uniqueResourceNamePrefix": {
             "type": "String",
             "value": "[variables('uniqueResourceNamePrefix')]"
