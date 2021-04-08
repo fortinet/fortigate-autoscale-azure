@@ -1,0 +1,722 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "AdminPassword": {
+            "type": "SecureString"
+        },
+        "AdminUsername": {
+            "defaultValue": "azureadmin",
+            "type": "String"
+        },
+        "BYOLInstanceCount": {
+            "defaultValue": 2,
+            "minValue": 0,
+            "type": "Int"
+        },
+        "ExtLBInboundNatPoolHTTPSBYOL": {
+            "type": "String"
+        },
+        "ExtLBInboundNatPoolHTTPSPAYG": {
+            "type": "String"
+        },
+        "ExtLBInboundNatPoolSSHBYOL": {
+            "type": "String"
+        },
+        "ExtLBInboundNatPoolSSHPAYG": {
+            "type": "String"
+        },
+        "ExternalLoadBalancerName": {
+            "type": "String"
+        },
+        "FgtVmImageBYOL": {
+            "type": "Object"
+        },
+        "FgtVmImagePAYG": {
+            "type": "Object"
+        },
+        "FunctioinEndpointAutoscaleHandler": {
+            "type": "String"
+        },
+        "FunctioinEndpointByolLicense": {
+            "type": "String"
+        },
+        "FunctionAppName": {
+            "type": "String"
+        },
+        "FunctionAppResourceGroupName": {
+            "type": "String"
+        },
+        "InstanceType": {
+            "type": "String"
+        },
+        "InternalLoadBalancerName": {
+            "type": "String"
+        },
+        "LicensingModel": {
+            "allowedValues": ["byolonly", "hybrid", "paygonly"],
+            "type": "String"
+        },
+        "LoadBalancerBackendIPPoolNameSubnet1": {
+            "type": "String"
+        },
+        "LoadBalancerBackendIPPoolNameSubnet2": {
+            "type": "String"
+        },
+        "LoadBalancerBackendIPPoolNameSubnet3": {
+            "type": "String"
+        },
+        "LoadBalancerBackendIPPoolNameSubnet4": {
+            "type": "String"
+        },
+        "MaxBYOLInstanceCount": {
+            "defaultValue": 2,
+            "minValue": 0,
+            "type": "Int"
+        },
+        "MaxPAYGInstanceCount": {
+            "defaultValue": 6,
+            "minValue": 0,
+            "type": "Int"
+        },
+        "MinBYOLInstanceCount": {
+            "defaultValue": 2,
+            "minValue": 0,
+            "type": "Int"
+        },
+        "MinPAYGInstanceCount": {
+            "defaultValue": 0,
+            "minValue": 0,
+            "type": "Int"
+        },
+        "PAYGInstanceCount": {
+            "defaultValue": 0,
+            "minValue": 0,
+            "type": "Int"
+        },
+        "ResourceNamePrefix": {
+            "maxLength": 10,
+            "type": "String"
+        },
+        "ScaleInThreshold": {
+            "defaultValue": 20,
+            "type": "Int"
+        },
+        "ScaleOutThreshold": {
+            "defaultValue": 80,
+            "type": "Int"
+        },
+        "StorageAccountName": {
+            "type": "String"
+        },
+        "Subnet1Name": {
+            "type": "String"
+        },
+        "Subnet2Name": {
+            "type": "String"
+        },
+        "Subnet3Name": {
+            "type": "String"
+        },
+        "Subnet4Name": {
+            "type": "String"
+        },
+        "UniqueResourceNamePrefix": {
+            "type": "String"
+        },
+        "VnetName": {
+            "type": "String"
+        },
+        "VnetResourceGroupName": {
+            "type": "String"
+        },
+        "VmssNameBYOL": {
+            "type": "String"
+        },
+        "VmssNamePAYG": {
+            "type": "String"
+        }
+    },
+    "variables": {
+        "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
+        "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
+        "autoscaleSettingsPresets": {
+            "byolonly": {
+                "byol": [
+                    {
+                        "metricTrigger": {
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                            "timeGrain": "PT1M",
+                            "statistic": "Average",
+                            "timeWindow": "PT5M",
+                            "timeAggregation": "Average",
+                            "operator": "GreaterThan",
+                            "threshold": "[parameters('ScaleOutThreshold')]"
+                        },
+                        "scaleAction": {
+                            "direction": "Increase",
+                            "type": "ChangeCount",
+                            "value": "1",
+                            "cooldown": "PT1M"
+                        }
+                    },
+                    {
+                        "metricTrigger": {
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                            "timeGrain": "PT1M",
+                            "statistic": "Average",
+                            "timeWindow": "PT5M",
+                            "timeAggregation": "Average",
+                            "operator": "LessThan",
+                            "threshold": "[parameters('ScaleInThreshold')]"
+                        },
+                        "scaleAction": {
+                            "direction": "Decrease",
+                            "type": "ChangeCount",
+                            "value": "1",
+                            "cooldown": "PT1M"
+                        }
+                    }
+                ],
+                "payg": []
+            },
+            "hybrid": {
+                "byol": [],
+                "payg": [
+                    {
+                        "metricTrigger": {
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                            "timeGrain": "PT1M",
+                            "statistic": "Average",
+                            "timeWindow": "PT5M",
+                            "timeAggregation": "Average",
+                            "operator": "GreaterThan",
+                            "threshold": "[parameters('ScaleOutThreshold')]"
+                        },
+                        "scaleAction": {
+                            "direction": "Increase",
+                            "type": "ChangeCount",
+                            "value": "1",
+                            "cooldown": "PT1M"
+                        }
+                    },
+                    {
+                        "metricTrigger": {
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                            "timeGrain": "PT1M",
+                            "statistic": "Average",
+                            "timeWindow": "PT5M",
+                            "timeAggregation": "Average",
+                            "operator": "GreaterThan",
+                            "threshold": "[parameters('ScaleOutThreshold')]"
+                        },
+                        "scaleAction": {
+                            "direction": "Increase",
+                            "type": "ChangeCount",
+                            "value": "1",
+                            "cooldown": "PT1M"
+                        }
+                    },
+                    {
+                        "metricTrigger": {
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                            "timeGrain": "PT1M",
+                            "statistic": "Average",
+                            "timeWindow": "PT5M",
+                            "timeAggregation": "Average",
+                            "operator": "LessThan",
+                            "threshold": "[parameters('ScaleInThreshold')]"
+                        },
+                        "scaleAction": {
+                            "direction": "Decrease",
+                            "type": "ChangeCount",
+                            "value": "1",
+                            "cooldown": "PT1M"
+                        }
+                    },
+                    {
+                        "metricTrigger": {
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                            "timeGrain": "PT1M",
+                            "statistic": "Average",
+                            "timeWindow": "PT5M",
+                            "timeAggregation": "Average",
+                            "operator": "LessThan",
+                            "threshold": "[parameters('ScaleInThreshold')]"
+                        },
+                        "scaleAction": {
+                            "direction": "Decrease",
+                            "type": "ChangeCount",
+                            "value": "1",
+                            "cooldown": "PT1M"
+                        }
+                    }
+                ]
+            },
+            "paygonly": {
+                "byol": [],
+                "payg": [
+                    {
+                        "metricTrigger": {
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                            "timeGrain": "PT1M",
+                            "statistic": "Average",
+                            "timeWindow": "PT5M",
+                            "timeAggregation": "Average",
+                            "operator": "GreaterThan",
+                            "threshold": "[parameters('ScaleOutThreshold')]"
+                        },
+                        "scaleAction": {
+                            "direction": "Increase",
+                            "type": "ChangeCount",
+                            "value": "1",
+                            "cooldown": "PT1M"
+                        }
+                    },
+                    {
+                        "metricTrigger": {
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                            "timeGrain": "PT1M",
+                            "statistic": "Average",
+                            "timeWindow": "PT5M",
+                            "timeAggregation": "Average",
+                            "operator": "LessThan",
+                            "threshold": "[parameters('ScaleInThreshold')]"
+                        },
+                        "scaleAction": {
+                            "direction": "Decrease",
+                            "type": "ChangeCount",
+                            "value": "1",
+                            "cooldown": "PT1M"
+                        }
+                    }
+                ]
+            }
+        },
+        "cmdDeleteAutoscaleSettings": "[concat('az account set -s ', subscription().subscriptionId, ';','az monitor autoscale delete -g ', resourceGroup().name, ' -n ', variables('autoscaleSettingsNameBYOL'), ';', 'az monitor autoscale delete -g ', resourceGroup().name, ' -n ', variables('autoscaleSettingsNamePAYG'), ';')]",
+        "cmdDeleteVMSS": "[concat('az account set -s ', subscription().subscriptionId, ';','az vmss delete -g ', resourceGroup().name,' -n ', parameters('VmssNameBYOL'), ';', 'az vmss delete -g ', resourceGroup().name,' -n ', parameters('VmssNamePAYG'), ';')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-07-01",
+            "location": "[resourceGroup().location]",
+            "name": "[parameters('VmssNameBYOL')]",
+            "plan": {
+                "name": "[parameters('FgtvmImageBYOL').sku]",
+                "publisher": "[parameters('FgtvmImageBYOL').publisher]",
+                "product": "[parameters('FgtvmImageBYOL').offer]"
+            },
+            "properties": {
+                "overprovision": false,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite"
+                        },
+                        "dataDisks": [
+                            {
+                                "diskSizeGB": 30,
+                                "lun": 1,
+                                "createOption": "Empty"
+                            }
+                        ],
+                        "imageReference": "[parameters('FgtvmImageBYOL')]"
+                    },
+                    "diagnosticsProfile": {
+                        "bootDiagnostics": {
+                            "enabled": true,
+                            "storageUri": "[concat('https://', parameters('StorageAccountName'), '.blob.core.windows.net')]"
+                        }
+                    },
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('VmssNameBYOL')]",
+                        "adminUsername": "[parameters('adminUsername')]",
+                        "customData": "[base64(concat('{\"license-url\": \"', parameters('FunctioinEndpointByolLicense'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'byol-license'), '2019-08-01').default, '\",\"config-url\": \"', parameters('FunctioinEndpointAutoscaleHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
+                        "adminPassword": "[parameters('adminPassword')]"
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[concat(parameters('VmssNameBYOL'),'-nic-config', '-subnet', '1')]",
+                                "properties": {
+                                    "primary": true,
+                                    "enableIPForwarding": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '1')]",
+                                            "properties": {
+                                                "Subnet": {
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet1Name'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('ExternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet1'))]"
+                                                    }
+                                                ],
+                                                "loadBalancerInboundNatPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolSSHBYOL'))]"
+                                                    },
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolHTTPSBYOL'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "[concat(parameters('VmssNameBYOL'),'-nic-config', '-subnet', '2')]",
+                                "properties": {
+                                    "primary": false,
+                                    "enableIPForwarding": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '2')]",
+                                            "properties": {
+                                                "Subnet": {
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet2Name'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet2'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "[concat(parameters('VmssNameBYOL'),'-nic-config', '-subnet', '3')]",
+                                "properties": {
+                                    "primary": false,
+                                    "enableIPForwarding": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '3')]",
+                                            "properties": {
+                                                "Subnet": {
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet3Name'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet3'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "[concat(parameters('VmssNameBYOL'),'-nic-config', '-subnet', '4')]",
+                                "properties": {
+                                    "primary": false,
+                                    "enableIPForwarding": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '4')]",
+                                            "properties": {
+                                                "Subnet": {
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet4Name'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet4'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "sku": {
+                "name": "[parameters('InstanceType')]",
+                "tier": "Standard",
+                "capacity": 0
+            },
+            "type": "Microsoft.Compute/virtualMachineScaleSets"
+        },
+        {
+            "apiVersion": "2019-07-01",
+            "location": "[resourceGroup().location]",
+            "name": "[parameters('VmssNamePAYG')]",
+            "plan": {
+                "name": "[parameters('FgtvmImagePAYG').sku]",
+                "publisher": "[parameters('FgtvmImagePAYG').publisher]",
+                "product": "[parameters('FgtvmImagePAYG').offer]"
+            },
+            "properties": {
+                "overprovision": false,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite"
+                        },
+                        "dataDisks": [
+                            {
+                                "diskSizeGB": 30,
+                                "lun": 1,
+                                "createOption": "Empty"
+                            }
+                        ],
+                        "imageReference": "[parameters('FgtvmImagePAYG')]"
+                    },
+                    "diagnosticsProfile": {
+                        "bootDiagnostics": {
+                            "enabled": true,
+                            "storageUri": "[concat('https://', parameters('StorageAccountName'), '.blob.core.windows.net')]"
+                        }
+                    },
+                    "priority": "Low",
+                    "evictionPolicy": "delete",
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('VmssNamePAYG')]",
+                        "customData": "[base64(concat('{\"config-url\": \"', parameters('FunctioinEndpointAutoscaleHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
+                        "adminUsername": "[parameters('adminUsername')]",
+                        "adminPassword": "[parameters('adminPassword')]"
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[concat(parameters('VmssNamePAYG'),'-nic-config', '-subnet', '1')]",
+                                "properties": {
+                                    "primary": true,
+                                    "enableIPForwarding": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '1')]",
+                                            "properties": {
+                                                "Subnet": {
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet1Name'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('ExternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet1'))]"
+                                                    }
+                                                ],
+                                                "loadBalancerInboundNatPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolSSHPAYG'))]"
+                                                    },
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolHTTPSPAYG'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "[concat(parameters('VmssNamePAYG'),'-nic-config', '-subnet', '2')]",
+                                "properties": {
+                                    "primary": false,
+                                    "enableIPForwarding": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '2')]",
+                                            "properties": {
+                                                "Subnet": {
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet2Name'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet2'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "[concat(parameters('VmssNamePAYG'),'-nic-config', '-subnet', '3')]",
+                                "properties": {
+                                    "primary": false,
+                                    "enableIPForwarding": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '3')]",
+                                            "properties": {
+                                                "Subnet": {
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet3Name'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet3'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "[concat(parameters('VmssNamePAYG'),'-nic-config', '-subnet', '4')]",
+                                "properties": {
+                                    "primary": false,
+                                    "enableIPForwarding": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '4')]",
+                                            "properties": {
+                                                "Subnet": {
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet4Name'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet4'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "sku": {
+                "name": "[parameters('InstanceType')]",
+                "tier": "Standard",
+                "capacity": 0
+            },
+            "type": "Microsoft.Compute/virtualMachineScaleSets"
+        },
+        {
+            "apiVersion": "2014-04-01",
+            "dependsOn": ["[parameters('VmssNameBYOL')]"],
+            "location": "[resourceGroup().location]",
+            "name": "[variables('autoscaleSettingsNameBYOL')]",
+            "properties": {
+                "name": "[variables('autoscaleSettingsNameBYOL')]",
+                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                "enabled": false,
+                "profiles": [
+                    {
+                        "name": "[concat(parameters('UniqueResourceNamePrefix'),'-deployed-profile')]",
+                        "capacity": {
+                            "minimum": "[parameters('MinBYOLInstanceCount')]",
+                            "maximum": "[parameters('MaxBYOLInstanceCount')]",
+                            "default": "[parameters('BYOLInstanceCount')]"
+                        },
+                        "rules": "[variables('autoscaleSettingsPresets')[parameters('LicensingModel')].byol]"
+                    }
+                ]
+            },
+            "type": "Microsoft.Insights/autoscaleSettings"
+        },
+        {
+            "apiVersion": "2014-04-01",
+            "dependsOn": [
+                "[parameters('VmssNamePAYG')]",
+                "[variables('autoscaleSettingsNameBYOL')]"
+            ],
+            "location": "[resourceGroup().location]",
+            "name": "[variables('autoscaleSettingsNamePAYG')]",
+            "properties": {
+                "name": "[variables('autoscaleSettingsNamePAYG')]",
+                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                "enabled": false,
+                "profiles": [
+                    {
+                        "name": "[concat(parameters('UniqueResourceNamePrefix'),'-deployed-profile')]",
+                        "capacity": {
+                            "minimum": "[parameters('MinPAYGInstanceCount')]",
+                            "maximum": "[parameters('MaxPAYGInstanceCount')]",
+                            "default": "[parameters('PAYGInstanceCount')]"
+                        },
+                        "rules": "[variables('autoscaleSettingsPresets')[parameters('LicensingModel')].payg]"
+                    }
+                ]
+            },
+            "type": "Microsoft.Insights/autoscaleSettings"
+        }
+    ],
+    "outputs": {
+        "byolAutoscaleSettingsName": {
+            "type": "String",
+            "value": "[variables('autoscaleSettingsNameBYOL')]"
+        },
+        "byolScaleSetDefaultSize": {
+            "type": "Int",
+            "value": "[parameters('BYOLInstanceCount')]"
+        },
+        "byolScaleSetMaxSize": {
+            "type": "Int",
+            "value": "[parameters('MaxBYOLInstanceCount')]"
+        },
+        "byolScaleSetMinSize": {
+            "type": "Int",
+            "value": "[parameters('MinBYOLInstanceCount')]"
+        },
+        "byolScaleSetName": {
+            "type": "String",
+            "value": "[parameters('VmssNameBYOL')]"
+        },
+        "cmdDeleteAutoscaleSettings": {
+            "type": "String",
+            "value": "[variables('cmdDeleteAutoscaleSettings')]"
+        },
+        "cmdDeleteVMSS": {
+            "type": "String",
+            "value": "[variables('cmdDeleteVMSS')]"
+        },
+        "paygAutoscaleSettingsName": {
+            "type": "String",
+            "value": "[variables('autoscaleSettingsNamePAYG')]"
+        },
+        "paygScaleSetDefaultSize": {
+            "type": "Int",
+            "value": "[parameters('PAYGInstanceCount')]"
+        },
+        "paygScaleSetMaxSize": {
+            "type": "Int",
+            "value": "[parameters('MaxPAYGInstanceCount')]"
+        },
+        "paygScaleSetMinSize": {
+            "type": "Int",
+            "value": "[parameters('MinPAYGInstanceCount')]"
+        },
+        "paygScaleSetName": {
+            "type": "String",
+            "value": "[parameters('VmssNamePAYG')]"
+        },
+        "vNetResourceGroupName": {
+            "type": "String",
+            "value": "[parameters('VnetResourceGroupName')]"
+        }
+    }
+}
