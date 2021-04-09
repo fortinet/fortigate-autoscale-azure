@@ -2,46 +2,40 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "3.3.0.0",
     "parameters": {
-        "ResourceNamePrefix": {
+        "AccessRestrictionIPRange": {
             "value": ""
         },
-        "VnetDeploymentMethod": {
-            "value": "create new"
-        },
-        "VnetResourceGroupName": {
+        "AdminPassword": {
             "value": ""
         },
-        "VnetName": {
+        "AdminUsername": {
+            "value": "azureadmin"
+        },
+        "BYOLInstanceCount": {
+            "value": 2
+        },
+        "FortiAnalyzerAutoscaleAdminPassword": {
             "value": ""
         },
-        "VnetAddressSpace": {
-            "value": "10.0.0.0/16"
-        },
-        "Subnet1Name": {
+        "FortiAnalyzerAutoscaleAdminUsername": {
             "value": ""
         },
-        "Subnet1AddressRange": {
-            "value": "10.0.0.0/24"
-        },
-        "Subnet2Name": {
+        "FortiAnalyzerCustomPrivateIpAddress": {
             "value": ""
         },
-        "Subnet2AddressRange": {
-            "value": "10.0.1.0/24"
+        "FortiAnalyzerInstanceType": {
+            "value": "Standard_D2"
         },
-        "Subnet3Name": {
+        "FortiAnalyzerIntegrationOptions": {
+            "value": "yes"
+        },
+        "FortiAnalyzerVersion": {
             "value": ""
         },
-        "Subnet3AddressRange": {
-            "value": "10.0.2.0/24"
-        },
-        "Subnet4Name": {
+        "FortiGatePSKSecret": {
             "value": ""
         },
-        "Subnet4AddressRange": {
-            "value": "10.0.3.0/24"
-        },
-        "NetworkSecurityGroupName": {
+        "FosVersion": {
             "value": ""
         },
         "FrontendIPDeploymentMethod": {
@@ -50,65 +44,8 @@
         "FrontendIPName": {
             "value": ""
         },
-        "LoadBalancerIP": {
-            "value": "10"
-        },
-        "InstanceType": {
-            "value": "Standard_F4"
-        },
-        "FOSVersion": {
-            "value": "6.4.5"
-        },
-        "FortiGatePSKSecret": {
-            "value": ""
-        },
-        "AdminUsername": {
-            "value": "azureadmin"
-        },
-        "AdminPassword": {
-            "value": ""
-        },
-        "AccessRestrictionIPRange": {
-            "value": ""
-        },
-        "StorageAccountType": {
-            "value": "Standard_LRS"
-        },
-        "ServicePrincipalObjectID": {
-            "value": ""
-        },
-        "ServicePrincipalAppID": {
-            "value": ""
-        },
-        "ServicePrincipalAppSecret": {
-            "value": ""
-        },
-        "BYOLInstanceCount": {
-            "value": 2
-        },
-        "MinBYOLInstanceCount": {
-            "value": 2
-        },
-        "MaxBYOLInstanceCount": {
-            "value": 2
-        },
-        "PAYGInstanceCount": {
-            "value": 0
-        },
-        "MinPAYGInstanceCount": {
-            "value": 0
-        },
-        "MaxPAYGInstanceCount": {
-            "value": 6
-        },
-        "ScaleOutThreshold": {
-            "value": 80
-        },
-        "ScaleInThreshold": {
-            "value": 20
-        },
-        "PrimaryElectionTimeout": {
-            "value": 90
+        "HeartBeatDelayAllowance": {
+            "value": 30
         },
         "HeartBeatInterval": {
             "value": 60
@@ -116,28 +53,94 @@
         "HeartBeatLossCount": {
             "value": 3
         },
-        "HeartBeatDelayAllowance": {
-            "value": 30
+        "InstanceType": {
+            "value": "Standard_F4"
+        },
+        "LoadBalancerIP": {
+            "value": "10"
+        },
+        "MaxBYOLInstanceCount": {
+            "value": 2
+        },
+        "MaxPAYGInstanceCount": {
+            "value": 6
+        },
+        "MinBYOLInstanceCount": {
+            "value": 2
+        },
+        "MinPAYGInstanceCount": {
+            "value": 0
+        },
+        "NetworkSecurityGroupName": {
+            "value": ""
+        },
+        "PAYGInstanceCount": {
+            "value": 0
         },
         "PackageResURL": {
             "value": ""
         },
-        "FortiAnalyzerIntegrationOptions": {
-            "value": "yes"
+        "PrimaryElectionTimeout": {
+            "value": 90
         },
-        "FortiAnalyzerInstanceType": {
-            "value": "Standard_D2"
-        },
-        "FortiAnalyzerVersion": {
-            "value": "6.4.4"
-        },
-        "FortiAnalyzerCustomPrivateIpAddress": {
+        "ResourceNamePrefix": {
             "value": ""
         },
-        "FortiAnalyzerAutoscaleAdminUsername": {
+        "ScaleInThreshold": {
+            "value": 20
+        },
+        "ScaleOutThreshold": {
+            "value": 80
+        },
+        "ServicePlanTier": {
+            "value": "Premium (P1V2)"
+        },
+        "ServicePrincipalAppID": {
             "value": ""
         },
-        "FortiAnalyzerAutoscaleAdminPassword": {
+        "ServicePrincipalAppSecret": {
+            "value": ""
+        },
+        "ServicePrincipalObjectID": {
+            "value": ""
+        },
+        "StorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "Subnet1AddressRange": {
+            "value": "10.0.0.0/24"
+        },
+        "Subnet1Name": {
+            "value": ""
+        },
+        "Subnet2AddressRange": {
+            "value": "10.0.1.0/24"
+        },
+        "Subnet2Name": {
+            "value": ""
+        },
+        "Subnet3AddressRange": {
+            "value": "10.0.2.0/24"
+        },
+        "Subnet3Name": {
+            "value": ""
+        },
+        "Subnet4AddressRange": {
+            "value": "10.0.3.0/24"
+        },
+        "Subnet4Name": {
+            "value": ""
+        },
+        "VnetAddressSpace": {
+            "value": "10.0.0.0/16"
+        },
+        "VnetDeploymentMethod": {
+            "value": "create new"
+        },
+        "VnetName": {
+            "value": ""
+        },
+        "VnetResourceGroupName": {
             "value": ""
         }
     }

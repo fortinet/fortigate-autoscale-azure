@@ -30,14 +30,6 @@
                 "description": "The number of FortiGate instances the BYOL VMSS should have at any time. For High Availability in BYOL-only and Hybrid use cases, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for PAYG-only, and >= 2 for BYOL-only or hybrid licensing."
             }
         },
-        "FOSVersion": {
-            "defaultValue": "6.4.5",
-            "allowedValues": ["6.4.5"],
-            "type": "String",
-            "metadata": {
-                "description": "FortiOS version supported by FortiGate Autoscale for Azure."
-            }
-        },
         "FortiAnalyzerAutoscaleAdminPassword": {
             "type": "securestring",
             "metadata": {
@@ -57,7 +49,6 @@
             }
         },
         "FortiAnalyzerInstanceType": {
-            "defaultValue": "Standard_D2",
             "type": "String",
             "metadata": {
                 "description": "Size of the FortiAnalyzer VM."
@@ -83,6 +74,14 @@
             "type": "SecureString",
             "metadata": {
                 "description": "The secret key for the FortiGates instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Maximum length is 128."
+            }
+        },
+        "FosVersion": {
+            "defaultValue": "6.4.5",
+            "allowedValues": ["6.4.5"],
+            "type": "String",
+            "metadata": {
+                "description": "FortiOS version supported by FortiGate Autoscale for Azure."
             }
         },
         "FrontendIPDeploymentMethod": {
@@ -376,17 +375,23 @@
         "extLBInboundNatPoolSSHBYOL": "[concat(variables('vmssNameBYOL'), '-nat-pool-ssh')]",
         "extLBInboundNatPoolSSHPAYG": "[concat(variables('vmssNamePAYG'), '-nat-pool-ssh')]",
         "externalLoadBalancerName": "[concat(parameters('ResourceNamePrefix'), '-external-load-balancer')]",
-        "fgtvmImageBYOL": {
+        "vmImgReferenceFazBYOL": {
+            "publisher": "fortinet",
+            "offer": "fortinet-fortianalyzer",
+            "sku": "fortinet-fortianalyzer",
+            "version": "[parameters('FortiAnalyzerVersion')]"
+        },
+        "vmImgReferenceFgtBYOL": {
             "publisher": "fortinet",
             "offer": "fortinet_fortigate-vm_v5",
             "sku": "fortinet_fg-vm",
-            "version": "[parameters('fosversion')]"
+            "version": "[parameters('FosVersion')]"
         },
-        "fgtvmImagePAYG": {
+        "vmImgReferenceFgtPAYG": {
             "publisher": "fortinet",
             "offer": "fortinet_fortigate-vm_v5",
             "sku": "fortinet_fg-vm_payg_20190624",
-            "version": "[parameters('fosversion')]"
+            "version": "[parameters('FosVersion')]"
         },
         "funcAppIPResrictionPriority": 100,
         "funcAppIPResrictions": {
@@ -1536,9 +1541,6 @@
                     "FortiAnalyzerInstanceType": {
                         "value": "[parameters('FortiAnalyzerInstanceType')]"
                     },
-                    "FortiAnalyzerVersion": {
-                        "value": "[parameters('FortiAnalyzerVersion')]"
-                    },
                     "Location": {
                         "value": "[resourceGroup().location]"
                     },
@@ -1550,6 +1552,9 @@
                     },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
+                    },
+                    "VmImgReferenceFaz": {
+                        "value": "[variables('vmImgReferenceFazBYOL')]"
                     }
                 }
             },
@@ -1750,11 +1755,11 @@
                     "ExternalLoadBalancerName": {
                         "value": "[variables('externalLoadBalancerName')]"
                     },
-                    "FgtVmImageBYOL": {
-                        "value": "[variables('fgtvmImageBYOL')]"
+                    "VmImageReferenceFgtBYOL": {
+                        "value": "[variables('vmImgReferenceFgtBYOL')]"
                     },
-                    "FgtVmImagePAYG": {
-                        "value": "[variables('fgtvmImagePAYG')]"
+                    "VmImageReferenceFgtPAYG": {
+                        "value": "[variables('vmImgReferenceFgtPAYG')]"
                     },
                     "FunctionAppName": {
                         "value": "[variables('functionAppName')]"

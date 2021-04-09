@@ -20,9 +20,6 @@
         "FortiAnalyzerInstanceType": {
             "type": "String"
         },
-        "FortiAnalyzerVersion": {
-            "type": "String"
-        },
         "Location": {
             "type": "String"
         },
@@ -35,6 +32,9 @@
         "UniqueResourceNamePrefix": {
             "maxLength": 18,
             "type": "String"
+        },
+        "VmImgReferenceFaz": {
+            "type": "Object"
         }
     },
     "variables": {
@@ -103,10 +103,10 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "fortinet",
-                        "offer": "fortinet-fortianalyzer",
-                        "sku": "fortinet-fortianalyzer",
-                        "version": "[parameters('FortiAnalyzerVersion')]"
+                        "publisher": "[parameters('VmImgReferenceFaz').publisher]",
+                        "offer": "[parameters('VmImgReferenceFaz').offer]",
+                        "sku": "[parameters('VmImgReferenceFaz').sku]",
+                        "version": "[parameters('VmImgReferenceFaz').version]"
                     },
                     "osDisk": {
                         "createOption": "FromImage"
