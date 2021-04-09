@@ -13,9 +13,13 @@ on:
         description: >-
           The custom version to be used for branch, tag, and release. Do not use an existing tag in the repo.
         required: true
+      name-prefix:
+        description: >-
+          The branch name prefix. Default: devrel_
+        required: false
       no-publish:
         description: >-
-          Skip the publication steps.
+          Boolean indicator to skip the publication steps.
         required: true
         default: 'false'
 jobs:
@@ -23,13 +27,16 @@ jobs:
     runs-on: ubuntu-latest
     name: main job
     steps:
+      - name: preparation
+        run: |
+          echo "name-prefix=${{ github.event.inputs['name-prefix'] && 'devrel_' || github.event.inputs['name-prefix'] }}" >> $GITHUB_ENV
       - name: create release branch
         id: create-branch
         uses: fortinet/github-action-version-branch@1.0.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           base-branch: ${{ github.event.inputs['base-branch'] }}
-          name-prefix: devrel_
+          name-prefix: ${{ env['name-prefix'] }}
           custom-version: ${{ github.event.inputs['custom-version'] }}
       - name: checkout dev release branch
         uses: actions/checkout@v2
