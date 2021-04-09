@@ -1541,12 +1541,6 @@
                     "FortiAnalyzerInstanceType": {
                         "value": "[parameters('FortiAnalyzerInstanceType')]"
                     },
-                    "Location": {
-                        "value": "[resourceGroup().location]"
-                    },
-                    "ResourceGroupName": {
-                        "value": "[resourceGroup().name]"
-                    },
                     "SubnetId": {
                         "value": "[variables('subnet1Id')]"
                     },
@@ -1578,17 +1572,11 @@
                     "FunctionExtensionVersion": {
                         "value": "~3"
                     },
-                    "Location": {
-                        "value": "[resourceGroup().location]"
-                    },
                     "NodeJSRuntimeVersion": {
                         "value": "~12"
                     },
                     "PackageResURL": {
                         "value": "[parameters('PackageResURL')]"
-                    },
-                    "ResourceGroupName": {
-                        "value": "[resourceGroup().name]"
                     },
                     "ServicePlanTier": {
                         "value": "[parameters('ServicePlanTier')]"
@@ -1794,9 +1782,6 @@
                     "LoadBalancerBackendIPPoolNameSubnet4": {
                         "value": "[variables('loadBalancerBackendIPPoolNameSubnet4')]"
                     },
-                    "Location": {
-                        "value": "[variables('vNetResourceGroupName')]"
-                    },
                     "MaxBYOLInstanceCount": {
                         "value": "[parameters('MaxBYOLInstanceCount')]"
                     },
@@ -1811,9 +1796,6 @@
                     },
                     "PAYGInstanceCount": {
                         "value": "[parameters('PAYGInstanceCount')]"
-                    },
-                    "ResourceGroupName": {
-                        "value": "[variables('vNetResourceGroupName')]"
                     },
                     "ResourceNamePrefix": {
                         "value": "[parameters('ResourceNamePrefix')]"
@@ -1854,7 +1836,7 @@
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
-            "resourceGroup": "[resourceGroup().name]"
+            "resourceGroup": "[variables('vNetResourceGroupName')]"
         }
     ],
     "outputs": {

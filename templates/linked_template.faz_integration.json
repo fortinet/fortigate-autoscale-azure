@@ -20,12 +20,6 @@
         "FortiAnalyzerInstanceType": {
             "type": "String"
         },
-        "Location": {
-            "type": "String"
-        },
-        "ResourceGroupName": {
-            "type": "String"
-        },
         "SubnetId": {
             "type": "String"
         },
@@ -39,9 +33,9 @@
     },
     "variables": {
         "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteFazPublicIp'), variables('cmdDeleteFazNic'), variables('cmdDeleteFazVm'))]",
-        "cmdDeleteFazNic": "[concat('az network nic delete', ' -g ', parameters('ResourceGroupName'), ' -n ', variables('fazNic0Name'), ';')]",
-        "cmdDeleteFazPublicIp": "[concat('az network public-ip delete', ' -g ', parameters('ResourceGroupName'), ' -n ', variables('fazPubIpName'), ';')]",
-        "cmdDeleteFazVm": "[concat('az vm delete -y', ' -g ', parameters('ResourceGroupName'), ' -n ', variables('fazName'), ';')]",
+        "cmdDeleteFazNic": "[concat('az network nic delete', ' -g ', resourceGroup().name, ' -n ', variables('fazNic0Name'), ';')]",
+        "cmdDeleteFazPublicIp": "[concat('az network public-ip delete', ' -g ', resourceGroup().name, ' -n ', variables('fazPubIpName'), ';')]",
+        "cmdDeleteFazVm": "[concat('az vm delete -y', ' -g ', resourceGroup().name, ' -n ', variables('fazName'), ';')]",
         "fazName": "[concat(toLower(parameters('UniqueResourceNamePrefix')),'faz001')]",
         "fazNic0Name": "[concat(toLower(variables('fazName')),'-nic0')]",
         "fazPubIpId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName'))]",
@@ -52,7 +46,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2020-07-01",
             "name": "[variables('fazPubIpName')]",
-            "location": "[parameters('Location')]",
+            "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Standard",
                 "tier": "Regional"
@@ -65,7 +59,7 @@
             "apiVersion": "2020-07-01",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('fazNic0Name')]",
-            "location": "[parameters('Location')]",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "ipConfigurations": [
                     {
@@ -90,7 +84,7 @@
             "apiVersion": "2020-06-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('fazName')]",
-            "location": "[parameters('Location')]",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "osProfile": {
                     "computerName": "[variables('fazName')]",

@@ -51,9 +51,6 @@
         "LicenseFileDirectory": {
             "type": "String"
         },
-        "Location": {
-            "type": "String"
-        },
         "MaxBYOLInstanceCount": {
             "type": "Int"
         },
@@ -71,9 +68,6 @@
         },
         "PrimaryElectionTimeout": {
             "type": "Int"
-        },
-        "ResourceGroupName": {
-            "type": "String"
         },
         "ScaleSetNameBYOL": {
             "type": "String"
@@ -112,14 +106,14 @@
     "variables": {
         "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]",
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
-        "storageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('ResourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', parameters('StorageAccountName'))]"
+        "storageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Storage/storageAccounts/', parameters('StorageAccountName'))]"
     },
     "resources": [
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
             "name": "[parameters('FunctionAppName')]",
-            "location": "[parameters('Location')]",
+            "location": "[resourceGroup().location]",
             "kind": "functionapp",
             "properties": {
                 "siteConfig": {
@@ -170,7 +164,7 @@
                         },
                         {
                             "name": "AUTOSCALE_DB_PRIMARY_KEY",
-                            "value": "[listKeys(resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.DocumentDb/databaseAccounts', parameters('DatabaseAccountName')), '2016-03-31').primaryMasterKey]"
+                            "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.DocumentDb/databaseAccounts', parameters('DatabaseAccountName')), '2016-03-31').primaryMasterKey]"
                         },
                         {
                             "name": "AUTOSCALE_KEY_VAULT_NAME",
@@ -178,7 +172,7 @@
                         },
                         {
                             "name": "AZURE_STORAGE_ACCESS_KEY",
-                            "value": "[listKeys(resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2019-04-01').keys[0].value]"
+                            "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2019-04-01').keys[0].value]"
                         },
                         {
                             "name": "AZURE_STORAGE_ACCOUNT",
