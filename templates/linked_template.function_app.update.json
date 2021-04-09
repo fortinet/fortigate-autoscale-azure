@@ -1,0 +1,409 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "AdminPortNumber": {
+            "type": "Int"
+        },
+        "BYOLInstanceCount": {
+            "type": "Int"
+        },
+        "DatabaseAccountName": {
+            "type": "String"
+        },
+        "DatabaseName": {
+            "type": "String"
+        },
+        "FortiAnalyzerIntegrationOptions": {
+            "type": "String",
+            "allowedValues": ["yes", "no"]
+        },
+        "FortiGatePSKSecret": {
+            "type": "securestring"
+        },
+        "FunctionAppInsightName": {
+            "type": "String"
+        },
+        "FunctionAppName": {
+            "type": "String"
+        },
+        "FunctionAppResourceGroupName": {
+            "type": "String"
+        },
+        "FunctionNameFazAuthHandler": {
+            "type": "String"
+        },
+        "FunctionNameFgtAsHandler": {
+            "type": "String"
+        },
+        "HeartBeatDelayAllowance": {
+            "type": "Int"
+        },
+        "HeartBeatInterval": {
+            "type": "Int"
+        },
+        "HeartBeatLossCount": {
+            "type": "Int"
+        },
+        "KeyVaultName": {
+            "type": "String"
+        },
+        "LicenseFileDirectory": {
+            "type": "String"
+        },
+        "Location": {
+            "type": "String"
+        },
+        "MaxBYOLInstanceCount": {
+            "type": "Int"
+        },
+        "MaxPAYGInstanceCount": {
+            "type": "Int"
+        },
+        "MinBYOLInstanceCount": {
+            "type": "Int"
+        },
+        "PAYGInstanceCount": {
+            "type": "Int"
+        },
+        "PackageResURL": {
+            "type": "String"
+        },
+        "PrimaryElectionTimeout": {
+            "type": "Int"
+        },
+        "ResourceGroupName": {
+            "type": "String"
+        },
+        "ScaleSetNameBYOL": {
+            "type": "String"
+        },
+        "ScaleSetNamePAYG": {
+            "type": "String"
+        },
+        "ScaleSetNamePrimary": {
+            "type": "String"
+        },
+        "ServicePrincipalAppID": {
+            "type": "String"
+        },
+        "ServicePrincipalAppSecret": {
+            "type": "String"
+        },
+        "StorageAccountName": {
+            "type": "String"
+        },
+        "TrafficPortNumber": {
+            "type": "Int"
+        },
+        "UniqueResourceNamePrefix": {
+            "type": "String"
+        },
+        "VnetAddressSpace": {
+            "type": "String"
+        },
+        "VnetName": {
+            "type": "String"
+        },
+        "VnetResourceGroupName": {
+            "type": "String"
+        }
+    },
+    "variables": {
+        "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]",
+        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
+        "storageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('ResourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', parameters('StorageAccountName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('FunctionAppName')]",
+            "location": "[parameters('Location')]",
+            "kind": "functionapp",
+            "properties": {
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsSecretStorageType",
+                            "value": "Files"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'), '2019-04-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "[if(not(empty(parameters('FunctionAppInsightName'))), 'APPINSIGHTS_INSTRUMENTATIONKEY', 'DEPLOYED_APPINSIGHTS')]",
+                            "value": "[if(not(empty(parameters('FunctionAppInsightName'))), resourceId('Microsoft.Insights/components', parameters('FunctionAppInsightName')), 'false')]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~3"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "node"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'), '2019-04-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(parameters('FunctionAppName'))]"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "~12"
+                        },
+                        {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "[parameters('PackageResURL')]"
+                        },
+                        {
+                            "name": "AUTOSCALE_DB_ACCOUNT",
+                            "value": "[parameters('DatabaseAccountName')]"
+                        },
+                        {
+                            "name": "AUTOSCALE_DB_NAME",
+                            "value": "[parameters('DatabaseName')]"
+                        },
+                        {
+                            "name": "AUTOSCALE_DB_PRIMARY_KEY",
+                            "value": "[listKeys(resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.DocumentDb/databaseAccounts', parameters('DatabaseAccountName')), '2016-03-31').primaryMasterKey]"
+                        },
+                        {
+                            "name": "AUTOSCALE_KEY_VAULT_NAME",
+                            "value": "[parameters('KeyVaultName')]"
+                        },
+                        {
+                            "name": "AZURE_STORAGE_ACCESS_KEY",
+                            "value": "[listKeys(resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2019-04-01').keys[0].value]"
+                        },
+                        {
+                            "name": "AZURE_STORAGE_ACCOUNT",
+                            "value": "[parameters('StorageAccountName')]"
+                        },
+                        {
+                            "name": "CLIENT_ID",
+                            "value": "[parameters('ServicePrincipalAppID')]"
+                        },
+                        {
+                            "name": "CLIENT_SECRET",
+                            "value": "[parameters('ServicePrincipalAppSecret')]"
+                        },
+                        {
+                            "name": "RESOURCE_GROUP",
+                            "value": "[parameters('VnetResourceGroupName')]"
+                        },
+                        {
+                            "name": "SUBSCRIPTION_ID",
+                            "value": "[subscription().subscriptionId]"
+                        },
+                        {
+                            "name": "TENANT_ID",
+                            "value": "[subscription().tenantId]"
+                        },
+                        {
+                            "name": "DEBUG_SAVE_CUSTOM_LOG",
+                            "value": "true"
+                        },
+                        {
+                            "name": "DEBUG_LOGGER_OUTPUT_QUEUE_ENABLED",
+                            "value": "true"
+                        },
+                        {
+                            "name": "DEBUG_LOGGER_TIMEZONE_OFFSET",
+                            "value": "0"
+                        },
+                        {
+                            "name": "additional-configset-name-list",
+                            "value": ""
+                        },
+                        {
+                            "name": "asset-storage-key-prefix",
+                            "value": "assets"
+                        },
+                        {
+                            "name": "asset-storage-name",
+                            "value": "fortigate-autoscale"
+                        },
+                        {
+                            "name": "autoscale-function-extend-execution",
+                            "value": "true"
+                        },
+                        {
+                            "name": "autoscale-function-max-execution-time",
+                            "value": "600"
+                        },
+                        {
+                            "name": "autoscale-handler-url",
+                            "value": "[concat(variables('funcappURL'), '/api/', parameters('FunctionNameFgtAsHandler'))]"
+                        },
+                        {
+                            "name": "byol-scaling-group-desired-capacity",
+                            "value": "[parameters('BYOLInstanceCount')]"
+                        },
+                        {
+                            "name": "byol-scaling-group-max-size",
+                            "value": "[parameters('MaxBYOLInstanceCount')]"
+                        },
+                        {
+                            "name": "byol-scaling-group-min-size",
+                            "value": "[parameters('MinBYOLInstanceCount')]"
+                        },
+                        {
+                            "name": "byol-scaling-group-name",
+                            "value": "[parameters('ScaleSetNameBYOL')]"
+                        },
+                        {
+                            "name": "custom-asset-container",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "custom-asset-directory",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "egress-traffic-route-table",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "enable-external-elb",
+                            "value": "true"
+                        },
+                        {
+                            "name": "enable-fortianalyzer-integration",
+                            "value": "[if(variables('enableFortiAnalyzer'),'true', 'false')]"
+                        },
+                        {
+                            "name": "enable-hybrid-licensing",
+                            "value": "true"
+                        },
+                        {
+                            "name": "enable-internal-elb",
+                            "value": "false"
+                        },
+                        {
+                            "name": "enable-second-nic",
+                            "value": "true"
+                        },
+                        {
+                            "name": "enable-vm-info-cache",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "faz-handler-name",
+                            "value": "[concat(variables('funcappURL'), '/api/', parameters('FunctionNameFazAuthHandler'),  '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  parameters('FunctionNameFazAuthHandler')), '2019-08-01').default)]"
+                        },
+                        {
+                            "name": "faz-ip",
+                            "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
+                        },
+                        {
+                            "name": "fortigate-admin-port",
+                            "value": "[parameters('AdminPortNumber')]"
+                        },
+                        {
+                            "name": "fortigate-autoscale-setting-saved",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "fortigate-autoscale-subnet-id-list",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "fortigate-autoscale-subnet-pairs",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "fortigate-autoscale-virtual-network-cidr",
+                            "value": "[parameters('VnetAddressSpace')]"
+                        },
+                        {
+                            "name": "fortigate-autoscale-virtual-network-id",
+                            "value": "[parameters('VnetName')]"
+                        },
+                        {
+                            "name": "fortigate-external-elb-dns",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "fortigate-internal-elb-dns",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "fortigate-psk-secret",
+                            "value": "[parameters('FortiGatePSKSecret')]"
+                        },
+                        {
+                            "name": "fortigate-sync-interface",
+                            "value": "port1"
+                        },
+                        {
+                            "name": "fortigate-traffic-port",
+                            "value": "[parameters('TrafficPortNumber')]"
+                        },
+                        {
+                            "name": "fortigate-traffic-protocol",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "heartbeat-delay-allowance",
+                            "value": "[parameters('HeartBeatDelayAllowance')]"
+                        },
+                        {
+                            "name": "heartbeat-interval",
+                            "value": "[parameters('HeartBeatInterval')]"
+                        },
+                        {
+                            "name": "heartbeat-loss-count",
+                            "value": "[parameters('HeartBeatLossCount')]"
+                        },
+                        {
+                            "name": "license-file-directory",
+                            "value": "[parameters('LicenseFileDirectory')]"
+                        },
+                        {
+                            "name": "payg-scaling-group-name",
+                            "value": "[parameters('ScaleSetNamePAYG')]"
+                        },
+                        {
+                            "name": "primary-election-timeout",
+                            "value": "[parameters('PrimaryElectionTimeout')]"
+                        },
+                        {
+                            "name": "primary-scaling-group-name",
+                            "value": "[parameters('ScaleSetNamePrimary')]"
+                        },
+                        {
+                            "name": "resource-tag-prefix",
+                            "value": "[parameters('UniqueResourceNamePrefix')]"
+                        },
+                        {
+                            "name": "scaling-group-desired-capacity",
+                            "value": "[parameters('PAYGInstanceCount')]"
+                        },
+                        {
+                            "name": "scaling-group-max-size",
+                            "value": "[parameters('MaxPAYGInstanceCount')]"
+                        },
+                        {
+                            "name": "scaling-group-min-size",
+                            "value": "[parameters('PAYGInstanceCount')]"
+                        },
+                        {
+                            "name": "vm-info-cache-time",
+                            "value": "n/a"
+                        },
+                        {
+                            "name": "vpn-bgp-asn",
+                            "value": "n/a"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

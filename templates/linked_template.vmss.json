@@ -29,22 +29,16 @@
         "ExternalLoadBalancerName": {
             "type": "String"
         },
-        "FgtVmImageBYOL": {
-            "type": "Object"
-        },
-        "FgtVmImagePAYG": {
-            "type": "Object"
-        },
-        "FunctioinEndpointAutoscaleHandler": {
-            "type": "String"
-        },
-        "FunctioinEndpointByolLicense": {
-            "type": "String"
-        },
         "FunctionAppName": {
             "type": "String"
         },
         "FunctionAppResourceGroupName": {
+            "type": "String"
+        },
+        "FunctionNameFgtAsHandler": {
+            "type": "String"
+        },
+        "FunctionNameLicenseHandler": {
             "type": "String"
         },
         "InstanceType": {
@@ -69,41 +63,35 @@
         "LoadBalancerBackendIPPoolNameSubnet4": {
             "type": "String"
         },
+        "Location": {
+            "type": "String"
+        },
         "MaxBYOLInstanceCount": {
-            "defaultValue": 2,
-            "minValue": 0,
             "type": "Int"
         },
         "MaxPAYGInstanceCount": {
-            "defaultValue": 6,
-            "minValue": 0,
             "type": "Int"
         },
         "MinBYOLInstanceCount": {
-            "defaultValue": 2,
-            "minValue": 0,
             "type": "Int"
         },
         "MinPAYGInstanceCount": {
-            "defaultValue": 0,
-            "minValue": 0,
             "type": "Int"
         },
         "PAYGInstanceCount": {
-            "defaultValue": 0,
-            "minValue": 0,
             "type": "Int"
+        },
+        "ResourceGroupName": {
+            "type": "String"
         },
         "ResourceNamePrefix": {
             "maxLength": 10,
             "type": "String"
         },
         "ScaleInThreshold": {
-            "defaultValue": 20,
             "type": "Int"
         },
         "ScaleOutThreshold": {
-            "defaultValue": 80,
             "type": "Int"
         },
         "StorageAccountName": {
@@ -124,16 +112,19 @@
         "UniqueResourceNamePrefix": {
             "type": "String"
         },
-        "VnetName": {
-            "type": "String"
+        "VmImageReferenceFgtBYOL": {
+            "type": "Object"
         },
-        "VnetResourceGroupName": {
-            "type": "String"
+        "VmImageReferenceFgtPAYG": {
+            "type": "Object"
         },
         "VmssNameBYOL": {
             "type": "String"
         },
         "VmssNamePAYG": {
+            "type": "String"
+        },
+        "VnetName": {
             "type": "String"
         }
     },
@@ -147,7 +138,7 @@
                         "metricTrigger": {
                             "metricName": "Percentage CPU",
                             "metricNamespace": "",
-                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
                             "timeGrain": "PT1M",
                             "statistic": "Average",
                             "timeWindow": "PT5M",
@@ -166,7 +157,7 @@
                         "metricTrigger": {
                             "metricName": "Percentage CPU",
                             "metricNamespace": "",
-                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
                             "timeGrain": "PT1M",
                             "statistic": "Average",
                             "timeWindow": "PT5M",
@@ -191,7 +182,7 @@
                         "metricTrigger": {
                             "metricName": "Percentage CPU",
                             "metricNamespace": "",
-                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
                             "timeGrain": "PT1M",
                             "statistic": "Average",
                             "timeWindow": "PT5M",
@@ -210,7 +201,7 @@
                         "metricTrigger": {
                             "metricName": "Percentage CPU",
                             "metricNamespace": "",
-                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
                             "timeGrain": "PT1M",
                             "statistic": "Average",
                             "timeWindow": "PT5M",
@@ -229,7 +220,7 @@
                         "metricTrigger": {
                             "metricName": "Percentage CPU",
                             "metricNamespace": "",
-                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
                             "timeGrain": "PT1M",
                             "statistic": "Average",
                             "timeWindow": "PT5M",
@@ -248,7 +239,7 @@
                         "metricTrigger": {
                             "metricName": "Percentage CPU",
                             "metricNamespace": "",
-                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
                             "timeGrain": "PT1M",
                             "statistic": "Average",
                             "timeWindow": "PT5M",
@@ -272,7 +263,7 @@
                         "metricTrigger": {
                             "metricName": "Percentage CPU",
                             "metricNamespace": "",
-                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
                             "timeGrain": "PT1M",
                             "statistic": "Average",
                             "timeWindow": "PT5M",
@@ -291,7 +282,7 @@
                         "metricTrigger": {
                             "metricName": "Percentage CPU",
                             "metricNamespace": "",
-                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('VnetResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                            "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
                             "timeGrain": "PT1M",
                             "statistic": "Average",
                             "timeWindow": "PT5M",
@@ -309,18 +300,19 @@
                 ]
             }
         },
-        "cmdDeleteAutoscaleSettings": "[concat('az account set -s ', subscription().subscriptionId, ';','az monitor autoscale delete -g ', resourceGroup().name, ' -n ', variables('autoscaleSettingsNameBYOL'), ';', 'az monitor autoscale delete -g ', resourceGroup().name, ' -n ', variables('autoscaleSettingsNamePAYG'), ';')]",
-        "cmdDeleteVMSS": "[concat('az account set -s ', subscription().subscriptionId, ';','az vmss delete -g ', resourceGroup().name,' -n ', parameters('VmssNameBYOL'), ';', 'az vmss delete -g ', resourceGroup().name,' -n ', parameters('VmssNamePAYG'), ';')]"
+        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteAutoscaleSettings'), variables('cmdDeleteVMSS'))]",
+        "cmdDeleteAutoscaleSettings": "[concat('az monitor autoscale delete', ' -g ', parameters('ResourceGroupName'), ' -n ', variables('autoscaleSettingsNameBYOL'), ';', 'az monitor autoscale delete -g ', parameters('ResourceGroupName'), ' -n ', variables('autoscaleSettingsNamePAYG'), ';')]",
+        "cmdDeleteVMSS": "[concat('az vmss delete', ' -g ', parameters('ResourceGroupName'),' -n ', parameters('VmssNameBYOL'), ';', 'az vmss delete -g ', parameters('ResourceGroupName'),' -n ', parameters('VmssNamePAYG'), ';')]"
     },
     "resources": [
         {
             "apiVersion": "2019-07-01",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "name": "[parameters('VmssNameBYOL')]",
             "plan": {
-                "name": "[parameters('FgtvmImageBYOL').sku]",
-                "publisher": "[parameters('FgtvmImageBYOL').publisher]",
-                "product": "[parameters('FgtvmImageBYOL').offer]"
+                "name": "[parameters('VmImageReferenceFgtBYOL').sku]",
+                "publisher": "[parameters('VmImageReferenceFgtBYOL').publisher]",
+                "product": "[parameters('VmImageReferenceFgtBYOL').offer]"
             },
             "properties": {
                 "overprovision": false,
@@ -340,7 +332,7 @@
                                 "createOption": "Empty"
                             }
                         ],
-                        "imageReference": "[parameters('FgtvmImageBYOL')]"
+                        "imageReference": "[parameters('VmImageReferenceFgtBYOL')]"
                     },
                     "diagnosticsProfile": {
                         "bootDiagnostics": {
@@ -351,7 +343,7 @@
                     "osProfile": {
                         "computerNamePrefix": "[parameters('VmssNameBYOL')]",
                         "adminUsername": "[parameters('adminUsername')]",
-                        "customData": "[base64(concat('{\"license-url\": \"', parameters('FunctioinEndpointByolLicense'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'byol-license'), '2019-08-01').default, '\",\"config-url\": \"', parameters('FunctioinEndpointAutoscaleHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
+                        "customData": "[base64(concat('{\"license-url\": \"', parameters('FunctionNameLicenseHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'byol-license'), '2019-08-01').default, '\",\"config-url\": \"', parameters('FunctionNameFgtAsHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
                         "adminPassword": "[parameters('adminPassword')]"
                     },
                     "networkProfile": {
@@ -366,19 +358,19 @@
                                             "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '1')]",
                                             "properties": {
                                                 "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet1Name'))]"
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet1Name'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('ExternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet1'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('ExternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet1'))]"
                                                     }
                                                 ],
                                                 "loadBalancerInboundNatPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolSSHBYOL'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolSSHBYOL'))]"
                                                     },
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolHTTPSBYOL'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolHTTPSBYOL'))]"
                                                     }
                                                 ]
                                             }
@@ -396,11 +388,11 @@
                                             "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '2')]",
                                             "properties": {
                                                 "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet2Name'))]"
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet2Name'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet2'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet2'))]"
                                                     }
                                                 ]
                                             }
@@ -418,11 +410,11 @@
                                             "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '3')]",
                                             "properties": {
                                                 "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet3Name'))]"
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet3Name'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet3'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet3'))]"
                                                     }
                                                 ]
                                             }
@@ -440,11 +432,11 @@
                                             "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '4')]",
                                             "properties": {
                                                 "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet4Name'))]"
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet4Name'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet4'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet4'))]"
                                                     }
                                                 ]
                                             }
@@ -465,12 +457,12 @@
         },
         {
             "apiVersion": "2019-07-01",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "name": "[parameters('VmssNamePAYG')]",
             "plan": {
-                "name": "[parameters('FgtvmImagePAYG').sku]",
-                "publisher": "[parameters('FgtvmImagePAYG').publisher]",
-                "product": "[parameters('FgtvmImagePAYG').offer]"
+                "name": "[parameters('VmImageReferenceFgtPAYG').sku]",
+                "publisher": "[parameters('VmImageReferenceFgtPAYG').publisher]",
+                "product": "[parameters('VmImageReferenceFgtPAYG').offer]"
             },
             "properties": {
                 "overprovision": false,
@@ -490,7 +482,7 @@
                                 "createOption": "Empty"
                             }
                         ],
-                        "imageReference": "[parameters('FgtvmImagePAYG')]"
+                        "imageReference": "[parameters('VmImageReferenceFgtPAYG')]"
                     },
                     "diagnosticsProfile": {
                         "bootDiagnostics": {
@@ -502,7 +494,7 @@
                     "evictionPolicy": "delete",
                     "osProfile": {
                         "computerNamePrefix": "[parameters('VmssNamePAYG')]",
-                        "customData": "[base64(concat('{\"config-url\": \"', parameters('FunctioinEndpointAutoscaleHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
+                        "customData": "[base64(concat('{\"config-url\": \"', parameters('FunctionNameFgtAsHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
                         "adminUsername": "[parameters('adminUsername')]",
                         "adminPassword": "[parameters('adminPassword')]"
                     },
@@ -518,19 +510,19 @@
                                             "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '1')]",
                                             "properties": {
                                                 "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet1Name'))]"
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet1Name'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('ExternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet1'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('ExternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet1'))]"
                                                     }
                                                 ],
                                                 "loadBalancerInboundNatPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolSSHPAYG'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolSSHPAYG'))]"
                                                     },
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolHTTPSPAYG'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolHTTPSPAYG'))]"
                                                     }
                                                 ]
                                             }
@@ -548,11 +540,11 @@
                                             "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '2')]",
                                             "properties": {
                                                 "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet2Name'))]"
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet2Name'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet2'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet2'))]"
                                                     }
                                                 ]
                                             }
@@ -570,11 +562,11 @@
                                             "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '3')]",
                                             "properties": {
                                                 "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet3Name'))]"
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet3Name'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet3'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet3'))]"
                                                     }
                                                 ]
                                             }
@@ -592,11 +584,11 @@
                                             "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '4')]",
                                             "properties": {
                                                 "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet4Name'))]"
+                                                    "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet4Name'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {
-                                                        "id": "[resourceId(subscription().subscriptionId, parameters('VnetResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet4'))]"
+                                                        "id": "[resourceId(subscription().subscriptionId, parameters('ResourceGroupName'), 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet4'))]"
                                                     }
                                                 ]
                                             }
@@ -618,11 +610,11 @@
         {
             "apiVersion": "2014-04-01",
             "dependsOn": ["[parameters('VmssNameBYOL')]"],
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "name": "[variables('autoscaleSettingsNameBYOL')]",
             "properties": {
                 "name": "[variables('autoscaleSettingsNameBYOL')]",
-                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
+                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/', parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
                 "enabled": false,
                 "profiles": [
                     {
@@ -644,11 +636,11 @@
                 "[parameters('VmssNamePAYG')]",
                 "[variables('autoscaleSettingsNameBYOL')]"
             ],
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "name": "[variables('autoscaleSettingsNamePAYG')]",
             "properties": {
                 "name": "[variables('autoscaleSettingsNamePAYG')]",
-                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
+                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  parameters('ResourceGroupName'), '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
                 "enabled": false,
                 "profiles": [
                     {
@@ -686,13 +678,9 @@
             "type": "String",
             "value": "[parameters('VmssNameBYOL')]"
         },
-        "cmdDeleteAutoscaleSettings": {
+        "cmdDeleteAll": {
             "type": "String",
-            "value": "[variables('cmdDeleteAutoscaleSettings')]"
-        },
-        "cmdDeleteVMSS": {
-            "type": "String",
-            "value": "[variables('cmdDeleteVMSS')]"
+            "value": "[variables('cmdDeleteAll')]"
         },
         "paygAutoscaleSettingsName": {
             "type": "String",
@@ -713,10 +701,6 @@
         "paygScaleSetName": {
             "type": "String",
             "value": "[parameters('VmssNamePAYG')]"
-        },
-        "vNetResourceGroupName": {
-            "type": "String",
-            "value": "[parameters('VnetResourceGroupName')]"
         }
     }
 }

@@ -13,6 +13,11 @@ on:
         description: >-
           The custom version to be used for branch, tag, and release. Do not use an existing tag in the repo.
         required: true
+      no-publish:
+        description: >-
+          Skip the publication steps.
+        required: true
+        default: 'false'
 jobs:
   main_job:
     runs-on: ubuntu-latest
@@ -62,10 +67,12 @@ jobs:
           echo "::set-output name=tag-commit::$(git rev-parse HEAD)"
       # prepare release assets
       - name: make dist
+        if: ${{ github.event.inputs['no-publish'] != 'true'  }}
         run: npm run make-dist
       # create a release
       - id: create-release
         name: create release
+        if: ${{ github.event.inputs['no-publish'] != 'true'  }}
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
@@ -77,6 +84,7 @@ jobs:
           commitish: ${{ steps['push-changes'].outputs['tag-commit'] }} # Use the output: `tag-commit` from a prev step
       - id: upload-release-asset
         name: upload release assets
+        if: ${{ github.event.inputs['no-publish'] != 'true'  }}
         uses: svenstaro/upload-release-action@2.2.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

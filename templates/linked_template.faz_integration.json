@@ -2,79 +2,57 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "3.3.0.0",
     "parameters": {
-        "UniqueResourceNamePrefix": {
-            "maxLength": 18,
-            "type": "String",
-            "metadata": {
-                "description": "The unique prefix for all applicable resource names. Can only contain uppercase letters, lowercase letters, and numbers. Maximum length is 18."
-            }
-        },
-        "SubnetId": {
-            "type": "String",
-            "metadata": {
-                "description": "The subnet of a virtual network to deploy the FortiAnalyzer."
-            }
-        },
-        "FortiAnalyzerInstanceType": {
-            "defaultValue": "Standard_DS2_v2",
-            "type": "String",
-            "metadata": {
-                "description": "Size of the FortiAnalyzer VM."
-            }
-        },
-        "FortiAnalyzerVersion": {
-            "defaultValue": "6.4.2",
-            "allowedValues": ["6.4.2", "6.2.5"],
-            "type": "String",
-            "metadata": {
-                "description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling."
-            }
-        },
-        "FortiAnalyzerCustomPrivateIpAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
-            }
+        "AdminPassword": {
+            "type": "SecureString"
         },
         "AdminUsername": {
-            "defaultValue": "",
-            "type": "String",
-            "metadata": {
-                "description": "FortiAnalyzer administrator username."
-            }
-        },
-        "AdminPassword": {
-            "type": "SecureString",
-            "metadata": {
-                "description": "FortiAnalyzer administrator password. This field must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
-            }
-        },
-        "FortiAnalyzerAutoscaleAdminUsername": {
-            "type": "string",
-            "metadata": {
-                "description": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
-            }
+            "type": "String"
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
-            }
+            "type": "securestring"
+        },
+        "FortiAnalyzerAutoscaleAdminUsername": {
+            "type": "string"
+        },
+        "FortiAnalyzerCustomPrivateIpAddress": {
+            "type": "string"
+        },
+        "FortiAnalyzerInstanceType": {
+            "type": "String"
+        },
+        "FortiAnalyzerVersion": {
+            "type": "String"
+        },
+        "Location": {
+            "type": "String"
+        },
+        "ResourceGroupName": {
+            "type": "String"
+        },
+        "SubnetId": {
+            "type": "String"
+        },
+        "UniqueResourceNamePrefix": {
+            "maxLength": 18,
+            "type": "String"
         }
     },
     "variables": {
+        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteFazPublicIp'), variables('cmdDeleteFazNic'), variables('cmdDeleteFazVm'))]",
+        "cmdDeleteFazNic": "[concat('az network nic delete', ' -g ', parameters('ResourceGroupName'), ' -n ', variables('fazNic0Name'), ';')]",
+        "cmdDeleteFazPublicIp": "[concat('az network public-ip delete', ' -g ', parameters('ResourceGroupName'), ' -n ', variables('fazPubIpName'), ';')]",
+        "cmdDeleteFazVm": "[concat('az vm delete -y', ' -g ', parameters('ResourceGroupName'), ' -n ', variables('fazName'), ';')]",
         "fazName": "[concat(toLower(parameters('UniqueResourceNamePrefix')),'faz001')]",
         "fazNic0Name": "[concat(toLower(variables('fazName')),'-nic0')]",
         "fazPubIpId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName'))]",
-        "fazPubIpName": "[concat(toLower(variables('fazName')),'-public-ip')]",
-        "location": "[resourceGroup().location]"
+        "fazPubIpName": "[concat(toLower(variables('fazName')),'-public-ip')]"
     },
     "resources": [
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2020-07-01",
             "name": "[variables('fazPubIpName')]",
-            "location": "[variables('location')]",
+            "location": "[parameters('Location')]",
             "sku": {
                 "name": "Standard",
                 "tier": "Regional"
@@ -87,7 +65,7 @@
             "apiVersion": "2020-07-01",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('fazNic0Name')]",
-            "location": "[variables('location')]",
+            "location": "[parameters('Location')]",
             "properties": {
                 "ipConfigurations": [
                     {
@@ -112,7 +90,7 @@
             "apiVersion": "2020-06-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('fazName')]",
-            "location": "[variables('location')]",
+            "location": "[parameters('Location')]",
             "properties": {
                 "osProfile": {
                     "computerName": "[variables('fazName')]",
@@ -158,6 +136,10 @@
         }
     ],
     "outputs": {
+        "cmdDeleteAll": {
+            "type": "String",
+            "value": "[variables('cmdDeleteAll')]"
+        },
         "fazPublicIp": {
             "type": "String",
             "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses/', variables('fazPubIpName')), '2020-07-01').IpAddress]"

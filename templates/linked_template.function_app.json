@@ -3,49 +3,40 @@
     "contentVersion": "3.3.0.0",
     "parameters": {
         "FunctionAppName": {
-            "type": "String",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The name of the Azure Function app."
-            }
+            "type": "String"
         },
         "FunctionExtensionVersion": {
             "type": "String",
-            "defaultValue": "~3",
-            "metadata": {
-                "description": "The Azure Function extension version."
-            }
+            "defaultValue": "~3"
+        },
+        "Location": {
+            "type": "String"
         },
         "NodeJSRuntimeVersion": {
             "type": "String",
-            "defaultValue": "~12",
-            "metadata": {
-                "description": "The NodeJS runtime version used in this Azure Function."
-            }
+            "defaultValue": "~12"
         },
         "PackageResURL": {
-            "type": "String",
-            "metadata": {
-                "description": "The public URL of the function source file named 'fortigate-autoscale-azure-funcapp.zip', and can be found inside 'fortigate-autoscale-azure-template-deployment.zip'. The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure."
-            }
+            "type": "String"
+        },
+        "ResourceGroupName": {
+            "type": "String"
         },
         "ServicePlanTier": {
             "defaultValue": "Premium (P1V2)",
             "allowedValues": ["Premium (P1V2)", "Free (for demo only)"],
-            "type": "String",
-            "metadata": {
-                "description": "The pricing tier for the function service plan. Note: the Free plan is for trial and demo only. Do not use it in production."
-            }
+            "type": "String"
         },
         "StorageAccountName": {
-            "type": "String",
-            "metadata": {
-                "description": "The storage account name to be used in this function app."
-            }
+            "type": "String"
         }
     },
     "variables": {
-        "enableAzureAppInsights": "[contains(variables('functionAppInsightAvailableLocations'), variables('location'))]",
+        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteInsights'), variables('cmdDeleteSite'), variables('cmdDeleteServerFarm'))]",
+        "cmdDeleteInsights": "[if(variables('enableAzureAppInsights'), concat('az monitor app-insights component delete', ' -a ', parameters('FunctionAppName'), ' -g ', parameters('ResourceGroupName'), ';'), '')]",
+        "cmdDeleteServerFarm": "[concat('az appservice plan delete -y', ' -n ', variables('hostingPlanName'), ' -g ', parameters('ResourceGroupName'), ';')]",
+        "cmdDeleteSite": "[concat('az webapp delete -y', ' -n ', parameters('FunctionAppName'), ' -g ', parameters('ResourceGroupName'), ';')]",
+        "enableAzureAppInsights": "[contains(variables('functionAppInsightAvailableLocations'), parameters('Location'))]",
         "functionAppInsightAvailableLocations": [
             "australiaeast",
             "australiasoutheast",
@@ -72,7 +63,6 @@
         ],
         "functionAppInsightName": "[concat(parameters('FunctionAppName'),'-insights')]",
         "hostingPlanName": "[concat(parameters('FunctionAppName'),'-service-plan')]",
-        "location": "[resourceGroup().location]",
         "servicePlanTierPresets": {
             "Free (for demo only)": {
                 "sku": "Free",
@@ -91,14 +81,14 @@
                 "reserved": false
             }
         },
-        "storageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Storage/storageAccounts/', parameters('StorageAccountName'))]"
+        "storageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('ResourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', parameters('StorageAccountName'))]"
     },
     "resources": [
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2018-02-01",
             "name": "[variables('hostingPlanName')]",
-            "location": "[variables('location')]",
+            "location": "[parameters('Location')]",
             "sku": {
                 "Name": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].skucode]"
             },
@@ -113,7 +103,7 @@
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
             "name": "[parameters('FunctionAppName')]",
-            "location": "[variables('location')]",
+            "location": "[parameters('Location')]",
             "kind": "functionapp",
             "dependsOn": ["[variables('hostingPlanName')]"],
             "properties": {
@@ -165,7 +155,7 @@
             "type": "Microsoft.Insights/components",
             "apiVersion": "2018-05-01-preview",
             "name": "[variables('functionAppInsightName')]",
-            "location": "[variables('location')]",
+            "location": "[parameters('Location')]",
             "kind": "web",
             "properties": {
                 "Application_Type": "web",
@@ -175,17 +165,21 @@
         }
     ],
     "outputs": {
+        "cmdDeleteAll": {
+            "type": "String",
+            "value": "[variables('cmdDeleteAll')]"
+        },
         "enableAzureAppInsights": {
             "type": "String",
             "value": "[if(variables('enableAzureAppInsights'), 'true', 'false')]"
         },
-        "functionAppInsightId": {
-            "type": "String",
-            "value": "[if(variables('enableAzureAppInsights'), resourceId('Microsoft.Insights/components', variables('functionAppInsightName')), '')]"
-        },
         "functionAppId": {
             "type": "String",
             "value": "[resourceId('Microsoft.Web/sites', parameters('FunctionAppName'))]"
+        },
+        "functionAppInsightName": {
+            "type": "String",
+            "value": "[if(variables('enableAzureAppInsights'), variables('functionAppInsightName'), '')]"
         },
         "functionAppName": {
             "type": "String",
@@ -195,17 +189,17 @@
             "type": "String",
             "value": "[reference(resourceId('Microsoft.Web/sites', parameters('FunctionAppName')), '2016-08-01').possibleOutboundIpAddresses]"
         },
-        "functionAppInsightsInstrumentationKey": {
+        "functionNameFazAuthHandler": {
             "type": "String",
-            "value": "[if(variables('enableAzureAppInsights'), reference(resourceId('Microsoft.Insights/components', variables('functionAppInsightName')), '2018-05-01-preview').InstrumentationKey, '')]"
+            "value": "faz-auth-handler"
         },
-        "functionKeyList": {
-            "type": "secureObject",
-            "value": {
-                "byol-license": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'byol-license'), '2019-08-01').default]",
-                "fgt-as-handler": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default]",
-                "faz-auth-handler": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'faz-auth-handler'), '2019-08-01').default]"
-            }
+        "functionNameFgtAsHandler": {
+            "type": "String",
+            "value": "fgt-as-handler"
+        },
+        "functionNameLicenseHandler": {
+            "type": "String",
+            "value": "byol-license"
         }
     }
 }
