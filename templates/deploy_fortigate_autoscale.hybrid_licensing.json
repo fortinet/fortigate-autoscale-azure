@@ -63,8 +63,8 @@
             }
         },
         "FortiAnalyzerVersion": {
-            "defaultValue": "6.4.4",
-            "allowedValues": ["6.4.4", "6.2.5"],
+            "defaultValue": "6.4.5",
+            "allowedValues": ["6.4.5", "6.2.5"],
             "type": "String",
             "metadata": {
                 "description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling."
