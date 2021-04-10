@@ -1619,6 +1619,9 @@
                     "FortiAnalyzerIntegrationOptions": {
                         "value": "[parameters('FortiAnalyzerIntegrationOptions')]"
                     },
+                    "FortiAnalyzerPublicIp": {
+                        "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, '')]"
+                    },
                     "FortiGatePSKSecret": {
                         "value": "[parameters('FortiGatePSKSecret')]"
                     },

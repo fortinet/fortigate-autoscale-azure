@@ -18,6 +18,9 @@
             "type": "String",
             "allowedValues": ["yes", "no"]
         },
+        "FortiAnalyzerPublicIp": {
+            "type": "string"
+        },
         "FortiGatePSKSecret": {
             "type": "securestring"
         },
@@ -292,7 +295,7 @@
                         },
                         {
                             "name": "faz-ip",
-                            "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
+                            "value": "[if(variables('enableFortiAnalyzer'), parameters('FortiAnalyzerPublicIp'), 'n/a')]"
                         },
                         {
                             "name": "fortigate-admin-port",
