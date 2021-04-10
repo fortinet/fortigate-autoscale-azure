@@ -1,0 +1,236 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "AdminPortNumber": {
+            "type": "Int"
+        },
+        "BYOLInstanceCount": {
+            "type": "Int"
+        },
+        "DatabaseAccountName": {
+            "type": "String"
+        },
+        "DatabaseName": {
+            "type": "String"
+        },
+        "FortiAnalyzerIntegrationOptions": {
+            "type": "String",
+            "allowedValues": ["yes", "no"]
+        },
+        "FortiAnalyzerPublicIp": {
+            "type": "string"
+        },
+        "FortiGatePSKSecret": {
+            "type": "securestring"
+        },
+        "FunctionAppInsightName": {
+            "type": "String"
+        },
+        "FunctionAppName": {
+            "type": "String"
+        },
+        "FunctionAppResourceGroupName": {
+            "type": "String"
+        },
+        "FunctionNameFazAuthHandler": {
+            "type": "String"
+        },
+        "FunctionNameFgtAsHandler": {
+            "type": "String"
+        },
+        "HeartBeatDelayAllowance": {
+            "type": "Int"
+        },
+        "HeartBeatInterval": {
+            "type": "Int"
+        },
+        "HeartBeatLossCount": {
+            "type": "Int"
+        },
+        "KeyVaultName": {
+            "type": "String"
+        },
+        "LicenseFileDirectory": {
+            "type": "String"
+        },
+        "MaxBYOLInstanceCount": {
+            "type": "Int"
+        },
+        "MaxPAYGInstanceCount": {
+            "type": "Int"
+        },
+        "MinBYOLInstanceCount": {
+            "type": "Int"
+        },
+        "PAYGInstanceCount": {
+            "type": "Int"
+        },
+        "PackageResURL": {
+            "type": "String"
+        },
+        "PrimaryElectionTimeout": {
+            "type": "Int"
+        },
+        "ScaleSetNameBYOL": {
+            "type": "String"
+        },
+        "ScaleSetNamePAYG": {
+            "type": "String"
+        },
+        "ScaleSetNamePrimary": {
+            "type": "String"
+        },
+        "ServicePrincipalAppID": {
+            "type": "String"
+        },
+        "ServicePrincipalAppSecret": {
+            "type": "String"
+        },
+        "StorageAccountName": {
+            "type": "String"
+        },
+        "TrafficPortNumber": {
+            "type": "Int"
+        },
+        "UniqueResourceNamePrefix": {
+            "type": "String"
+        },
+        "VnetAddressSpace": {
+            "type": "String"
+        },
+        "VnetName": {
+            "type": "String"
+        },
+        "VnetResourceGroupName": {
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "UpdateFunctionApp",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.0-dev.0/templates/linked_template.function_app.update.json"
+                },
+                "parameters": {
+                    "AdminPortNumber": {
+                        "value": "[parameters('AdminPortNumber')]"
+                    },
+                    "BYOLInstanceCount": {
+                        "value": "[parameters('BYOLInstanceCount')]"
+                    },
+                    "DatabaseAccountName": {
+                        "value": "[parameters('DatabaseAccountName')]"
+                    },
+                    "DatabaseAccountPrimaryMasterKey": {
+                        "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.DocumentDb/databaseAccounts', parameters('DatabaseAccountName')), '2016-03-31').primaryMasterKey]"
+                    },
+                    "DatabaseName": {
+                        "value": "[parameters('DatabaseName')]"
+                    },
+                    "FortiAnalyzerIntegrationOptions": {
+                        "value": "[parameters('FortiAnalyzerIntegrationOptions')]"
+                    },
+                    "FortiAnalyzerPublicIp": {
+                        "value": "[parameters('FortiAnalyzerPublicIp')]"
+                    },
+                    "FortiGatePSKSecret": {
+                        "value": "[parameters('FortiGatePSKSecret')]"
+                    },
+                    "FunctionAppInsightName": {
+                        "value": "[parameters('FunctionAppInsightName')]"
+                    },
+                    "FunctionAppName": {
+                        "value": "[parameters('FunctionAppName')]"
+                    },
+                    "FunctionKeyFazAuthHandler": {
+                        "value": "[listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  parameters('FunctionNameFazAuthHandler')), '2019-08-01').default]"
+                    },
+                    "FunctionNameFazAuthHandler": {
+                        "value": "[parameters('FunctionNameFazAuthHandler')]"
+                    },
+                    "FunctionNameFgtAsHandler": {
+                        "value": "[parameters('FunctionNameFgtAsHandler')]"
+                    },
+                    "HeartBeatDelayAllowance": {
+                        "value": "[parameters('HeartBeatDelayAllowance')]"
+                    },
+                    "HeartBeatInterval": {
+                        "value": "[parameters('HeartBeatInterval')]"
+                    },
+                    "HeartBeatLossCount": {
+                        "value": "[parameters('HeartBeatLossCount')]"
+                    },
+                    "KeyVaultName": {
+                        "value": "[parameters('KeyVaultName')]"
+                    },
+                    "LicenseFileDirectory": {
+                        "value": "[parameters('LicenseFileDirectory')]"
+                    },
+                    "MaxBYOLInstanceCount": {
+                        "value": "[parameters('MaxBYOLInstanceCount')]"
+                    },
+                    "MaxPAYGInstanceCount": {
+                        "value": "[parameters('MaxPAYGInstanceCount')]"
+                    },
+                    "MinBYOLInstanceCount": {
+                        "value": "[parameters('MinBYOLInstanceCount')]"
+                    },
+                    "PAYGInstanceCount": {
+                        "value": "[parameters('PAYGInstanceCount')]"
+                    },
+                    "PackageResURL": {
+                        "value": "[parameters('PackageResURL')]"
+                    },
+                    "PrimaryElectionTimeout": {
+                        "value": "[parameters('PrimaryElectionTimeout')]"
+                    },
+                    "ScaleSetNameBYOL": {
+                        "value": "[parameters('ScaleSetNameBYOL')]"
+                    },
+                    "ScaleSetNamePAYG": {
+                        "value": "[parameters('ScaleSetNamePAYG')]"
+                    },
+                    "ScaleSetNamePrimary": {
+                        "value": "[parameters('ScaleSetNamePrimary')]"
+                    },
+                    "ServicePrincipalAppID": {
+                        "value": "[parameters('ServicePrincipalAppID')]"
+                    },
+                    "ServicePrincipalAppSecret": {
+                        "value": "[parameters('ServicePrincipalAppSecret')]"
+                    },
+                    "StorageAccountKey": {
+                        "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2019-04-01').keys[0].value]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[parameters('StorageAccountName')]"
+                    },
+                    "TrafficPortNumber": {
+                        "value": "[parameters('TrafficPortNumber')]"
+                    },
+                    "UniqueResourceNamePrefix": {
+                        "value": "[parameters('UniqueResourceNamePrefix')]"
+                    },
+                    "VnetAddressSpace": {
+                        "value": "[parameters('VnetAddressSpace')]"
+                    },
+                    "VnetName": {
+                        "value": "[parameters('VnetName')]"
+                    },
+                    "VnetResourceGroupName": {
+                        "value": "[parameters('VnetResourceGroupName')]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]"
+        }
+    ],
+    "outputs": {}
+}

@@ -11,6 +11,9 @@
         "DatabaseAccountName": {
             "type": "String"
         },
+        "DatabaseAccountPrimaryMasterKey": {
+            "type": "securestring"
+        },
         "DatabaseName": {
             "type": "String"
         },
@@ -30,8 +33,8 @@
         "FunctionAppName": {
             "type": "String"
         },
-        "FunctionAppResourceGroupName": {
-            "type": "String"
+        "FunctionKeyFazAuthHandler": {
+            "type": "securestring"
         },
         "FunctionNameFazAuthHandler": {
             "type": "String"
@@ -87,6 +90,9 @@
         "ServicePrincipalAppSecret": {
             "type": "String"
         },
+        "StorageAccountKey": {
+            "type": "securestring"
+        },
         "StorageAccountName": {
             "type": "String"
         },
@@ -108,8 +114,7 @@
     },
     "variables": {
         "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]",
-        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
-        "storageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Storage/storageAccounts/', parameters('StorageAccountName'))]"
+        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]"
     },
     "resources": [
         {
@@ -127,7 +132,7 @@
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'), '2019-04-01').keys[0].value)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('StorageAccountName'), ';AccountKey=', parameters('StorageAccountKey'))]"
                         },
                         {
                             "name": "[if(not(empty(parameters('FunctionAppInsightName'))), 'APPINSIGHTS_INSTRUMENTATIONKEY', 'DEPLOYED_APPINSIGHTS')]",
@@ -143,7 +148,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'), '2019-04-01').keys[0].value)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('StorageAccountName'), ';AccountKey=', parameters('StorageAccountKey'))]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
@@ -167,7 +172,7 @@
                         },
                         {
                             "name": "AUTOSCALE_DB_PRIMARY_KEY",
-                            "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.DocumentDb/databaseAccounts', parameters('DatabaseAccountName')), '2016-03-31').primaryMasterKey]"
+                            "value": "[parameters('DatabaseAccountPrimaryMasterKey')]"
                         },
                         {
                             "name": "AUTOSCALE_KEY_VAULT_NAME",
@@ -175,7 +180,7 @@
                         },
                         {
                             "name": "AZURE_STORAGE_ACCESS_KEY",
-                            "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2019-04-01').keys[0].value]"
+                            "value": "[parameters('StorageAccountKey')]"
                         },
                         {
                             "name": "AZURE_STORAGE_ACCOUNT",
@@ -291,7 +296,7 @@
                         },
                         {
                             "name": "faz-handler-name",
-                            "value": "[concat(variables('funcappURL'), '/api/', parameters('FunctionNameFazAuthHandler'),  '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  parameters('FunctionNameFazAuthHandler')), '2019-08-01').default)]"
+                            "value": "[concat(variables('funcappURL'), '/api/', parameters('FunctionNameFazAuthHandler'),  '?code=', parameters('FunctionKeyFazAuthHandler'))]"
                         },
                         {
                             "name": "faz-ip",
