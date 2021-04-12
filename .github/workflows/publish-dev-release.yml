@@ -13,18 +13,30 @@ on:
         description: >-
           The custom version to be used for branch, tag, and release. Do not use an existing tag in the repo.
         required: true
+      name-prefix:
+        description: >-
+          The branch name prefix. Default: devrel_
+        required: false
+      no-publish:
+        description: >-
+          Boolean indicator to skip the publication steps.
+        required: true
+        default: 'false'
 jobs:
   main_job:
     runs-on: ubuntu-latest
     name: main job
     steps:
+      - name: preparation
+        run: |
+          echo "name-prefix=${{ github.event.inputs['name-prefix'] && 'devrel_' || github.event.inputs['name-prefix'] }}" >> $GITHUB_ENV
       - name: create release branch
         id: create-branch
         uses: fortinet/github-action-version-branch@1.0.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           base-branch: ${{ github.event.inputs['base-branch'] }}
-          name-prefix: devrel_
+          name-prefix: ${{ env['name-prefix'] }}
           custom-version: ${{ github.event.inputs['custom-version'] }}
       - name: checkout dev release branch
         uses: actions/checkout@v2
@@ -62,10 +74,12 @@ jobs:
           echo "::set-output name=tag-commit::$(git rev-parse HEAD)"
       # prepare release assets
       - name: make dist
+        if: ${{ github.event.inputs['no-publish'] != 'true'  }}
         run: npm run make-dist
       # create a release
       - id: create-release
         name: create release
+        if: ${{ github.event.inputs['no-publish'] != 'true'  }}
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
@@ -77,6 +91,7 @@ jobs:
           commitish: ${{ steps['push-changes'].outputs['tag-commit'] }} # Use the output: `tag-commit` from a prev step
       - id: upload-release-asset
         name: upload release assets
+        if: ${{ github.event.inputs['no-publish'] != 'true'  }}
         uses: svenstaro/upload-release-action@2.2.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
