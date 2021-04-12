@@ -136,7 +136,7 @@
                         },
                         {
                             "name": "[if(not(empty(parameters('FunctionAppInsightName'))), 'APPINSIGHTS_INSTRUMENTATIONKEY', 'DEPLOYED_APPINSIGHTS')]",
-                            "value": "[if(not(empty(parameters('FunctionAppInsightName'))), resourceId('Microsoft.Insights/components', parameters('FunctionAppInsightName')), 'false')]"
+                            "value": "[if(not(empty(parameters('FunctionAppInsightName'))), reference(resourceId('Microsoft.Insights/components', parameters('FunctionAppInsightName')), '2018-05-01-preview').InstrumentationKey, 'false')]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
