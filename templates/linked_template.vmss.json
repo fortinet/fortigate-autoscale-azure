@@ -337,7 +337,7 @@
                     "osProfile": {
                         "computerNamePrefix": "[parameters('VmssNameBYOL')]",
                         "adminUsername": "[parameters('adminUsername')]",
-                        "customData": "[base64(concat('{\"license-url\": \"', parameters('FunctionNameLicenseHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'byol-license'), '2019-08-01').default, '\",\"config-url\": \"', parameters('FunctionNameFgtAsHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
+                        "customData": "[base64(concat('{\"license-url\": \"', 'https://', parameters('FunctionAppName'), '.azurewebsites.net/api/', parameters('FunctionNameLicenseHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'byol-license'), '2019-08-01').default, '\",\"config-url\": \"', 'https://', parameters('FunctionAppName'), '.azurewebsites.net/api/', parameters('FunctionNameFgtAsHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
                         "adminPassword": "[parameters('adminPassword')]"
                     },
                     "networkProfile": {
@@ -488,7 +488,7 @@
                     "evictionPolicy": "delete",
                     "osProfile": {
                         "computerNamePrefix": "[parameters('VmssNamePAYG')]",
-                        "customData": "[base64(concat('{\"config-url\": \"', parameters('FunctionNameFgtAsHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
+                        "customData": "[base64(concat('{\"config-url\": \"', 'https://', parameters('FunctionAppName'), '.azurewebsites.net/api/', parameters('FunctionNameFgtAsHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
                         "adminUsername": "[parameters('adminUsername')]",
                         "adminPassword": "[parameters('adminPassword')]"
                     },
