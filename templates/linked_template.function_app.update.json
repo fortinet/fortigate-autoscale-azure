@@ -196,7 +196,7 @@
                         },
                         {
                             "name": "FORTIANALYZER_HANDLER_ACCESS_KEY",
-                            "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'faz-auth-handler'), '2019-08-01').default]"
+                            "value": "[parameters('FunctionKeyFazAuthHandler')]"
                         },
                         {
                             "name": "RESOURCE_GROUP",
