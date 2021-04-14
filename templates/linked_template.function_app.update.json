@@ -195,6 +195,10 @@
                             "value": "[parameters('ServicePrincipalAppSecret')]"
                         },
                         {
+                            "name": "FORTIANALYZER_HANDLER_ACCESS_KEY",
+                            "value": "[listKeys(resourceId(subscription().subscriptionId, resourceGroup().location, 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'faz-auth-handler'), '2019-08-01').default]"
+                        },
+                        {
                             "name": "RESOURCE_GROUP",
                             "value": "[parameters('VnetResourceGroupName')]"
                         },
