@@ -14,10 +14,10 @@
             "minValue": 0,
             "type": "Int"
         },
-        "ExternalLBBackendAddressPools": {
+        "ExternalLBBackendAddressPoolIds": {
             "type": "Array"
         },
-        "ExternalLBInboundNatPools": {
+        "ExternalLBInboundNatPoolIds": {
             "type": "Array"
         },
         "ExtraSubnetIds": {
@@ -268,9 +268,9 @@
             "copy": [
                 {
                     "name": "iterations",
-                    "count": "[if(empty(parameters('ExternalLBInboundNatPools')), 0,length(parameters('ExternalLBInboundNatPools')))]",
+                    "count": "[if(empty(parameters('ExternalLBInboundNatPoolIds')), 0,length(parameters('ExternalLBInboundNatPoolIds')))]",
                     "input": {
-                        "id": "[parameters('ExternalLBInboundNatPools')[copyIndex('iterations')]]"
+                        "id": "[parameters('ExternalLBInboundNatPoolIds')[copyIndex('iterations')]]"
                     }
                 }
             ]
@@ -279,9 +279,9 @@
             "copy": [
                 {
                     "name": "iterations",
-                    "count": "[if(empty(parameters('ExternalLBBackendAddressPools')), 0,length(parameters('ExternalLBBackendAddressPools')))]",
+                    "count": "[if(empty(parameters('ExternalLBInboundNatPoolIds')), 0,length(parameters('ExternalLBInboundNatPoolIds')))]",
                     "input": {
-                        "id": "[parameters('ExternalLBBackendAddressPools')[copyIndex('iterations')]]"
+                        "id": "[parameters('ExternalLBInboundNatPoolIds')[copyIndex('iterations')]]"
                     }
                 }
             ]
