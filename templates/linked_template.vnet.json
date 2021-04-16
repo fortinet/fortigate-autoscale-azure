@@ -1,0 +1,189 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "ExtraSubnetAddressRanges": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "ExtraSubnetNames": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "Subnet1AddressRange": {
+            "type": "String"
+        },
+        "Subnet1Name": {
+            "type": "String"
+        },
+        "UniqueResourceNamePrefix": {
+            "type": "String"
+        },
+        "VnetAddressSpace": {
+            "type": "String"
+        },
+        "VnetName": {
+            "type": "String"
+        }
+    },
+    "variables": {
+        "extraSubnetCount": "[if(empty(parameters('ExtraSubnetAddressRanges')), 0, length(parameters('ExtraSubnetAddressRanges')))]",
+        "extraSubnetNames": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[variables('extraSubnetCount')]",
+                    "input": "[if(or(empty(parameters('ExtraSubnetNames')), less(length(parameters('ExtraSubnetNames')), add(1, copyIndex('iterations'))), empty(parameters('ExtraSubnetNames')[copyIndex('iterations')])), concat(variables('vNetName'), '-subnet', copyIndex('iterations', 2)), parameters('ExtraSubnetNames')[copyIndex('iterations')])]"
+                }
+            ]
+        },
+        "extraSubnets": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[variables('extraSubnetCount')]",
+                    "input": {
+                        "name": "[variables('extraSubnetNames').iterations[copyIndex('iterations')]]",
+                        "properties": {
+                            "addressPrefix": "[parameters('ExtraSubnetAddressRanges')[copyIndex('iterations')]]",
+                            "networkSecurityGroup": {
+                                "id": "[variables('networkSecurityGroupId')]"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
+        "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-network-security-group')]",
+        "subnet1": {
+            "name": "[variables('subnet1Name')]",
+            "properties": {
+                "addressPrefix": "[parameters('Subnet1AddressRange')]",
+                "networkSecurityGroup": {
+                    "id": "[variables('networkSecurityGroupId')]"
+                },
+                "serviceEndpoints": [
+                    {
+                        "service": "Microsoft.AzureCosmosDB",
+                        "locations": ["*"]
+                    },
+                    {
+                        "service": "Microsoft.Web",
+                        "locations": ["*"]
+                    }
+                ]
+            }
+        },
+        "subnet1Name": "[if(empty(parameters('Subnet1Name')), concat(variables('vNetName'), '-subnet1'), parameters('Subnet1Name'))]",
+        "subnetIds": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[length(variables('subnets'))]",
+                    "input": "[concat(variables('vnetID'), '/subnets/', variables('subnets')[copyIndex('iterations')].name)]"
+                }
+            ]
+        },
+        "subnetNames": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[length(variables('subnets'))]",
+                    "input": "[variables('subnets')[copyIndex('iterations')].name]"
+                }
+            ]
+        },
+        "subnets": "[union(createArray(variables('subnet1')), variables('extraSubnets').iterations)]",
+        "vNetAddressPrefix": "[parameters('VnetAddressSpace')]",
+        "vNetName": "[concat(parameters('UniqueResourceNamePrefix'), '-virtual-network')]",
+        "vnetID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('VnetName'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-04-01",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('networkSecurityGroupName')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowAllInbound",
+                        "properties": {
+                            "description": "Allow all in",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowAllOutbound",
+                        "properties": {
+                            "description": "Allow all out",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 105,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+            "apiVersion": "2019-04-01",
+            "dependsOn": ["[variables('networkSecurityGroupName')]"],
+            "location": "[resourceGroup().location]",
+            "name": "[variables('vNetName')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": ["[variables('vNetAddressPrefix')]"]
+                },
+                "Subnets": "[variables('subnets')]"
+            },
+            "type": "Microsoft.Network/virtualNetworks"
+        }
+    ],
+    "outputs": {
+        "networkSecurityGroupName": {
+            "type": "String",
+            "value": "[variables('networkSecurityGroupName')]"
+        },
+        "subnet1Id": {
+            "type": "String",
+            "value": "[variables('subnetIds').iterations[0]]"
+        },
+        "subnet1Name": {
+            "type": "String",
+            "value": "[variables('subnetNames').iterations[0]]"
+        },
+        "subnetCount": {
+            "type": "Int",
+            "value": "[length(variables('subnets'))]"
+        },
+        "subnetIds": {
+            "type": "Array",
+            "value": "[variables('subnetIds').iterations]"
+        },
+        "subnetNames": {
+            "type": "Array",
+            "value": "[variables('subnetNames').iterations]"
+        },
+        "vnetID": {
+            "type": "String",
+            "value": "[variables('vnetID')]"
+        },
+        "vnetName": {
+            "type": "String",
+            "value": "[variables('vNetName')]"
+        }
+    }
+}

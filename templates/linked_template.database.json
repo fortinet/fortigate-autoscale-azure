@@ -1,0 +1,390 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "DatabaseAccountName": {
+            "type": "String"
+        },
+        "DatabaseName": {
+            "type": "String"
+        },
+        "SharedThroughput": {
+            "type": "Int"
+        },
+        "EnableFortiAnalyzer": {
+            "allowedValues": ["yes", "no"],
+            "type": "String"
+        },
+        "EnableHybridLicensing": {
+            "allowedValues": ["yes", "no"],
+            "type": "String"
+        }
+    },
+    "variables": {
+        "ifEnableFortiAnalyzer": "[equals(parameters('EnableFortiAnalyzer'), 'yes')]",
+        "ifEnableHybridLicensing": "[equals(parameters('EnableHybridLicensing'), 'yes')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'))]",
+            "properties": {
+                "resource": {
+                    "id": "[parameters('DatabaseName')]"
+                },
+                "options": {
+                    "throughput": "[parameters('SharedThroughput')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'), '/Autoscale')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('DatabaseAccountName'), 'sql', parameters('DatabaseName'))]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "Autoscale",
+                    "partitionKey": {
+                        "paths": ["/vmId"],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [
+                            {
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'), '/PrimaryElection')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('DatabaseAccountName'), 'sql', parameters('DatabaseName'))]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "PrimaryElection",
+                    "partitionKey": {
+                        "paths": ["/id"],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [
+                            {
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'), '/FortiAnalyzer')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('DatabaseAccountName'), 'sql', parameters('DatabaseName'))]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "FortiAnalyzer",
+                    "partitionKey": {
+                        "paths": ["/vmId"],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [
+                            {
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            },
+            "condition": "[variables('IfEnableFortiAnalyzer')]"
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'), '/LicenseStock')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('DatabaseAccountName'), 'sql', parameters('DatabaseName'))]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "LicenseStock",
+                    "partitionKey": {
+                        "paths": ["/checksum"],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [
+                            {
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            },
+            "condition": "[variables('ifEnableHybridLicensing')]"
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'), '/LicenseUsage')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('DatabaseAccountName'), 'sql', parameters('DatabaseName'))]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "LicenseUsage",
+                    "partitionKey": {
+                        "paths": ["/id"],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [
+                            {
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            },
+            "condition": "[bool(variables('ifEnableHybridLicensing'))]"
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'), '/CustomLog')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('DatabaseAccountName'), 'sql', parameters('DatabaseName'))]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "CustomLog",
+                    "partitionKey": {
+                        "paths": ["/id"],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [
+                            {
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'), '/ApiRequestCache')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('DatabaseAccountName'), 'sql', parameters('DatabaseName'))]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "ApiRequestCache",
+                    "partitionKey": {
+                        "paths": ["/id"],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [
+                            {
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "apiVersion": "2016-03-31",
+            "name": "[concat(parameters('DatabaseAccountName'), '/sql/', parameters('DatabaseName'), '/Settings')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('DatabaseAccountName'), 'sql', parameters('DatabaseName'))]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "Settings",
+                    "partitionKey": {
+                        "paths": ["/settingKey"],
+                        "kind": "Hash"
+                    },
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "includedPaths": [
+                            {
+                                "path": "/*",
+                                "indexes": [
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "number",
+                                        "precision": -1
+                                    },
+                                    {
+                                        "kind": "Range",
+                                        "dataType": "string",
+                                        "precision": -1
+                                    }
+                                ]
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    }
+                },
+                "options": {}
+            }
+        }
+    ],
+    "outputs": {}
+}
