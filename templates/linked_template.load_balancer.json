@@ -25,7 +25,7 @@
         }
     },
     "variables": {
-        "ifCreateInternalLB": "[and(parameters('InternalLBFrontendIPAddress'), parameters('InternalLBFrontendSubnetId'))]",
+        "ifCreateInternalLB": "[and(not(empty(parameters('InternalLBFrontendIPAddress'))), not(empty(parameters('InternalLBFrontendSubnetId'))))]",
         "ifCreateExternalLBPublicFrontendIP": "[empty(parameters('ExternalLBFrontendIPId'))]",
         "externalLBFrontendIPName": "[concat(parameters('UniqueResourceNamePrefix'), '-ext-lb-public-ip')]",
         "externalLBFrontendIPId": "[if(variables('ifCreateExternalLBPublicFrontendIP'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('externalLBFrontendIPName')), parameters('ExternalLBFrontendIPId'))]",
