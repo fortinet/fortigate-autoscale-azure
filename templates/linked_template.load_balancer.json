@@ -75,17 +75,17 @@
             "copy": [
                 {
                     "name": "iterations",
-                    "count": "[length(parameters('ExternalLBRules'))]",
+                    "count": "[div(length(parameters('ExternalLBRules')), 3)]",
                     "input": {
-                        "name": "[concat(variables('externalLoadBalancerName'), '-rule-', parameters('ExternalLBRules')[copyIndex('iterations')][0], '-', parameters('ExternalLBRules')[copyIndex('iterations')][1], '-', parameters('ExternalLBRules')[copyIndex('iterations')][2])]",
+                        "name": "[concat(variables('externalLoadBalancerName'), '-rule-', parameters('ExternalLBRules')[add(0, copyIndex('iterations'))], '-', parameters('ExternalLBRules')[add(1, copyIndex('iterations'))], '-', parameters('ExternalLBRules')[add(2, copyIndex('iterations'))])]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
                             },
                             "backendAddressPool": "[variables('externalLBBackendAddressPoolIds').iterations[0]]",
-                            "protocol": "[parameters('ExternalLBRules')[copyIndex('iterations')][0]]",
-                            "frontendPort": "[int(parameters('ExternalLBRules')[copyIndex('iterations')][1])]",
-                            "backendPort": "[int(parameters('ExternalLBRules')[copyIndex('iterations')][2])]",
+                            "protocol": "[parameters('ExternalLBRules')[add(0, copyIndex('iterations'))]]",
+                            "frontendPort": "[int(parameters('ExternalLBRules')[add(1, copyIndex('iterations'))])]",
+                            "backendPort": "[int(parameters('ExternalLBRules')[add(2, copyIndex('iterations'))])]",
                             "loadDistribution": "SourceIP",
                             "enableFloatingIP": true,
                             "probe": {
