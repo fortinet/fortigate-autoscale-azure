@@ -268,9 +268,9 @@
             "copy": [
                 {
                     "name": "iterations",
-                    "count": "[if(empty(parameters('ExternalLBInboundNatPoolIds')), 0,length(parameters('ExternalLBInboundNatPoolIds')))]",
+                    "count": "[if(empty(parameters('ExternalLBBackendAddressPoolIds')), 0,length(parameters('ExternalLBBackendAddressPoolIds')))]",
                     "input": {
-                        "id": "[parameters('ExternalLBInboundNatPoolIds')[copyIndex('iterations')]]"
+                        "id": "[parameters('ExternalLBBackendAddressPoolIds')[copyIndex('iterations')]]"
                     }
                 }
             ]
