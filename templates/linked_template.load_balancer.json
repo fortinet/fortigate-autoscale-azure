@@ -76,7 +76,7 @@
                 {
                     "name": "iterations",
                     "count": "[length(variables('externalLBBackendAddressPool').iterations)]",
-                    "input": "[concat(variables('externalLoadBalancerId'), '/backendAddressPools/',variables('externalLBBackendAddressPool')[copyIndex('iterations')].id)]"
+                    "input": "[concat(variables('externalLoadBalancerId'), '/backendAddressPools/',variables('externalLBBackendAddressPool').iterations[copyIndex('iterations')].id)]"
                 }
             ]
         },
