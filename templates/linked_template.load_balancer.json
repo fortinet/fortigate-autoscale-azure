@@ -121,6 +121,7 @@
             "apiVersion": "2019-04-01",
             "name": "[variables('externalLoadBalancerName')]",
             "location": "[resourceGroup().location]",
+            "dependsOn": ["[variables('externalLBFrontendIPName')]"],
             "sku": {
                 "name": "Standard"
             },
