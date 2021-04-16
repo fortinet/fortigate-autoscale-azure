@@ -60,7 +60,7 @@
                 "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolSSHName'))]"
             }
         ],
-        "externalLBBackendAddressPoolIds": {
+        "externalLBBackendAddressPool": {
             "copy": [
                 {
                     "name": "iterations",
@@ -68,6 +68,15 @@
                     "input": {
                         "id": "[concat(variables('externalLoadBalancerId'), '/backendAddressPools/',variables('externalLBBackendAddressPools')[copyIndex('iterations')].name)]"
                     }
+                }
+            ]
+        },
+        "externalLBBackendAddressPoolIds": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[length(variables('externalLBBackendAddressPool').iterations)]",
+                    "input": "[concat(variables('externalLoadBalancerId'), '/backendAddressPools/',variables('externalLBBackendAddressPool')[copyIndex('iterations')].id)]"
                 }
             ]
         },
@@ -82,7 +91,7 @@
                             "frontendIPConfiguration": {
                                 "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
                             },
-                            "backendAddressPool": "[variables('externalLBBackendAddressPoolIds').iterations[0]]",
+                            "backendAddressPool": "[variables('externalLBBackendAddressPool').iterations[0]]",
                             "protocol": "[parameters('ExternalLBRules')[add(0, mul(3, copyIndex('iterations')))]]",
                             "frontendPort": "[int(parameters('ExternalLBRules')[add(1, mul(3, copyIndex('iterations')))])]",
                             "backendPort": "[int(parameters('ExternalLBRules')[add(2, mul(3, copyIndex('iterations')))])]",
