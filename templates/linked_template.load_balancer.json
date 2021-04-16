@@ -40,7 +40,6 @@
         "externalLoadBalancerFrontendIPConfigName1": "[concat(variables('externalLoadBalancerName'), '-frontend-ip-config1')]",
         "externalLoadBalancerFrontendIPConfigId1": "[concat(variables('externalLoadBalancerId'), '/frontendIPConfigurations/', variables('externalLoadBalancerFrontendIPConfigName1'))]",
         "externalLoadBalancerBackendAddressPoolName1": "[concat(variables('externalLoadBalancerName'), '-backend-ip-pool-subnet1')]",
-        "externalLoadBalancerBackendAddressPoolId1": "[concat(variables('externalLoadBalancerId'), '/backendAddressPools/',variables('externalLoadBalancerBackendAddressPoolName1'))]",
         "internalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-internal-load-balancer')]",
         "internalLoadBalancerId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('internalLoadBalancerName'))]",
         "internalLoadBalancerFrontendIPConfigName1": "[concat(variables('internalLoadBalancerName'), '-frontend-ip-config1')]",
@@ -53,12 +52,8 @@
             }
         ],
         "externalLBInboundNatPoolIds": [
-            {
-                "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolHTTPSName'))]"
-            },
-            {
-                "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolSSHName'))]"
-            }
+            "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolHTTPSName'))]",
+            "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolSSHName'))]"
         ],
         "externalLBBackendAddressPool": {
             "copy": [
@@ -76,7 +71,7 @@
                 {
                     "name": "iterations",
                     "count": "[length(variables('externalLBBackendAddressPool').iterations)]",
-                    "input": "[concat(variables('externalLoadBalancerId'), '/backendAddressPools/',variables('externalLBBackendAddressPool')[copyIndex('iterations')].id)]"
+                    "input": "[variables('externalLBBackendAddressPool').iterations[copyIndex('iterations')].id]"
                 }
             ]
         },
