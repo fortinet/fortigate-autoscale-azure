@@ -83,9 +83,9 @@
                                 "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
                             },
                             "backendAddressPool": "[variables('externalLBBackendAddressPoolIds').iterations[0]]",
-                            "protocol": "[parameters('ExternalLBRules')[add(0, copyIndex('iterations'))]]",
-                            "frontendPort": "[int(parameters('ExternalLBRules')[add(1, copyIndex('iterations'))])]",
-                            "backendPort": "[int(parameters('ExternalLBRules')[add(2, copyIndex('iterations'))])]",
+                            "protocol": "[parameters('ExternalLBRules')[add(0, mul(3, copyIndex('iterations')))]]",
+                            "frontendPort": "[int(parameters('ExternalLBRules')[add(1, mul(3, copyIndex('iterations')))])]",
+                            "backendPort": "[int(parameters('ExternalLBRules')[add(2, mul(3, copyIndex('iterations')))])]",
                             "loadDistribution": "SourceIP",
                             "enableFloatingIP": true,
                             "probe": {
