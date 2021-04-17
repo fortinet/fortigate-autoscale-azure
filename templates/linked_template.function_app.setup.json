@@ -5,6 +5,12 @@
         "AdminPortNumber": {
             "type": "Int"
         },
+        "AllowAccessFromIPAddresses": {
+            "type": "Array"
+        },
+        "AllowAccessFromSubnetIds": {
+            "type": "Array"
+        },
         "BYOLInstanceCount": {
             "type": "Int"
         },
@@ -111,11 +117,11 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "name": "UpdateFunctionApp",
+            "name": "UpdateFunctionAppConfigurations",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.function_app.update.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.function_app.configuration.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
@@ -225,6 +231,31 @@
                     },
                     "VnetResourceGroupName": {
                         "value": "[parameters('VnetResourceGroupName')]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "UpdateFunctionAppAccessRestrictions",
+            "dependsOn": ["UpdateFunctionAppConfigurations"],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.function_app.access_restriction.json"
+                },
+                "parameters": {
+                    "AllowAccessFromIPAddresses": {
+                        "value": "[parameters('AllowAccessFromIPAddresses')]"
+                    },
+                    "AllowAccessFromSubnetIds": {
+                        "value": "[parameters('AllowAccessFromSubnetIds')]"
+                    },
+                    "FunctionAppName": {
+                        "value": "[parameters('FunctionAppName')]"
                     }
                 }
             },
