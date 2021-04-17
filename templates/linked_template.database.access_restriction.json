@@ -5,7 +5,7 @@
         "AllowAccessFromSubnetIds": {
             "type": "array"
         },
-        "CommaseparatedIPAddressString": {
+        "CommaSeparatedIPAddressString": {
             "type": "string"
         },
         "DatabaseAccountName": {
@@ -34,7 +34,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "databaseAccountOfferType": "Standard",
-                "ipRangeFilter": "[parameters('CommaseparatedIPAddressString')]",
+                "ipRangeFilter": "[parameters('CommaSeparatedIPAddressString')]",
                 "isVirtualNetworkFilterEnabled": true,
                 "virtualNetworkRules": "[variables('virtualNetworkRules').iterations]",
                 "locations": [
