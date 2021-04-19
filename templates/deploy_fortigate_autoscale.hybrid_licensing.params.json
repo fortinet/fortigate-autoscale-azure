@@ -26,17 +26,14 @@
         "FortiAnalyzerInstanceType": {
             "value": "Standard_D2"
         },
-        "FortiAnalyzerIntegrationOptions": {
-            "value": "yes"
-        },
         "FortiAnalyzerVersion": {
-            "value": ""
+            "value": "6.4.5"
         },
         "FortiGatePSKSecret": {
             "value": ""
         },
-        "FosVersion": {
-            "value": ""
+        "FOSVersion": {
+            "value": "6.4.5"
         },
         "FrontendIPDeploymentMethod": {
             "value": "create new public IP address"

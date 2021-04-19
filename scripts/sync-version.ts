@@ -65,7 +65,10 @@ files
                 // both template file and parameter file may contain the parameter. however,
                 // the parameters in the file parameter file may not have the defaultValue prop.
                 // so only set which it contains a defaultValue prop.
-                if (key === 'PackageResURL' && templateJSON.parameters[key].defaultValue) {
+                if (
+                    key === 'PackageResURL' &&
+                    templateJSON.parameters[key].defaultValue !== undefined
+                ) {
                     templateJSON.parameters[
                         key
                     ].defaultValue = `https://github.com/fortinet/fortigate-autoscale-azure/releases/download/${verStr}/fortigate-autoscale-azure-funcapp.zip`;

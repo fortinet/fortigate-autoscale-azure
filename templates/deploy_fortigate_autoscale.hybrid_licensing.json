@@ -54,14 +54,6 @@
                 "description": "Size of the FortiAnalyzer VM."
             }
         },
-        "FortiAnalyzerIntegrationOptions": {
-            "defaultValue": "yes",
-            "allowedValues": ["yes", "no"],
-            "type": "String",
-            "metadata": {
-                "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
-            }
-        },
         "FortiAnalyzerVersion": {
             "defaultValue": "6.4.5",
             "allowedValues": ["6.4.5", "6.2.5"],
@@ -76,7 +68,7 @@
                 "description": "The secret key for the FortiGates instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Maximum length is 128."
             }
         },
-        "FosVersion": {
+        "FOSVersion": {
             "defaultValue": "6.4.5",
             "allowedValues": ["6.4.5"],
             "type": "String",
@@ -363,7 +355,7 @@
         "databaseName": "FortiGateAutoscale",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "databaseSharedThroughputBase": 500,
-        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
+        "enableFortiAnalyzer": true,
         "enableHybridLicensing": true,
         "extLBFrontendIPConfigNameSubnet1": "external-lb-frontend-ip-config-subnet-1",
         "extLBFrontendPortRangeEndHTTPS": 40120,
@@ -385,13 +377,13 @@
             "publisher": "fortinet",
             "offer": "fortinet_fortigate-vm_v5",
             "sku": "fortinet_fg-vm",
-            "version": "[parameters('FosVersion')]"
+            "version": "[parameters('FOSVersion')]"
         },
         "vmImgReferenceFgtPAYG": {
             "publisher": "fortinet",
             "offer": "fortinet_fortigate-vm_v5",
             "sku": "fortinet_fg-vm_payg_20190624",
-            "version": "[parameters('FosVersion')]"
+            "version": "[parameters('FOSVersion')]"
         },
         "funcAppIPResrictionPriority": 100,
         "funcAppIPResrictions": {
@@ -1617,7 +1609,7 @@
                         "value": "[variables('databaseName')]"
                     },
                     "FortiAnalyzerIntegrationOptions": {
-                        "value": "[parameters('FortiAnalyzerIntegrationOptions')]"
+                        "value": "[if(variables('enableFortiAnalyzer'), 'yes', 'no')]"
                     },
                     "FortiAnalyzerPublicIp": {
                         "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, '')]"
