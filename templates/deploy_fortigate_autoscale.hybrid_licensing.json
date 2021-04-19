@@ -426,13 +426,13 @@
             "publisher": "fortinet",
             "offer": "fortinet_fortigate-vm_v5",
             "sku": "fortinet_fg-vm",
-            "version": "[parameters('FosVersion')]"
+            "version": "[parameters('FOSVersion')]"
         },
         "vmImgReferenceFgtPAYG": {
             "publisher": "fortinet",
             "offer": "fortinet_fortigate-vm_v5",
             "sku": "fortinet_fg-vm_payg_20190624",
-            "version": "[parameters('FosVersion')]"
+            "version": "[parameters('FOSVersion')]"
         },
         "vmssNameBYOL": "[concat(parameters('ResourceNamePrefix'), 'byol')]",
         "vmssNamePAYG": "[concat(parameters('ResourceNamePrefix'), 'payg')]",
