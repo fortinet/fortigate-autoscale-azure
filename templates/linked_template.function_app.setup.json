@@ -112,7 +112,9 @@
             "type": "String"
         }
     },
-    "variables": {},
+    "variables": {
+        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]"
+    },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
@@ -155,7 +157,7 @@
                         "value": "[parameters('FunctionAppName')]"
                     },
                     "FunctionKeyFazAuthHandler": {
-                        "value": "[listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  parameters('FunctionNameFazAuthHandler')), '2019-08-01').default]"
+                        "value": "[if( variables('enableFortiAnalyzer'), listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  parameters('FunctionNameFazAuthHandler')), '2019-08-01').default,'')]"
                     },
                     "FunctionNameFazAuthHandler": {
                         "value": "[parameters('FunctionNameFazAuthHandler')]"

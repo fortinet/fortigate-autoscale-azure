@@ -72,6 +72,11 @@ files
                     templateJSON.parameters[
                         key
                     ].defaultValue = `https://github.com/fortinet/fortigate-autoscale-azure/releases/download/${verStr}/fortigate-autoscale-azure-funcapp.zip`;
+                    console.log(
+                        `Function app zip file url: ${chalk.green(
+                            templateJSON.parameters[key].defaultValue
+                        )}.`
+                    );
                 }
             });
         }

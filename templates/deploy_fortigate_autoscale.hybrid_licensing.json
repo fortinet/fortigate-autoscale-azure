@@ -62,6 +62,14 @@
                 "description": "Size of the FortiAnalyzer VM."
             }
         },
+        "FortiAnalyzerIntegrationOptions": {
+            "defaultValue": "yes",
+            "allowedValues": ["yes", "no"],
+            "type": "String",
+            "metadata": {
+                "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
+            }
+        },
         "FortiAnalyzerVersion": {
             "defaultValue": "6.4.5",
             "allowedValues": ["6.4.5", "6.2.5"],
@@ -356,7 +364,7 @@
         "databaseName": "FortiGateAutoscale",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "databaseSharedThroughputBase": 500,
-        "enableFortiAnalyzer": true,
+        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
         "enableHybridLicensing": true,
         "externalLBFrontendIPId": "[if(variables('ifCreateNewPublicIP'), '', concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/publicIPAddresses/', parameters('FrontendIPName')))]",
         "externalLBFrontendIPName": "[if(and(variables('ifCreateNewPublicIP'), empty(parameters('FrontendIPName'))), concat(variables('vNetName'), '-ext-lb-public-ip'), parameters('FrontendIPName'))]",
