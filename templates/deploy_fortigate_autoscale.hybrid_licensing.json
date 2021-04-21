@@ -928,7 +928,7 @@
     "outputs": {
         "cmdDeleteAll": {
             "type": "String",
-            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'), if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''))]"
+            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
         }
     }
 }
