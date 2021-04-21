@@ -14,8 +14,11 @@
         "BYOLInstanceCount": {
             "value": 2
         },
-        "ExternalLoadBalancerFrontendIP": {
-            "value": "create new"
+        "ExternalLoadBalancerFrontendIPName": {
+            "value": ""
+        },
+        "ExternalLoadBalancerFrontendIPResourceGroup": {
+            "value": ""
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
             "value": ""
@@ -37,9 +40,6 @@
         },
         "FOSVersion": {
             "value": "6.4.5"
-        },
-        "FrontendIPName": {
-            "value": ""
         },
         "HeartBeatDelayAllowance": {
             "value": 30
