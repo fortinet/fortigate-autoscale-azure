@@ -123,7 +123,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.function_app.configuration.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.function_app.configuration.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
@@ -247,7 +247,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.function_app.access_restriction.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.function_app.access_restriction.json"
                 },
                 "parameters": {
                     "AllowAccessFromIPAddresses": {

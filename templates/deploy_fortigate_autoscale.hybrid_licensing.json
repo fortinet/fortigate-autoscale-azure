@@ -39,24 +39,28 @@
             }
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
+            "defaultValue": "",
             "type": "securestring",
             "metadata": {
                 "description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
             }
         },
         "FortiAnalyzerAutoscaleAdminUsername": {
+            "defaultValue": "",
             "type": "string",
             "metadata": {
                 "description": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
             }
         },
         "FortiAnalyzerCustomPrivateIpAddress": {
+            "defaultValue": "",
             "type": "string",
             "metadata": {
                 "description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
             }
         },
         "FortiAnalyzerInstanceType": {
+            "defaultValue": "",
             "type": "String",
             "metadata": {
                 "description": "Size of the FortiAnalyzer VM."
@@ -491,7 +495,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.database.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.database.json"
                 },
                 "parameters": {
                     "DatabaseAccountName": {
@@ -522,7 +526,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.vnet.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.vnet.json"
                 },
                 "parameters": {
                     "ExtraSubnetAddressRanges": {
@@ -559,7 +563,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.load_balancer.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.load_balancer.json"
                 },
                 "parameters": {
                     "UniqueResourceNamePrefix": {
@@ -597,7 +601,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.faz_integration.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.faz_integration.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -640,7 +644,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.function_app.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.function_app.json"
                 },
                 "parameters": {
                     "FunctionAppName": {
@@ -674,7 +678,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.vmss.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.vmss.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -775,7 +779,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.database.access_restriction.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.database.access_restriction.json"
                 },
                 "parameters": {
                     "AllowAccessFromSubnetIds": {
@@ -804,7 +808,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_move_more_resources_to_link_template/templates/linked_template.function_app.setup.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/linked_template.function_app.setup.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
