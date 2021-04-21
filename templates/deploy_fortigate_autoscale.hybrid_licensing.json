@@ -342,23 +342,11 @@
         }
     },
     "variables": {
-        "accessRestrictionIPArray": "[split(parameters('AccessRestrictionIPRange'), ',')]",
-        "accessRestrictionIPCount": "[if(empty(parameters('AccessRestrictionIPRange')), 0, length(variables('accessRestrictionIPArray')))]",
-        "accessRestrictionIPString": "[if(empty(parameters('AccessRestrictionIPRange')), '', concat(parameters('AccessRestrictionIPRange'), ','))]",
         "adminPortNumber": 8443,
         "autoscaleAssetContainerName": "fortigate-autoscale",
-        "cmdDeleteAutoscaleAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteVNetAll'), variables('cmdDeleteDatabaseAll'))]",
         "cmdDeleteDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
         "cmdDeleteKeyVault": "[concat('az keyvault delete -g ', resourceGroup().name,' -n ', variables('keyVaultName'), ';')]",
-        "cmdDeleteNetworkSecurityGroup": "[if(variables('ifCreateVNet'), concat('az network nsg delete -g ', variables('vNetResourceGroupName'),' -n ', variables('networkSecurityGroupName'), ';'), '')]",
-        "cmdDeletePublicIP": "[if(variables('ifCreateNewPublicIP'), concat('az network public-ip delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('externalLBFrontendIPName'), ';'), '')]",
-        "cmdDeleteRouteTable1": "[if(variables('ifCreateVNet'), concat('az network route-table delete -g ', variables('vNetResourceGroupName'),' -n ', variables('intRouteTable1Name'), ';'), '')]",
-        "cmdDeleteRouteTable2": "[if(variables('ifCreateVNet'), concat('az network route-table delete -g ', variables('vNetResourceGroupName'),' -n ', variables('intRouteTable2Name'), ';'), '')]",
-        "cmdDeleteRouteTable3": "[if(variables('ifCreateVNet'), concat('az network route-table delete -g ', variables('vNetResourceGroupName'),' -n ', variables('intRouteTable3Name'), ';'), '')]",
-        "cmdDeleteRouteTableAll": "[concat(variables('cmdDeleteRouteTable1'), variables('cmdDeleteRouteTable2'), variables('cmdDeleteRouteTable3'))]",
         "cmdDeleteStorageAccount": "[concat('az storage account delete -y -g ', resourceGroup().name, ' -n ', variables('storageAccountName'), ';')]",
-        "cmdDeleteVNet": "[if(variables('ifCreateVNet'), concat('az network vnet delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vNetName'), ';'), '')]",
-        "cmdDeleteVNetAll": "[if(variables('ifCreateVNet'), concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteLBS'), variables('cmdDeleteVNet'), variables('cmdDeleteNetworkSecurityGroup'), variables('cmdDeletePublicIP'), variables('cmdDeleteRouteTableAll'), variables('cmdDeleteVNet')), '')]",
         "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
         "databaseName": "FortiGateAutoscale",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
@@ -366,51 +354,17 @@
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
         "enableHybridLicensing": true,
         "externalLBFrontendIPId": "[if(variables('ifCreateNewPublicIP'), '', concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/publicIPAddresses/', parameters('FrontendIPName')))]",
-        "externalLBFrontendIPName": "[if(and(variables('ifCreateNewPublicIP'), empty(parameters('FrontendIPName'))), concat(variables('vNetName'), '-ext-lb-public-ip'), parameters('FrontendIPName'))]",
-        "externalLoadBalancerName": "[concat(parameters('ResourceNamePrefix'), '-external-load-balancer')]",
-        "funcAppIPResrictionPriority": 100,
-        "funcAppIPResrictions": {
-            "copy": [
-                {
-                    "name": "ipRangeRestriction",
-                    "count": "[variables('accessRestrictionIPCount')]",
-                    "input": {
-                        "name": "[concat('allow-external-ipv4-', copyIndex('ipRangeRestriction', 1))]",
-                        "ipAddress": "[variables('accessRestrictionIPArray')[copyIndex('ipRangeRestriction')]]",
-                        "action": "Allow",
-                        "tag": "Default",
-                        "priority": "[add(variables('funcAppIPResrictionPriority'), copyIndex('ipRangeRestriction', 1))]"
-                    }
-                }
-            ]
-        },
-        "funcAppIpSecurityRestrictions": "[concat(variables('funcAppVNetResrictions'), variables('funcAppIPResrictions').ipRangeRestriction)]",
-        "funcAppVNetResrictions": [
-            {
-                "vnetSubnetResourceId": "[concat(variables('vNetId'), '/subnets/', variables('subnet1Name'))]",
-                "action": "Allow",
-                "tag": "Default",
-                "priority": "[variables('funcAppIPResrictionPriority')]",
-                "name": "allow-FortiGate-subnet"
-            }
-        ],
         "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifCreateNewPublicIP": "[or(equals(parameters('ExternalLoadBalancerFrontendIP'), 'create new'), empty(parameters('FrontendIPName')))]",
         "ifCreateVNet": "[equals(parameters('VnetDeploymentMethod'), 'create new')]",
         "ifCreateVNetInSameRSG": "[and(variables('ifCreateVNet'), or(equals(parameters('VnetResourceGroupName'), ''), equals(parameters('VnetResourceGroupName'), resourceGroup().name)))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
-        "intRouteTable1Name": "[concat(variables('subnet2Name'),'-route-table')]",
-        "intRouteTable2Name": "[concat(variables('subnet3Name'),'-route-table')]",
-        "intRouteTable3Name": "[concat(variables('subnet4Name'),'-route-table')]",
         "internalLoadBalancerIPAddress": "[concat(substring(variables('subnet1Prefix'), 0, lastIndexOf(variables('subnet1Prefix'), '.')),'.', parameters('LoadBalancerIP'))]",
-        "internalLoadBalancerName": "[concat(parameters('ResourceNamePrefix'), '-internal-load-balancer')]",
         "keyVaultName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'kv001')]",
         "licenseFileDirectory": "license-files",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'paygonly', if(variables('ifBYOLOnly'), 'byolonly', 'hybrid'))]",
-        "licensingModelName": "[if(variables('ifPAYGOnly'), 'PAYG-Only', if(variables('ifBYOLOnly'), 'BYOL-Only', 'Hybrid'))]",
         "location": "[resourceGroup().location]",
-        "networkSecurityGroupName": "[if(and(variables('ifCreateVNet'), empty(parameters('NetworkSecurityGroupName'))), concat(parameters('ResourceNamePrefix'), '-network-security-group'), if(empty(parameters('NetworkSecurityGroupName')), 'not-applicable', parameters('NetworkSecurityGroupName')))]",
         "storageAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'sta001')]",
         "subnet1Id": "[concat(variables('vnetID'), '/subnets/', variables('subnet1Name'))]",
         "subnet1Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet1'), parameters('Subnet1Name'))]",
