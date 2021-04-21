@@ -33,7 +33,7 @@
                 {
                     "name": "iterations",
                     "count": "[variables('extraSubnetCount')]",
-                    "input": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', variables('extraSubnetNames').iterations[copyIndex('iterations')], ' -vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]"
+                    "input": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('ExtraSubnetNames')[copyIndex('iterations')], ' -vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]"
                 }
             ]
         },
@@ -41,22 +41,13 @@
         "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupName') , ';')]",
         "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', variables('vNetName') , ';')]",
         "extraSubnetCount": "[if(empty(parameters('ExtraSubnetAddressRanges')), 0, length(parameters('ExtraSubnetAddressRanges')))]",
-        "extraSubnetNames": {
-            "copy": [
-                {
-                    "name": "iterations",
-                    "count": "[variables('extraSubnetCount')]",
-                    "input": "[if(or(empty(parameters('ExtraSubnetNames')), less(length(parameters('ExtraSubnetNames')), add(1, copyIndex('iterations'))), empty(parameters('ExtraSubnetNames')[copyIndex('iterations')])), concat(variables('vNetName'), '-subnet', copyIndex('iterations', 2)), parameters('ExtraSubnetNames')[copyIndex('iterations')])]"
-                }
-            ]
-        },
         "extraSubnets": {
             "copy": [
                 {
                     "name": "iterations",
                     "count": "[variables('extraSubnetCount')]",
                     "input": {
-                        "name": "[variables('extraSubnetNames').iterations[copyIndex('iterations')]]",
+                        "name": "[parameters('ExtraSubnetNames')[copyIndex('iterations')]]",
                         "properties": {
                             "addressPrefix": "[parameters('ExtraSubnetAddressRanges')[copyIndex('iterations')]]",
                             "networkSecurityGroup": {
@@ -183,7 +174,7 @@
                         "value": ""
                     },
                     "StringArray": {
-                        "value": "[variables('cmdDeassociateNSGFromExtraSubnets')]"
+                        "value": "[variables('cmdDeassociateNSGFromExtraSubnets').iterations]"
                     }
                 }
             },
