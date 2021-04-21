@@ -21,7 +21,7 @@
         "delimiter": "[if(empty(variables('firstElement')), '', parameters('Delimiter'))]",
         "joinString": "[concat(parameters('InputString'), variables('delimiter'), variables('firstElement'))]",
         "remainingArray": "[skip(parameters('StringArray'), 1)]",
-        "remainingResourceName": "[concat(variables('uniqueName'), length(parameters('StringArray')))]"
+        "remainingResourceName": "[concat('deployment-template-function-join-', variables('uniqueName'), '-', length(parameters('StringArray')))]"
     },
     "resources": [
         {
