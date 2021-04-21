@@ -553,7 +553,7 @@
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
-            "resourceGroup": "[resourceGroup().name]"
+            "resourceGroup": "[variables('vNetResourceGroupName')]"
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -634,7 +634,7 @@
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
-            "resourceGroup": "[resourceGroup().name]"
+            "resourceGroup": "[variables('vNetResourceGroupName')]"
         },
         {
             "type": "Microsoft.Resources/deployments",
