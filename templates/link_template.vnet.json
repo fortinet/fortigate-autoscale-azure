@@ -27,13 +27,13 @@
         }
     },
     "variables": {
-        "cmdDeassociateNSGFromSubnet1": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('Subnet1Name'), ' -vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]",
+        "cmdDeassociateNSGFromSubnet1": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('Subnet1Name'), ' --vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]",
         "cmdDeassociateNSGFromExtraSubnets": {
             "copy": [
                 {
                     "name": "iterations",
                     "count": "[variables('extraSubnetCount')]",
-                    "input": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('ExtraSubnetNames')[copyIndex('iterations')], ' -vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]"
+                    "input": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('ExtraSubnetNames')[copyIndex('iterations')], ' --vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]"
                 }
             ]
         },
