@@ -1,0 +1,59 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "InputString": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "Delimiter": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "StringArray": {
+            "type": "Array"
+        }
+    },
+    "variables": {
+        "uniqueName": "[uniqueString(concat(resourceGroup().id, parameters('InputString')))]",
+        "ifContinue": "[not(empty(variables('remainingArray')))]",
+        "firstElement": "[if(or(equals(length(parameters('StringArray')), 0), empty(parameters('StringArray')[0])), '', parameters('StringArray')[0])]",
+        "delimiter": "[if(empty(variables('firstElement')), '', parameters('Delimiter'))]",
+        "joinString": "[concat(parameters('InputString'), variables('delimiter'), variables('firstElement'))]",
+        "remainingArray": "[skip(parameters('StringArray'), 1)]",
+        "remainingResourceName": "[concat(variables('uniqueName'), length(parameters('StringArray')))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('remainingResourceName')]",
+            "condition": "[variables('ifContinue')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_template_function/templates/template_function.join_string_array.json"
+                },
+                "parameters": {
+                    "InputString": {
+                        "value": "[variables('joinString')]"
+                    },
+                    "Delimiter": {
+                        "value": "[parameters('Delimiter')]"
+                    },
+                    "StringArray": {
+                        "value": "[variables('remainingArray')]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]"
+        }
+    ],
+    "outputs": {
+        "outputString": {
+            "type": "String",
+            "value": "[if(variables('ifContinue'), reference(variables('remainingResourceName')).outputs.outputString.value, variables('joinString'))]"
+        }
+    }
+}

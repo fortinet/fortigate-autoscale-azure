@@ -27,9 +27,9 @@
     },
     "variables": {
         "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteInsights'), variables('cmdDeleteSite'), variables('cmdDeleteServerFarm'))]",
-        "cmdDeleteInsights": "[if(variables('enableAzureAppInsights'), concat('az monitor app-insights component delete', ' -a ', parameters('FunctionAppName'), ' -g ', resourceGroup().name, ';'), '')]",
-        "cmdDeleteServerFarm": "[concat('az appservice plan delete -y', ' -n ', variables('hostingPlanName'), ' -g ', resourceGroup().name, ';')]",
-        "cmdDeleteSite": "[concat('az webapp delete -y', ' -n ', parameters('FunctionAppName'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteInsights": "[if(variables('enableAzureAppInsights'), concat('az monitor app-insights component delete -g ', resourceGroup().name, ' -a ', parameters('FunctionAppName'), ';'), '')]",
+        "cmdDeleteServerFarm": "[concat('az appservice plan delete -y -g ', resourceGroup().name, ' -n ', variables('hostingPlanName'), ';')]",
+        "cmdDeleteSite": "[concat('az webapp delete -g ', resourceGroup().name, ' -n ', parameters('FunctionAppName'), ';')]",
         "enableAzureAppInsights": "[contains(variables('functionAppInsightAvailableLocations'), resourceGroup().location)]",
         "functionAppInsightAvailableLocations": [
             "australiaeast",

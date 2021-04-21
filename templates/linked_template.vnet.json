@@ -27,6 +27,19 @@
         }
     },
     "variables": {
+        "cmdDeassociateNSGFromSubnet1": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('Subnet1Name'), ' -vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]",
+        "cmdDeassociateNSGFromExtraSubnets": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[variables('extraSubnetCount')]",
+                    "input": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', variables('extraSubnetNames').iterations[copyIndex('iterations')], ' -vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]"
+                }
+            ]
+        },
+        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeassociateNSGFromSubnet1'))]",
+        "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupName') , ';')]",
+        "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', variables('vNetName') , ';')]",
         "extraSubnetCount": "[if(empty(parameters('ExtraSubnetAddressRanges')), 0, length(parameters('ExtraSubnetAddressRanges')))]",
         "extraSubnetNames": {
             "copy": [
@@ -54,6 +67,7 @@
                 }
             ]
         },
+        "ifCreateExtraSubnets": "[greater(variables('extraSubnetCount'), 0)]",
         "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
         "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-network-security-group')]",
         "subnet1": {
@@ -150,9 +164,38 @@
                 "Subnets": "[variables('subnets')]"
             },
             "type": "Microsoft.Network/virtualNetworks"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "CmdDeassociateNSG",
+            "condition": "[variables('ifCreateExtraSubnets')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_template_function/templates/template_function.join_string_array.json"
+                },
+                "parameters": {
+                    "InputString": {
+                        "value": ""
+                    },
+                    "Delimiter": {
+                        "value": ""
+                    },
+                    "StringArray": {
+                        "value": "[variables('cmdDeassociateNSGFromExtraSubnets')]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]"
         }
     ],
     "outputs": {
+        "cmdDeleteAll": {
+            "type": "String",
+            "value": "[concat(variables('cmdDeleteAll'), if(variables('ifCreateExtraSubnets'), reference('CmdDeassociateNSG').outputs.outputString.value, ''), variables('cmdDeleteNSG'), variables('cmdDeleteVNet'))]"
+        },
         "networkSecurityGroupName": {
             "type": "String",
             "value": "[variables('networkSecurityGroupName')]"

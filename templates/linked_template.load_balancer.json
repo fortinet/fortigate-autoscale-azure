@@ -25,6 +25,10 @@
         }
     },
     "variables": {
+        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteExternalLB'), if(variables('ifCreateInternalLB'), variables('cmdDeleteInternalLB'), ''), if(variables('ifCreateExternalLBPublicFrontendIP'), variables('cmdDeleteExternalLBPublicFrontendIP'), ''))]",
+        "cmdDeleteExternalLB": "[concat('az network lb delete -g ', resourceGroup().name,' -n ', variables('externalLoadBalancerName'), ';')]",
+        "cmdDeleteExternalLBPublicFrontendIP": "[concat('az network public-ip delete -g ', resourceGroup().name,' -n ', parameters('ExternalLBFrontendIPId'), ';')]",
+        "cmdDeleteInternalLB": "[concat('az network lb delete -g ', resourceGroup().name,' -n ', variables('internalLoadBalancerName'), ';')]",
         "externalLBBackendAddressPool": {
             "copy": [
                 {
@@ -244,6 +248,10 @@
         }
     ],
     "outputs": {
+        "cmdDeleteAll": {
+            "type": "String",
+            "value": "[variables('cmdDeleteAll')]"
+        },
         "externalLBBackendAddressPoolIds": {
             "type": "Array",
             "value": "[variables('externalLBBackendAddressPoolIds').iterations]"
