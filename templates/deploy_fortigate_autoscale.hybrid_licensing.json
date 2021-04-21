@@ -30,12 +30,18 @@
                 "description": "The number of FortiGate instances the BYOL VMSS should have at any time. For High Availability in BYOL-only and Hybrid use cases, ensure at least 2 FortiGates are in the group. For specific use cases, set to 0 for PAYG-only, and >= 2 for BYOL-only or hybrid licensing."
             }
         },
-        "ExternalLoadBalancerFrontendIP": {
-            "defaultValue": "create new",
-            "allowedValues": ["create new", "use existing"],
+        "ExternalLoadBalancerFrontendIPName": {
+            "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Deployment method for the Frontend Public IP address for the external load balancer. If set to 'create new', the IP address will be deployed to the resource group where the VNet is located. If set to 'use existing', the existing IP address must reside in the same resource group as the VNet and it must be of the 'standard' SKU in order to match the VMSS."
+                "description": "Name of the Frontend Public IP address for the external load balancer. Specify it when using an existing Public IP address. Othewise, a new public IP address will be created."
+            }
+        },
+        "ExternalLoadBalancerFrontendIPResourceGroup": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "Name of the resource group that contains the Frontend Public IP address for the external load balancer. Specify it when using an existing Public IP address. Othewise, a new public IP address will be created."
             }
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
@@ -94,13 +100,6 @@
             "type": "String",
             "metadata": {
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
-            }
-        },
-        "FrontendIPName": {
-            "defaultValue": "",
-            "type": "String",
-            "metadata": {
-                "description": "Name of the Frontend Public IP address for the external load balancer. When the 'External Load Balancer Frontend IP' parameter is set to 'create new, this parameter can be left empty and a name will be generated."
             }
         },
         "HeartBeatDelayAllowance": {
@@ -357,10 +356,10 @@
         "databaseSharedThroughputBase": 500,
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
         "enableHybridLicensing": true,
-        "externalLBFrontendIPId": "[if(variables('ifCreateNewPublicIP'), '', concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/publicIPAddresses/', parameters('FrontendIPName')))]",
+        "externalLBFrontendIPId": "[if(variables('ifCreateNewPublicIP'), '', concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('ExternalLoadBalancerFrontendIPResourceGroup'), '/providers/Microsoft.Network/publicIPAddresses/', parameters('ExternalLoadBalancerFrontendIPName')))]",
         "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
-        "ifCreateNewPublicIP": "[or(equals(parameters('ExternalLoadBalancerFrontendIP'), 'create new'), empty(parameters('FrontendIPName')))]",
+        "ifCreateNewPublicIP": "[or(empty(parameters('ExternalLoadBalancerFrontendIPName')), empty(parameters('ExternalLoadBalancerFrontendIPResourceGroup')))]",
         "ifCreateVNet": "[equals(parameters('VnetDeploymentMethod'), 'create new')]",
         "ifCreateVNetInSameRSG": "[and(variables('ifCreateVNet'), or(equals(parameters('VnetResourceGroupName'), ''), equals(parameters('VnetResourceGroupName'), resourceGroup().name)))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
@@ -933,6 +932,10 @@
         "cmdDeleteAll": {
             "type": "String",
             "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
+        },
+        "cmdDeleteAllExceptVNet": {
+            "type": "String",
+            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
         }
     }
 }
