@@ -255,7 +255,7 @@
             "defaultValue": "10.0.0.0/24",
             "type": "String",
             "metadata": {
-                "description": "When deploying to a new VNet, this defines the address range for subnet 1 in CIDR notation (e.g. 10.0.0.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet."
+                "description": "When deploying to a new VNet, this defines the address range for subnet 1 in CIDR notation (e.g. 10.0.0.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet. This subnet is required."
             }
         },
         "Subnet1Name": {
@@ -269,42 +269,42 @@
             "defaultValue": "10.0.1.0/24",
             "type": "String",
             "metadata": {
-                "description": "When deploying to a new VNet, this defines the address range for subnet 2 in CIDR notation (e.g. 10.0.1.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet."
+                "description": "When deploying to a new VNet, this defines the address range for subnet 2 in CIDR notation (e.g. 10.0.1.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. Specify this field to deploy a subnet of the address range to the new VNet. When using an existing VNet, the field will be ignored."
             }
         },
         "Subnet2Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Subnet 2 name. One of the subnets to be protected by the FortiGate. Required when using an existing VNet. The value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Subnet 2 name. One of the optional extra subnets to be deployed to the new VNet that uses the Subnet 2 Address Range. Specify a name of your choice. Otherwise, leave it empty and a name will be generated."
             }
         },
         "Subnet3AddressRange": {
             "defaultValue": "10.0.2.0/24",
             "type": "String",
             "metadata": {
-                "description": "When deploying to a new VNet, this defines the address range for subnet 3 in CIDR notation (e.g. 10.0.2.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet."
+                "description": "When deploying to a new VNet, this defines the address range for subnet 3 in CIDR notation (e.g. 10.0.2.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. Specify this field to deploy a subnet of the address range to the new VNet. When using an existing VNet, the field will be ignored."
             }
         },
         "Subnet3Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Subnet 3 name. One of the subnets to be protected by the FortiGate. Required when using an existing VNet. The value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Subnet 3 name. One of the optional extra subnets to be deployed to the new VNet that uses the Subnet 3 Address Range. Specify a name of your choice. Otherwise, leave it empty and a name will be generated."
             }
         },
         "Subnet4AddressRange": {
             "defaultValue": "10.0.3.0/24",
             "type": "String",
             "metadata": {
-                "description": "When deploying to a new VNet, this defines the address range for subnet 4 in CIDR notation (e.g. 10.0.3.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet."
+                "description": "When deploying to a new VNet, this defines the address range for subnet 4 in CIDR notation (e.g. 10.0.3.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. Specify this field to deploy a subnet of the address range to the new VNet. When using an existing VNet, the field will be ignored."
             }
         },
         "Subnet4Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Subnet 4 name. One of the subnets to be protected by the FortiGate. Required when using an existing VNet. The value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Subnet 4 name. One of the optional extra subnets to be deployed to the new VNet that uses the Subnet 4 Address Range. Specify a name of your choice. Otherwise, leave it empty and a name will be generated."
             }
         },
         "VnetAddressSpace": {
