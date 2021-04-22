@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.0.0",
+    "contentVersion": "3.3.1.0",
     "parameters": {
         "AdminPortNumber": {
             "type": "Int"
@@ -123,7 +123,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.function_app.configuration.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.15/templates/link_template.function_app.configuration.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
@@ -247,7 +247,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.function_app.access_restriction.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.15/templates/link_template.function_app.access_restriction.json"
                 },
                 "parameters": {
                     "AllowAccessFromIPAddresses": {
