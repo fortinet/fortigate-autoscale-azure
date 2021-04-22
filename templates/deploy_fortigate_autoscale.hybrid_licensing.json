@@ -174,13 +174,6 @@
                 "description": "Minimum number of FortiGate instances in the PAYG VMSS. For specific use cases, set to 0 for BYOL-only, >= 2 for PAYG-only, and >= 0 for hybrid licensing."
             }
         },
-        "NetworkSecurityGroupName": {
-            "defaultValue": "",
-            "type": "String",
-            "metadata": {
-                "description": "The name of the Network Security Group associated with the subnets in the VNet. Required when using an existing VNet. The value should match the name of the existing Network Security Group associated with the subnets in the VNet. When creating a new VNet, you may specify a name for the Network Security Group. If left empty a name will be generated."
-            }
-        },
         "PAYGInstanceCount": {
             "defaultValue": 0,
             "minValue": 0,
@@ -357,6 +350,8 @@
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
         "enableHybridLicensing": true,
         "externalLBFrontendIPId": "[if(variables('ifCreateNewPublicIP'), '', concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('ExternalLoadBalancerFrontendIPResourceGroup'), '/providers/Microsoft.Network/publicIPAddresses/', parameters('ExternalLoadBalancerFrontendIPName')))]",
+        "extraSubnetIPRanges": "[union(variables('subnet2Prefix'), variables('subnet3Prefix'), variables('subnet4Prefix'))]",
+        "extraSubnetNames": "[union(if(empty(variables('subnet2Prefix')), createArray(), createArray(variables('subnet2Name'))), if(empty(variables('subnet3Prefix')), createArray(), createArray(variables('subnet3Name'))), if(empty(variables('subnet4Prefix')), createArray(), createArray(variables('subnet4Name'))))]",
         "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifCreateNewPublicIP": "[or(empty(parameters('ExternalLoadBalancerFrontendIPName')), empty(parameters('ExternalLoadBalancerFrontendIPResourceGroup')))]",
@@ -373,11 +368,14 @@
         "subnet1Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet1'), parameters('Subnet1Name'))]",
         "subnet1Prefix": "[parameters('Subnet1AddressRange')]",
         "subnet2Id": "[concat(variables('vnetID'), '/subnets/', variables('subnet2Name'))]",
-        "subnet2Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet2'), parameters('Subnet2Name'))]",
+        "subnet2Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet2Name'))), concat(variables('vNetName'), '-subnet2'), parameters('Subnet2Name'))]",
+        "subnet2Prefix": "[if(empty(parameters('Subnet2AddressRange')), createArray(), createArray(parameters('Subnet2AddressRange')))]",
         "subnet3Id": "[concat(variables('vnetID'), '/subnets/', variables('subnet3Name'))]",
-        "subnet3Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet3'), parameters('Subnet3Name'))]",
+        "subnet3Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet3Name'))), concat(variables('vNetName'), '-subnet3'), parameters('Subnet3Name'))]",
+        "subnet3Prefix": "[if(empty(parameters('Subnet3AddressRange')), createArray(), createArray(parameters('Subnet3AddressRange')))]",
         "subnet4Id": "[concat(variables('vnetID'), '/subnets/', variables('subnet4Name'))]",
-        "subnet4Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet4'), parameters('Subnet4Name'))]",
+        "subnet4Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet4Name'))), concat(variables('vNetName'), '-subnet4'), parameters('Subnet4Name'))]",
+        "subnet4Prefix": "[if(empty(parameters('Subnet4AddressRange')), createArray(), createArray(parameters('Subnet4AddressRange')))]",
         "subnetIds": "[createArray(variables('subnet1Id'), variables('subnet2Id'), variables('subnet3Id'), variables('subnet4Id'))]",
         "trafficPortNumber": 8443,
         "uniqueId": "[take(uniquestring(resourceGroup().id), 8)]",
@@ -533,10 +531,10 @@
                 },
                 "parameters": {
                     "ExtraSubnetAddressRanges": {
-                        "value": "[createArray(parameters('Subnet2AddressRange'), parameters('Subnet3AddressRange'), parameters('Subnet4AddressRange'))]"
+                        "value": "[variables('extraSubnetIPRanges')]"
                     },
                     "ExtraSubnetNames": {
-                        "value": "[createArray(variables('subnet2Name'), variables('subnet3Name'), variables('subnet4Name'))]"
+                        "value": "[variables('extraSubnetNames')]"
                     },
                     "Subnet1AddressRange": {
                         "value": "[parameters('Subnet1AddressRange')]"
