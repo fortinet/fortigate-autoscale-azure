@@ -266,7 +266,7 @@
             }
         },
         "Subnet2AddressRange": {
-            "defaultValue": "10.0.1.0/24",
+            "defaultValue": "",
             "type": "String",
             "metadata": {
                 "description": "When deploying to a new VNet, this defines the address range for subnet 2 in CIDR notation (e.g. 10.0.1.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. Specify this field to deploy a subnet of the address range to the new VNet. When using an existing VNet, the field will be ignored."
@@ -280,7 +280,7 @@
             }
         },
         "Subnet3AddressRange": {
-            "defaultValue": "10.0.2.0/24",
+            "defaultValue": "",
             "type": "String",
             "metadata": {
                 "description": "When deploying to a new VNet, this defines the address range for subnet 3 in CIDR notation (e.g. 10.0.2.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. Specify this field to deploy a subnet of the address range to the new VNet. When using an existing VNet, the field will be ignored."
@@ -294,7 +294,7 @@
             }
         },
         "Subnet4AddressRange": {
-            "defaultValue": "10.0.3.0/24",
+            "defaultValue": "",
             "type": "String",
             "metadata": {
                 "description": "When deploying to a new VNet, this defines the address range for subnet 4 in CIDR notation (e.g. 10.0.3.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. Specify this field to deploy a subnet of the address range to the new VNet. When using an existing VNet, the field will be ignored."
