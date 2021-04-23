@@ -20,7 +20,7 @@
         "FortiAnalyzerAutoscaleAdminUsername": {
             "value": ""
         },
-        "FortiAnalyzerCustomPrivateIpAddress": {
+        "FortiAnalyzerCustomPrivateIPAddress": {
             "value": ""
         },
         "FortiAnalyzerInstanceType": {
