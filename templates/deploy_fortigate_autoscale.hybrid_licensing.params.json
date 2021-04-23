@@ -68,9 +68,6 @@
         "MinPAYGInstanceCount": {
             "value": 0
         },
-        "NetworkSecurityGroupName": {
-            "value": ""
-        },
         "PAYGInstanceCount": {
             "value": 0
         },

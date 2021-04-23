@@ -20,9 +20,6 @@
         "ExternalLBInboundNatPoolIds": {
             "type": "Array"
         },
-        "ExtraSubnetIds": {
-            "type": "Array"
-        },
         "FunctionAppName": {
             "type": "String"
         },
@@ -70,8 +67,8 @@
         "StorageAccountName": {
             "type": "String"
         },
-        "Subnet1Id": {
-            "type": "String"
+        "SubnetIds": {
+            "type": "Array"
         },
         "UniqueResourceNamePrefix": {
             "type": "String"
@@ -286,22 +283,23 @@
                 }
             ]
         },
+        "extraSubnetIds": "[skip(parameters('SubnetIds'), 1)]",
         "networkInterfaceConfigurationExtra": {
             "copy": [
                 {
-                    "name": "iterations",
-                    "count": "[if(empty(parameters('ExtraSubnetIds')), 0,length(parameters('ExtraSubnetIds')))]",
+                    "name": "networkInterfaceConfigurationExtraCopyIt",
+                    "count": "[length(variables('extraSubnetIds'))]",
                     "input": {
-                        "name": "[concat('nic-config-subnet', copyIndex('iterations', 2))]",
+                        "name": "[concat('nic-config-subnet', copyIndex('networkInterfaceConfigurationExtraCopyIt', 2))]",
                         "properties": {
                             "primary": false,
                             "enableIPForwarding": true,
                             "ipConfigurations": [
                                 {
-                                    "name": "[concat('ip-config-subnet', copyIndex('iterations', 2))]",
+                                    "name": "[concat('ip-config-subnet', copyIndex('networkInterfaceConfigurationExtraCopyIt', 2))]",
                                     "properties": {
                                         "Subnet": {
-                                            "id": "[parameters('ExtraSubnetIds')[copyIndex('iterations')]]"
+                                            "id": "[variables('extraSubnetIds')[copyIndex('networkInterfaceConfigurationExtraCopyIt')]]"
                                         }
                                     }
                                 }
@@ -321,7 +319,7 @@
                         "name": "ip-config-subnet1",
                         "properties": {
                             "Subnet": {
-                                "id": "[parameters('Subnet1Id')]"
+                                "id": "[parameters('SubnetIds')[0]]"
                             },
                             "loadBalancerBackendAddressPools": "[variables('externalLBBackendAddressPools').iterations]",
                             "loadBalancerInboundNatPools": "[variables('externlLBInboundNatPools').iterations]"
@@ -330,7 +328,7 @@
                 ]
             }
         },
-        "networkInterfaceConfigurations": "[union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').iterations)]"
+        "networkInterfaceConfigurations": "[union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').networkInterfaceConfigurationExtraCopyIt)]"
     },
     "resources": [
         {

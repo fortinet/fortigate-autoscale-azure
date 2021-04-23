@@ -2,19 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "3.3.0.0",
     "parameters": {
-        "ExtraSubnetAddressRanges": {
+        "Subnets": {
             "type": "array",
             "defaultValue": []
-        },
-        "ExtraSubnetNames": {
-            "type": "array",
-            "defaultValue": []
-        },
-        "Subnet1AddressRange": {
-            "type": "String"
-        },
-        "Subnet1Name": {
-            "type": "String"
         },
         "UniqueResourceNamePrefix": {
             "type": "String"
@@ -22,87 +12,56 @@
         "VnetAddressSpace": {
             "type": "String"
         },
-        "VnetName": {
+        "VNetName": {
             "type": "String"
         }
     },
     "variables": {
-        "cmdDeassociateNSGFromSubnet1": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('Subnet1Name'), ' --vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]",
-        "cmdDeassociateNSGFromExtraSubnets": {
+        "cmdDeassociateNSGFromSubnets": {
             "copy": [
                 {
-                    "name": "iterations",
-                    "count": "[variables('extraSubnetCount')]",
-                    "input": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('ExtraSubnetNames')[copyIndex('iterations')], ' --vnet-name ', variables('vNetName'),' --remove networkSecurityGroup', ';')]"
+                    "name": "cmdDeassociateNSGCopyIt",
+                    "count": "[length(parameters('Subnets'))]",
+                    "input": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('Subnets')[copyIndex('cmdDeassociateNSGCopyIt')].name, ' --vnet-name ', parameters('VNetName'),' --remove networkSecurityGroup', ';')]"
                 }
             ]
         },
-        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeassociateNSGFromSubnet1'))]",
+        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';')]",
         "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupName') , ';')]",
-        "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', variables('vNetName') , ';')]",
-        "extraSubnetCount": "[if(empty(parameters('ExtraSubnetAddressRanges')), 0, length(parameters('ExtraSubnetAddressRanges')))]",
-        "extraSubnets": {
+        "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', parameters('VNetName') , ';')]",
+        "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
+        "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-network-security-group')]",
+        "serviceEndpoints": [
+            {
+                "service": "Microsoft.AzureCosmosDB",
+                "locations": ["*"]
+            },
+            {
+                "service": "Microsoft.Web",
+                "locations": ["*"]
+            }
+        ],
+        "subnet1Id": "[parameters('Subnets')[0].id]",
+        "subnet1Name": "[parameters('Subnets')[0].name]",
+        "subnets": {
             "copy": [
                 {
-                    "name": "iterations",
-                    "count": "[variables('extraSubnetCount')]",
+                    "name": "subnetsCopyIt",
+                    "count": "[length(parameters('Subnets'))]",
                     "input": {
-                        "name": "[parameters('ExtraSubnetNames')[copyIndex('iterations')]]",
+                        "name": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].name]",
                         "properties": {
-                            "addressPrefix": "[parameters('ExtraSubnetAddressRanges')[copyIndex('iterations')]]",
+                            "addressPrefix": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].addressRange]",
                             "networkSecurityGroup": {
                                 "id": "[variables('networkSecurityGroupId')]"
-                            }
+                            },
+                            "serviceEndpoints": "[if(equals(copyIndex('subnetsCopyIt'), 0), variables('serviceEndpoints'), createArray())]"
                         }
                     }
                 }
             ]
         },
-        "ifCreateExtraSubnets": "[greater(variables('extraSubnetCount'), 0)]",
-        "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
-        "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-network-security-group')]",
-        "subnet1": {
-            "name": "[variables('subnet1Name')]",
-            "properties": {
-                "addressPrefix": "[parameters('Subnet1AddressRange')]",
-                "networkSecurityGroup": {
-                    "id": "[variables('networkSecurityGroupId')]"
-                },
-                "serviceEndpoints": [
-                    {
-                        "service": "Microsoft.AzureCosmosDB",
-                        "locations": ["*"]
-                    },
-                    {
-                        "service": "Microsoft.Web",
-                        "locations": ["*"]
-                    }
-                ]
-            }
-        },
-        "subnet1Name": "[if(empty(parameters('Subnet1Name')), concat(variables('vNetName'), '-subnet1'), parameters('Subnet1Name'))]",
-        "subnetIds": {
-            "copy": [
-                {
-                    "name": "iterations",
-                    "count": "[length(variables('subnets'))]",
-                    "input": "[concat(variables('vnetID'), '/subnets/', variables('subnets')[copyIndex('iterations')].name)]"
-                }
-            ]
-        },
-        "subnetNames": {
-            "copy": [
-                {
-                    "name": "iterations",
-                    "count": "[length(variables('subnets'))]",
-                    "input": "[variables('subnets')[copyIndex('iterations')].name]"
-                }
-            ]
-        },
-        "subnets": "[union(createArray(variables('subnet1')), variables('extraSubnets').iterations)]",
-        "vNetAddressPrefix": "[parameters('VnetAddressSpace')]",
-        "vNetName": "[concat(parameters('UniqueResourceNamePrefix'), '-virtual-network')]",
-        "vnetID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('VnetName'))]"
+        "vNetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('VNetName'))]"
     },
     "resources": [
         {
@@ -147,12 +106,12 @@
             "apiVersion": "2019-04-01",
             "dependsOn": ["[variables('networkSecurityGroupName')]"],
             "location": "[resourceGroup().location]",
-            "name": "[variables('vNetName')]",
+            "name": "[parameters('VNetName')]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": ["[variables('vNetAddressPrefix')]"]
+                    "addressPrefixes": ["[parameters('VnetAddressSpace')]"]
                 },
-                "Subnets": "[variables('subnets')]"
+                "Subnets": "[variables('subnets').subnetsCopyIt]"
             },
             "type": "Microsoft.Network/virtualNetworks"
         },
@@ -160,11 +119,10 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "CmdDeassociateNSG",
-            "condition": "[variables('ifCreateExtraSubnets')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/dev_template_function/templates/template_function.join_string_array.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/template_function.join_string_array.json"
                 },
                 "parameters": {
                     "InputString": {
@@ -174,7 +132,7 @@
                         "value": ""
                     },
                     "StringArray": {
-                        "value": "[variables('cmdDeassociateNSGFromExtraSubnets').iterations]"
+                        "value": "[variables('cmdDeassociateNSGFromSubnets').cmdDeassociateNSGCopyIt]"
                     }
                 }
             },
@@ -185,7 +143,7 @@
     "outputs": {
         "cmdDeleteAll": {
             "type": "String",
-            "value": "[concat(variables('cmdDeleteAll'), if(variables('ifCreateExtraSubnets'), reference('CmdDeassociateNSG').outputs.outputString.value, ''), variables('cmdDeleteNSG'), variables('cmdDeleteVNet'))]"
+            "value": "[concat(variables('cmdDeleteAll'), reference('CmdDeassociateNSG').outputs.outputString.value, variables('cmdDeleteNSG'), variables('cmdDeleteVNet'))]"
         },
         "networkSecurityGroupName": {
             "type": "String",
@@ -193,31 +151,37 @@
         },
         "subnet1Id": {
             "type": "String",
-            "value": "[variables('subnetIds').iterations[0]]"
+            "value": "[variables('subnet1Id')]"
         },
         "subnet1Name": {
             "type": "String",
-            "value": "[variables('subnetNames').iterations[0]]"
+            "value": "[variables('subnet1Name')]"
         },
         "subnetCount": {
             "type": "Int",
-            "value": "[length(variables('subnets'))]"
+            "value": "[length(parameters('Subnets'))]"
         },
         "subnetIds": {
             "type": "Array",
-            "value": "[variables('subnetIds').iterations]"
+            "copy": {
+                "count": "[length(parameters('Subnets'))]",
+                "input": "[parameters('Subnets')[copyIndex()].id]"
+            }
         },
         "subnetNames": {
             "type": "Array",
-            "value": "[variables('subnetNames').iterations]"
+            "copy": {
+                "count": "[length(parameters('Subnets'))]",
+                "input": "[parameters('Subnets')[copyIndex()].name]"
+            }
         },
-        "vnetID": {
+        "vNetId": {
             "type": "String",
-            "value": "[variables('vnetID')]"
+            "value": "[variables('vNetId')]"
         },
-        "vnetName": {
+        "vNetName": {
             "type": "String",
-            "value": "[variables('vNetName')]"
+            "value": "[parameters('VNetName')]"
         }
     }
 }
