@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.0.0",
+    "contentVersion": "3.3.1.0",
     "parameters": {
         "AccessRestrictionIPRange": {
             "defaultValue": "",
@@ -184,7 +184,7 @@
         },
         "PackageResURL": {
             "type": "String",
-            "defaultValue": "",
+            "defaultValue": "https://github.com/fortinet/fortigate-autoscale-azure/releases/download/3.3.1-dev.19/fortigate-autoscale-azure-funcapp.zip",
             "metadata": {
                 "description": "The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure. The default URL points to the GitHub release corresponding to this ARM template contentVersion."
             }
@@ -515,7 +515,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.database.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.19/templates/link_template.database.json"
                 },
                 "parameters": {
                     "DatabaseAccountName": {
@@ -546,7 +546,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.vnet.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.19/templates/link_template.vnet.json"
                 },
                 "parameters": {
                     "Subnets": {
@@ -574,7 +574,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.load_balancer.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.19/templates/link_template.load_balancer.json"
                 },
                 "parameters": {
                     "UniqueResourceNamePrefix": {
@@ -612,7 +612,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.faz_integration.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.19/templates/link_template.faz_integration.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -655,7 +655,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.function_app.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.19/templates/link_template.function_app.json"
                 },
                 "parameters": {
                     "FunctionAppName": {
@@ -689,7 +689,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.vmss.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.19/templates/link_template.vmss.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -787,7 +787,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.database.access_restriction.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.19/templates/link_template.database.access_restriction.json"
                 },
                 "parameters": {
                     "AllowAccessFromSubnetIds": {
@@ -816,7 +816,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.function_app.setup.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1-dev.19/templates/link_template.function_app.setup.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
