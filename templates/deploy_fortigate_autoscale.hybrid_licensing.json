@@ -208,7 +208,7 @@
             "maxLength": 10,
             "type": "String",
             "metadata": {
-                "description": "The prefix for all applicable resource names. Can only contain uppercase letters, lowercase letters, and numbers. Maximum length is 10."
+                "description": "The prefix for all applicable resource names. Can only contain lowercase letters and numbers. Maximum length is 10."
             }
         },
         "ScaleInThreshold": {
