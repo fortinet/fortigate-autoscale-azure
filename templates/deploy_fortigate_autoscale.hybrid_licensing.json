@@ -34,28 +34,28 @@
             "defaultValue": "",
             "type": "securestring",
             "metadata": {
-                "description": "The password for the 'Autoscale admin username'. The password must conform to the FortiAnalyzer password policy and have a min length of 8 and a max length 128. If you need to enable KMS encryption, refer to the documentation."
+                "description": "Password for the 'FortiAnalyzer Autoscale Admin Username'. The password must conform to the FortiAnalyzer password policy and have a minimum length of 8 and a maximum length of 128. If you need to enable KMS encryption, refer to the documentation."
             }
         },
         "FortiAnalyzerAutoscaleAdminUsername": {
             "defaultValue": "",
             "type": "string",
             "metadata": {
-                "description": "This FortiAnalyzer account name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-)."
+                "description": "The name of the secondary administrator-level account in the FortiAnalyzer, which FortiGate Autoscale uses to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the user name can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-)."
             }
         },
-        "FortiAnalyzerCustomPrivateIpAddress": {
+        "FortiAnalyzerCustomPrivateIPAddress": {
             "defaultValue": "",
             "type": "string",
             "metadata": {
-                "description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration' is set to 'yes'. If 'FortiAnalyzer Integration' is set to 'no', any input will be ignored."
+                "description": "The custom private IP address to be used by the FortiAnalyzer. Must be within the Public subnet 1 CIDR range. Required if 'FortiAnalyzer Integration Options' is set to 'yes'. If 'FortiAnalyzer Integration Options' is set to 'no', any input will be ignored."
             }
         },
         "FortiAnalyzerInstanceType": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Size of the FortiAnalyzer VM."
+                "description": "Size of the FortiAnalyzer-VM."
             }
         },
         "FortiAnalyzerIntegrationOptions": {
@@ -63,7 +63,7 @@
             "allowedValues": ["yes", "no"],
             "type": "String",
             "metadata": {
-                "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Auto Scaling to use extended features that include storing logs into FortiAnalyzer."
+                "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Autoscale to use extended features that include storing logs into FortiAnalyzer."
             }
         },
         "FortiAnalyzerVersion": {
@@ -71,7 +71,7 @@
             "allowedValues": ["6.4.5", "6.2.5"],
             "type": "String",
             "metadata": {
-                "description": "The FortiAnalyzer version supported by Fortinet FortiGate Auto Scaling."
+                "description": "FortiAnalyzer version supported by FortiGate Autoscale for Azure."
             }
         },
         "FortiGatePSKSecret": {
@@ -208,7 +208,7 @@
             "maxLength": 10,
             "type": "String",
             "metadata": {
-                "description": "The prefix for all applicable resource names. Can only contain uppercase letters, lowercase letters, and numbers. Maximum length is 10."
+                "description": "The prefix for all applicable resource names. Can only contain lowercase letters and numbers. Maximum length is 10."
             }
         },
         "ScaleInThreshold": {
@@ -236,19 +236,19 @@
         "ServicePrincipalAppID": {
             "type": "String",
             "metadata": {
-                "description": "Application ID for the Registered app used as Autosccale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
+                "description": "Application ID for the Registered app used as Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
         },
         "ServicePrincipalAppSecret": {
             "type": "String",
             "metadata": {
-                "description": "Password (Authentication key) for the Registered app used as Autosccale Function App API request service principal."
+                "description": "Password (Authentication key) for the Registered app used as Autoscale Function App API request service principal."
             }
         },
         "ServicePrincipalObjectID": {
             "type": "String",
             "metadata": {
-                "description": "Object ID for the Registered app used as Autosccale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
+                "description": "Object ID for the Registered app used as Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
         },
         "StorageAccountType": {
@@ -1539,8 +1539,8 @@
                     "FortiAnalyzerAutoscaleAdminUsername": {
                         "value": "[parameters('FortiAnalyzerAutoscaleAdminUsername')]"
                     },
-                    "FortiAnalyzerCustomPrivateIpAddress": {
-                        "value": "[parameters('FortiAnalyzerCustomPrivateIpAddress')]"
+                    "FortiAnalyzerCustomPrivateIPAddress": {
+                        "value": "[parameters('FortiAnalyzerCustomPrivateIPAddress')]"
                     },
                     "FortiAnalyzerInstanceType": {
                         "value": "[parameters('FortiAnalyzerInstanceType')]"
