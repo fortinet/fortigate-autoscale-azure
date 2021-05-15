@@ -11,9 +11,6 @@ pull-request:
     This pull request is automatically created because new FOS / FAZ versions are detected in the Azure Marketplace.
     QA process is required before integrating these versions into our latest Autoscale Azure project.
   reviewers: # array of GitHub login
-    - jamie-pate
-    - Joel-Cripps
-    - JaydenLiang
   team-reviewers: # array of GitHub login
   labels: # array of string literal
     - marketplace updates
