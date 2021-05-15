@@ -117,7 +117,7 @@ function main(): void {
     // log('stdin: ', JSON.stringify(input, null, 4));
     log('cwd:', process.cwd());
     log('argv:', JSON.stringify(process.argv, null, 4));
-    const params = extractParams(process.argv.slice(3));
+    const params = extractParams(process.argv.slice(4));
     log(JSON.stringify(params));
     // read template file
     const filePathTemplateMain = path.resolve(

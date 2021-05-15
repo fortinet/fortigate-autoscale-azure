@@ -12,6 +12,8 @@ npm --version
 
 cd $1
 
+eval "git checkout -b $2"
+
 # do npm install and build project before running scripts
 npm install
 npm run build
