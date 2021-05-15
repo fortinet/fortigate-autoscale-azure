@@ -1,0 +1,110 @@
+resource_types:
+  - name: docker-node-env
+    type: docker-image
+    source:
+      repository: node:14-alpine
+      tag: latest
+  - name: azure-rest-api
+    type: docker-image
+    source:
+      repository: ((registry.domain))azure-rest-api
+      username: ((registry.username))
+      password: ((registry.password))
+resources:
+  - name: git-repo-fortigate-autoscale-azure-base
+    type: git
+    source:
+      uri: (("github.com".repo_url))
+      branch: (("github.com".base_branch))
+      private_key: (("github.com".private_key))
+  - name: git-repo-fortigate-autoscale-azure-head
+    type: git
+    source:
+      uri: (("github.com".repo_url))
+      branch: (("github.com".base_branch))
+      private_key: (("github.com".private_key))
+  - name: resource-azure-list-fortigate-images-byol
+    type: azure-rest-api
+    source:
+      # from_local_path: ../params/source
+      client_id: (("azure-api-credential".client_id))
+      client_secret: (("azure-api-credential".client_secret))
+      tenant: (("azure-api-credential".tenant))
+      subscription: (("azure-api-credential".subscription))
+      location: ((images.location))
+      publisher: ((images.fgt.byol.publisher))
+      offer: ((images.fgt.byol.offer))
+      sku: ((images.fgt.byol.sku))
+      url: 'https://management.azure.com/subscriptions/{subscription}/providers/Microsoft.Compute/locations/{location}/publishers/{publisher}/artifacttypes/vmimage/offers/{offer}/skus/{sku}/versions?api-version=2020-12-01'
+  - name: resource-azure-list-fortigate-images-payg
+    type: azure-rest-api
+    source:
+      # from_local_path: ../params/source
+      client_id: (("azure-api-credential".client_id))
+      client_secret: (("azure-api-credential".client_secret))
+      tenant: (("azure-api-credential".tenant))
+      subscription: (("azure-api-credential".subscription))
+      location: ((images.location))
+      publisher: ((images.fgt.payg.publisher))
+      offer: ((images.fgt.payg.offer))
+      sku: ((images.fgt.payg.sku))
+      url: 'https://management.azure.com/subscriptions/{subscription}/providers/Microsoft.Compute/locations/{location}/publishers/{publisher}/artifacttypes/vmimage/offers/{offer}/skus/{sku}/versions?api-version=2020-12-01'
+  - name: resource-azure-list-fortianalyzer-images-byol
+    type: azure-rest-api
+    source:
+      # from_local_path: ../params/source
+      client_id: (("azure-api-credential".client_id))
+      client_secret: (("azure-api-credential".client_secret))
+      tenant: (("azure-api-credential".tenant))
+      subscription: (("azure-api-credential".subscription))
+      location: ((images.location))
+      publisher: ((images.faz.byol.publisher))
+      offer: ((images.faz.byol.offer))
+      sku: ((images.faz.byol.sku))
+      url: 'https://management.azure.com/subscriptions/{subscription}/providers/Microsoft.Compute/locations/{location}/publishers/{publisher}/artifacttypes/vmimage/offers/{offer}/skus/{sku}/versions?api-version=2020-12-01'
+
+jobs:
+  - name: demo
+    public: true
+    plan:
+      - get: git-repo-fortigate-autoscale-azure-base
+      - get: resource-azure-list-fortigate-images-byol
+      - get: resource-azure-list-fortigate-images-payg
+      - get: resource-azure-list-fortianalyzer-images-byol
+      - get: git-repo-fortigate-autoscale-azure-head
+      - task: update-azure-template
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: node
+              tag: 14-alpine
+          inputs:
+            - name: git-repo-fortigate-autoscale-azure-base
+            - name: git-repo-fortigate-autoscale-azure-head
+            - name: resource-azure-list-fortigate-images-byol
+            - name: resource-azure-list-fortigate-images-payg
+            - name: resource-azure-list-fortianalyzer-images-byol
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure-head
+          run:
+            path: 'sh'
+            args:
+              # the first arg is the script to call
+              - git-repo-fortigate-autoscale-azure-head/scripts/update-template.sh
+              # repo folder
+              - git-repo-fortigate-autoscale-azure-head
+              # branch name
+              - (("github.com".head_branch))
+              # the following args must come in a pair: name=<something>,value=<something>
+              - name=repo,value=../git-repo-fortigate-autoscale-azure-base
+              - name=fortigate-byol,value=../resource-azure-list-fortigate-images-byol/rest-api
+              - name=fortigate-payg,value=../resource-azure-list-fortigate-images-payg/rest-api
+              - name=fortianalyzer-byol,value=../resource-azure-list-fortianalyzer-images-byol/rest-api
+              - name=fortigate-semver-range,value=>=6.4.4
+              - name=fortianalyzer-semver-range,value=>=6.4.4
+      - put: git-repo-fortigate-autoscale-azure-head
+        params:
+          repository: git-repo-fortigate-autoscale-azure-head
+          branch: (("github.com".head_branch))

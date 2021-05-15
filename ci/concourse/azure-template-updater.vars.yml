@@ -1,0 +1,30 @@
+github.com:
+  repo_url:
+  base_branch:
+  head_branch:
+  private_key:
+registry:
+  domain:
+  username:
+  password:
+azure-api-credential:
+  client_id:
+  client_secret:
+  tenant:
+  subscription:
+images:
+  location:
+  fgt:
+    byol:
+      offer:
+      publisher:
+      sku:
+    payg:
+      offer:
+      publisher:
+      sku:
+  faz:
+    byol:
+      offer:
+      publisher:
+      sku:
