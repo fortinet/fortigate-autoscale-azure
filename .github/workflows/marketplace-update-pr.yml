@@ -20,4 +20,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           pr-create-draft: false
           pr-fail-if-exist: false
-          pr-template-uri: templates/marketplace-updates-pr.yml
+          pr-template-uri: .github/workflows/templates/marketplace-updates-pr.yml
