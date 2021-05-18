@@ -41,7 +41,7 @@ A deployment guide is available from the Fortinet Document Library:
 ## Project development history
 | Version | Details | Documentation |
 | ------- | ------- | ------------- |
-| 3.3.0 (latest) | FortiAnalyzer integration is available with this version.|
+| 3.3.0 (latest) | Added support for FortiAnalyzer integration.|
 | 3.0 | The AWS portion of this project has been moved to [fortigate-autoscale-aws](https://github.com/fortinet/fortigate-autoscale-aws). Going forward, this project will be maintained for Azure only. | [ FortiGate / FortiOS 6.2 / Deploying auto scaling on Azure](https://docs.fortinet.com/document/fortigate-public-cloud/6.2.0/azure-administration-guide/161167/deploying-auto-scaling-on-azure) |
 | 2.0 | Added support for Hybrid Licensing (any combination of BYOL and/or PAYG instances). | A PDF for AWS is available in the 2.0 branch.<br/>[deploying-auto-scaling-on-aws-2.0.9.pdf](https://github.com/fortinet/fortigate-autoscale/blob/2.0/docs/deploying-auto-scaling-on-aws-2.0.9.pdf) |
 | 1.0 | Supports auto scaling for PAYG instances only.  | PDFs for AWS and for Azure are available in the 1.0.6 branch.<br/>[deploying-auto-scaling-on-aws-1.0.pdf](https://github.com/fortinet/fortigate-autoscale/blob/1.0/docs/deploying-auto-scaling-on-aws-1.0.pdf)<br/>[deploying-auto-scaling-on-azure-1.0.pdf](https://github.com/fortinet/fortigate-autoscale/blob/1.0/docs/deploying-auto-scaling-on-azure-1.0.pdf) |

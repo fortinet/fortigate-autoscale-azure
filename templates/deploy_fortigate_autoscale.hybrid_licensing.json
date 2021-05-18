@@ -12,7 +12,7 @@
         "AdminPassword": {
             "type": "SecureString",
             "metadata": {
-                "description": "FortiGate administrator password on all VMs as well as the FortiAnalyzer if 'FortiAnalyzer integration' is enabled. Must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
+                "description": "FortiGate administrator password on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration is enabled. Must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
             }
         },
         "AdminUsername": {
@@ -179,7 +179,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of the Network Security Group associated with the subnets in the VNet. Required when using existing VNet. The value should match the name of the existing Network Security Group associated with the subnets in the VNet. When creating a new VNet, you may specify a name for the Network Security Group. If left empty, a name will be generated."
+                "description": "Name of the Network Security Group associated with the subnets in the VNet. Required when using an existing VNet. The value should match the name of the existing Network Security Group associated with the subnets in the VNet. When creating a new VNet, you may specify a name for the Network Security Group. If left empty, a name will be generated."
             }
         },
         "PAYGInstanceCount": {
@@ -334,7 +334,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of the Azure VNet  to connect to FortiGate Autoscale. Required when using an existing VNet. When creating a new VNet, this parameter can be left empty and a name will be generated."
+                "description": "Name of the Azure VNet to connect to FortiGate Autoscale. Required when using an existing VNet. When creating a new VNet, this parameter can be left empty and a name will be generated."
             }
         },
         "VnetResourceGroupName": {
