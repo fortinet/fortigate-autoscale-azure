@@ -117,7 +117,14 @@ function main(): void {
     // log('stdin: ', JSON.stringify(input, null, 4));
     log('cwd:', process.cwd());
     log('argv:', JSON.stringify(process.argv, null, 4));
-    const params = extractParams(process.argv.slice(4));
+    // argv exlanations by index:
+    // 0: node process location
+    // 1: script location
+    // 2: base repo directory
+    // 3: head repo directory
+    // 4: head branch name
+    // rest: parameters to pass to this script
+    const params = extractParams(process.argv.slice(5));
     log(JSON.stringify(params));
     // read template file
     const filePathTemplateMain = path.resolve(

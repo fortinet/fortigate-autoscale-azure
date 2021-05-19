@@ -8,11 +8,25 @@ git --version
 node --version
 npm --version
 
-# change directory got from arg $1
+# clone the repo from base ($1) to head ($2)
+echo "git clone $1 $2"
+git clone $1 $2
 
-cd $1
+cd $2
 
-eval "git checkout -b $2"
+git fetch -fpP
+
+# check if local branch exists
+exists=`git show-ref refs/heads/$3`
+echo "branch $3 ref: $exists"
+if [ -n "$exists" ]; then
+    echo "branch exists"
+    eval "git checkout $3 && git pull"
+else
+    echo "branch not found"
+    eval "git checkout -b $3"
+fi
+
 
 # do npm install and build project before running scripts
 npm install
@@ -29,3 +43,4 @@ git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 git add -u
 git commit -m "auto update by Azure marketplace offer changes" --no-gpg-sign
+
