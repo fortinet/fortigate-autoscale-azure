@@ -19,7 +19,8 @@ The project also contains a deployment script that can generate packages for eac
 ## Deployment packages
 To generate local deployment packages:
 
-  1. From the [project release page](https://github.com/fortinet/fortigate-autoscale-azure/releases), download the fortigate-autoscale-azure.zip for the latest versioin.
+1. From the [project release page](https://github.com/fortinet/fortigate-autoscale-azure/releases), download the fortigate-autoscale-azure.zip for the latest version.
+2. ```
 
 
 ## Deployment guide
