@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: create version branch
         id: create-branch
-        uses: fortinet/github-action-version-branch@1.1.0
+        uses: fortinet/github-action-version-branch@1.1.1
         with:
           base-branch: ${{ github.event.inputs.base-branch }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
