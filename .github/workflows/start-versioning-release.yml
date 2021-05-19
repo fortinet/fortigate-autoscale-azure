@@ -65,7 +65,12 @@ jobs:
       - name: bump version
         id: bump-version
         # use the same version from the output of step: create-branch
-        run: npm version ${{ steps['create-branch'].outputs['head-version'] }}
+        run: |
+          npm config set sign-git-tag false
+          npm config set sign-git-commit false
+          npm version ${{ steps['create-branch'].outputs['head-version'] }} --no-git-tag-version
+          git add -u
+          git commit -m "release: ${{ steps['create-branch'].outputs['head-version'] }}" --no-gpg-sign
       - name: submit changes
         # push commits only. Even though a tag is created, it will not be pushed.
         run: git push
