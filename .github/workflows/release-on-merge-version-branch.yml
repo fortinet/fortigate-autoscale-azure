@@ -1,0 +1,56 @@
+name: >-
+  Automatically create a release if there's a pull request merged from a version branch.
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+jobs:
+  main_job:
+    runs-on: ubuntu-latest
+    name: process pull request merge event
+    # conditionally run only when the pull request is merged.
+    if: github.event.pull_request.merged == true
+    steps:
+      # check if this pull request coming from a version-branch
+      # if yes then proceed to create a release
+      # if no then skip the following steps
+      - id: fetch-versioning-info
+        name: fetch versioning info
+        uses: fortinet/github-action-version-branch@1.1.0
+        with:
+          pr-number: ${{ github.event.number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      # create a release
+      - name: 'prep: git checkout'
+        uses: actions/checkout@v2
+      - name: 'prep: install dependencies'
+        run: npm ci
+      - name: build project
+        run: npm run build
+      - name: make release assets
+        run: npm run make-release
+      - id: create-release
+        name: create release
+        # run only if the merged pull request is from a version branch
+        if: ${{ steps['fetch-versioning-info'].outputs['is-version-branch'] == 'true' }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps['fetch-versioning-info'].outputs['head-version'] }} # Use the output from the `fetch-versioning-info` step
+          release_name: ${{ steps['fetch-versioning-info'].outputs['head-version'] }} # Use the output from the `fetch-versioning-info` step
+          draft: false
+          prerelease: ${{ steps['fetch-versioning-info'].outputs['is-prerelease'] == 'true' }} # Use the output from the `fetch-versioning-info` step
+      - id: upload-release-asset
+        name: upload release assets
+        # run only if the merged pull request is from a version branch
+        if: ${{ steps['fetch-versioning-info'].outputs['is-version-branch'] == 'true' }}
+        uses: svenstaro/upload-release-action@2.2.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps['fetch-versioning-info'].outputs['head-version'] }} # Use the output from the `fetch-versioning-info` step
+          prerelease: ${{ steps['fetch-versioning-info'].outputs['is-prerelease'] == 'true' }} # Use the output from the `fetch-versioning-info` step
+          file: ./fortigate-autoscale-azure*.zip
+          file_glob: true
+          overwrite: true
