@@ -55,7 +55,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Size of the FortiAnalyzer-VM."
+                "description": "Size of the FortiAnalyzer-VM. Not all instance types are supported. Review the documentation prior to selecting an instance."
             }
         },
         "FortiAnalyzerIntegrationOptions": {
