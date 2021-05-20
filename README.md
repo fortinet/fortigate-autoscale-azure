@@ -17,11 +17,9 @@ This project is organized in separate node modules:
 The project also contains a deployment script that can generate packages for each cloud service's *serverless* implementation.
 
 ## Deployment packages
-To generate local deployment packages:
+The FortiGate Autoscale for Azure deployment package is located in the Fortinet Autoscale GitHub project.
 
-1. From the [project release page](https://github.com/fortinet/fortigate-autoscale-azure/releases), download the fortigate-autoscale-azure.zip for the latest version.
-2. ```
-
+To obtain the package, go to the FortiGate Autoscale [GitHub project release page](https://github.com/fortinet/fortigate-autoscale/releases) and download `fortigate-autoscale-azure.zip` for the latest version. Unzip the file to your local PC.
 
 ## Deployment guide
 A deployment guide is available from the Fortinet Document Library:
