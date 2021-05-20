@@ -17,7 +17,7 @@ jobs:
       # if no then skip the following steps
       - id: fetch-versioning-info
         name: fetch versioning info
-        uses: fortinet/github-action-version-branch@1.1.1
+        uses: fortinet/github-action-version-branch@1.1.2
         with:
           pr-number: ${{ github.event.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token

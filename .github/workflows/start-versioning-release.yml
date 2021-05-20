@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: create version branch
         id: create-branch
-        uses: fortinet/github-action-version-branch@1.1.1
+        uses: fortinet/github-action-version-branch@1.1.2
         with:
           base-branch: ${{ github.event.inputs.base-branch }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -77,7 +77,7 @@ jobs:
       # open a versioning pull request for review
       - name: versioning pr
         id: versioning-pr
-        uses: fortinet/github-action-version-pr@1.0.2
+        uses: fortinet/github-action-version-pr@1.0.3
         with:
           base-branch: ${{ github.event.inputs.base-branch }}
           head-branch: ${{ steps['create-branch'].outputs['head-branch'] }}
