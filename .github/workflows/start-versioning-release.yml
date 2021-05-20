@@ -1,0 +1,87 @@
+name: >-
+  Start a versioning release pipeline for the latest changes in a selected branch.
+
+on:
+  # Run by manual trigger
+  workflow_dispatch:
+    inputs:
+      base-branch:
+        description: >-
+          The base branch that a versioning branch will be based.
+        required: true
+        default: main
+      version-level:
+        description: >-
+          The level of the semver version.
+          Accepted inputs: major, minor, patch, and prerelease.
+        required: true
+        default: patch
+      pre-id:
+        description: >-
+          A valid semver pre-release id to bump version as a pre-release.
+          If specified, the versioning behavior will become
+          'premajor', 'preminor', 'prepatch', and 'prerelease'.
+          GitHub 'pre-release' flag will also be set accordingly.
+        required: false
+      custom-version:
+        description: >-
+          The custom version to bump to.
+          If specified, it will be used instead of the other versioning parameters.
+          It must be a valid semver format.
+        required: false
+jobs:
+  main_job:
+    runs-on: ubuntu-latest
+    name: main job
+    steps:
+      - name: create version branch
+        id: create-branch
+        uses: fortinet/github-action-version-branch@1.1.1
+        with:
+          base-branch: ${{ github.event.inputs.base-branch }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name-prefix: rel_
+          version-level: ${{ github.event.inputs.version-level }}
+          pre-id: ${{ github.event.inputs.pre-id }}
+          custom-version: ${{ github.event.inputs.custom-version }}
+      # checkout the versioning branch
+      - name: checkout version branch
+        uses: actions/checkout@v2
+        with:
+          # set ref to the head branch (newly created) from the output of step: create-branch
+          ref: ${{ steps['create-branch'].outputs['head-branch'] }}
+      - name: config git author identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      # install all dependencies
+      - name: install project dependencies
+        run: npm ci
+      # run necessariy build / bundle / make-dist step
+      - name: build
+        run: npm run build
+      # bump version by running `npm version`
+      # pre-version, in-version, post-version scripts will not take into account here.
+      - name: bump version
+        id: bump-version
+        # use the same version from the output of step: create-branch
+        run: |
+          npm config set sign-git-tag false
+          npm config set sign-git-commit false
+          npm version ${{ steps['create-branch'].outputs['head-version'] }} --no-git-tag-version
+          git add -u
+          git commit -m "release: ${{ steps['create-branch'].outputs['head-version'] }}" --no-gpg-sign
+      - name: submit changes
+        # push commits only. Even though a tag is created, it will not be pushed.
+        run: git push
+      # open a versioning pull request for review
+      - name: versioning pr
+        id: versioning-pr
+        uses: fortinet/github-action-version-pr@1.0.2
+        with:
+          base-branch: ${{ github.event.inputs.base-branch }}
+          head-branch: ${{ steps['create-branch'].outputs['head-branch'] }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-template-uri: .github/workflows/templates/version-pr.yml
+          pr-create-draft: true
+          pr-fail-if-exist: false

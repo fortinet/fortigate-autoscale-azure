@@ -6,20 +6,20 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Specify IP ranges (single IPv4 or CIDR range) to allow access from the Internet or from your on-premises network to the CosmosDB and Function App. Specify at least one entry for security purposes. For multiple entries, each entry must be separated by a comma and no trailing comma is allowed. **WARNING!** 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses."
+                "description": "Specify IP ranges (single IPv4 address or CIDR range) to allow access from the Internet or from your on-premises network to the CosmosDB and Function App. Specify at least one entry for security purposes. For multiple entries, each entry must be separated by a comma and no trailing comma is allowed. **WARNING!** 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses."
             }
         },
         "AdminPassword": {
             "type": "SecureString",
             "metadata": {
-                "description": "FortiGate administrator password on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration enabled. This field must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
+                "description": "FortiGate administrator password on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration is enabled. Must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
             }
         },
         "AdminUsername": {
             "defaultValue": "azureadmin",
             "type": "String",
             "metadata": {
-                "description": "FortiGate administrator username on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration enabled."
+                "description": "FortiGate administrator username on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration is enabled."
             }
         },
         "BYOLInstanceCount": {
@@ -55,7 +55,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Size of the FortiAnalyzer-VM."
+                "description": "Size of the FortiAnalyzer-VM. Not all instance types are supported. Review the documentation prior to selecting an instance."
             }
         },
         "FortiAnalyzerIntegrationOptions": {
@@ -63,7 +63,7 @@
             "allowedValues": ["yes", "no"],
             "type": "String",
             "metadata": {
-                "description": "Choose 'yes' to incorporate FortiAnalyzer into Fortinet FortiGate Autoscale to use extended features that include storing logs into FortiAnalyzer."
+                "description": "Choose 'yes' to incorporate FortiAnalyzer into FortiGate Autoscale for Azure to use extended features that include storing logs into FortiAnalyzer."
             }
         },
         "FortiAnalyzerVersion": {
@@ -77,7 +77,7 @@
         "FortiGatePSKSecret": {
             "type": "SecureString",
             "metadata": {
-                "description": "The secret key for the FortiGates instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Maximum length is 128."
+                "description": "The secret key used by FortiGate instances to securely communicate with each other. Must contain numbers and letters and may contain special characters. Maximum length is 128."
             }
         },
         "FOSVersion": {
@@ -100,7 +100,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of the Frontend Public IP address. When the 'Frontend IP Deployment Method' parameter is set to 'create new public IP address, this parameter can be left empty and a name will be generated."
+                "description": "Name of the Frontend Public IP address. When the parameter 'Frontend IP Deployment Method' is set to 'create new public IP address', this parameter can be left empty and a name will be generated."
             }
         },
         "HeartBeatDelayAllowance": {
@@ -140,7 +140,7 @@
             "defaultValue": "10",
             "type": "String",
             "metadata": {
-                "description": "The last octet of the Frontend Private IP address to be used by the Load Balancer. For example, if set to 10, the Private IP for the Load Balancer in the subnet with prefix 10.0.1.0/24 would be 10.0.1.10."
+                "description": "The last octet of the Frontend Private IP address to be used by the Load Balancer. For example, if set to 10, the Private IP address for the Load Balancer in the subnet with prefix 10.0.1.0/24 would be 10.0.1.10."
             }
         },
         "MaxBYOLInstanceCount": {
@@ -179,7 +179,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "The name of the Network Security Group associated with the subnets in the VNet. Required when using an existing VNet. The value should match the name of the existing Network Security Group associated with the subnets in the VNet. When creating a new VNet, you may specify a name for the Network Security Group. If left empty a name will be generated."
+                "description": "Name of the Network Security Group associated with the subnets in the VNet. Required when using an existing VNet. The value should match the name of the existing Network Security Group associated with the subnets in the VNet. When creating a new VNet, you may specify a name for the Network Security Group. If left empty, a name will be generated."
             }
         },
         "PAYGInstanceCount": {
@@ -194,14 +194,14 @@
             "type": "String",
             "defaultValue": "",
             "metadata": {
-                "description": "The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure. The default URL points to the GitHub release corresponding to this ARM template contentVersion."
+                "description": "The public URL of the function source file named fortigate-autoscale-azure-funcapp.zip, and can be found inside fortigate-autoscale-azure-template-deployment.zip. The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure. The default URL points to the GitHub release corresponding to this ARM template contentVersion."
             }
         },
         "PrimaryElectionTimeout": {
             "defaultValue": 600,
             "type": "Int",
             "metadata": {
-                "description": "The maximum time (in seconds) to wait for a primary election to complete."
+                "description": "The maximum time (in seconds) to wait for the election of the primary instance to complete."
             }
         },
         "ResourceNamePrefix": {
@@ -230,19 +230,19 @@
             "allowedValues": ["Premium (P1V2)", "Free (for demo only)"],
             "type": "String",
             "metadata": {
-                "description": "The pricing tier for the function service plan. Note: the Free plan is for trial and demo only. Do not use it in production."
+                "description": "The pricing tier for the function service plan. Note: The Free plan is for trial and demo use only. Do not use it in a production environment."
             }
         },
         "ServicePrincipalAppID": {
             "type": "String",
             "metadata": {
-                "description": "Application ID for the Registered app used as Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
+                "description": "Application ID for the Registered app used as the Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
         },
         "ServicePrincipalAppSecret": {
             "type": "String",
             "metadata": {
-                "description": "Password (Authentication key) for the Registered app used as Autoscale Function App API request service principal."
+                "description": "Password (Authentication key) for the Registered app used as the Autoscale Function App API request service principal."
             }
         },
         "ServicePrincipalObjectID": {
@@ -263,63 +263,63 @@
             "defaultValue": "10.0.0.0/24",
             "type": "String",
             "metadata": {
-                "description": "When deploying to a new VNet, this defines the address range for subnet 1 in CIDR notation (e.g. 10.0.0.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet."
+                "description": "Defines the subnet 1 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "Subnet1Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Subnet 1 name. The subnet in which to deploy the FortiGate VMSS. Required when using an existing VNet. The value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 1, the subnet in which to deploy the FortiGate VMSS. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "Subnet2AddressRange": {
             "defaultValue": "10.0.1.0/24",
             "type": "String",
             "metadata": {
-                "description": "When deploying to a new VNet, this defines the address range for subnet 2 in CIDR notation (e.g. 10.0.1.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet."
+                "description": "Defines the subnet 2 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "Subnet2Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Subnet 2 name. One of the subnets to be protected by the FortiGate. Required when using an existing VNet. The value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 2, a subnet to be protected by the FortiGate. Required when using an existing Net; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "Subnet3AddressRange": {
             "defaultValue": "10.0.2.0/24",
             "type": "String",
             "metadata": {
-                "description": "When deploying to a new VNet, this defines the address range for subnet 3 in CIDR notation (e.g. 10.0.2.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet."
+                "description": "Defines the subnet 3 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "Subnet3Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Subnet 3 name. One of the subnets to be protected by the FortiGate. Required when using an existing VNet. The value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 3, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "Subnet4AddressRange": {
             "defaultValue": "10.0.3.0/24",
             "type": "String",
             "metadata": {
-                "description": "When deploying to a new VNet, this defines the address range for subnet 4 in CIDR notation (e.g. 10.0.3.0/24). It must be contained by the address space of the virtual network. The address range of a subnet which is in use can't be edited. When using an existing VNet, the value should match the subnet of the target VNet."
+                "description": "Defines the subnet 4 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "Subnet4Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Subnet 4 name. One of the subnets to be protected by the FortiGate. Required when using an existing VNet. The value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 4, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "VnetAddressSpace": {
             "defaultValue": "10.0.0.0/16",
             "type": "String",
             "metadata": {
-                "description": "IP address space of the VNet in CIDR notation. E.g. 10.0.0.0/16. Required when using an existing VNet. The value should match the address space of the target VNet."
+                "description": "IP address space of the VNet in CIDR notation. E.g. 10.0.0.0/16. Required when using an existing VNet; the value should match the address space of the target VNet."
             }
         },
         "VnetDeploymentMethod": {
@@ -327,7 +327,7 @@
             "allowedValues": ["create new", "use existing"],
             "type": "String",
             "metadata": {
-                "description": "Options for Virtual Network (VNet) deployment. For requirements when using an existing resource group, refer to the documentation."
+                "description": "Options for Virtual Network (VNet) deployment. Note: The VNet resource group (specified in the 'VNet Resource Group Name' parameter) must be in the same region as the Autoscale resource group (specified in the 'Resource group' parameter). For requirements when using an existing VNet, refer to the documentation."
             }
         },
         "VnetName": {
@@ -341,7 +341,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of the resource group that contains the VNet and related network components. Required if the VNet is not in the Autoscale resource group, otherwise, it will use the same resource group as this deployment. For details refer to the description for the parameter VNet Deployment Method. This resource group must be in the same region as the Autoscale resource group."
+                "description": "Name of the resource group that contains the VNet and related network components. Required if the VNet is not in the Autoscale resource group (specified in the parameter 'Resource group'). If not specified, the Autoscale resource group will be used. For details refer to the description for the parameter 'VNet Deployment Method'. This resource group must be in the same region as the Autoscale resource group."
             }
         }
     },
