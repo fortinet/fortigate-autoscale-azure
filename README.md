@@ -18,8 +18,6 @@ This project has the following features:
 
 [autoscale-core](https://github.com/fortinet/autoscale-core) contains the core logic and provides an interface that can be extended to deal with the differences in cloud platform APIs.
 
-The project also contains a deployment script that can generate packages for each cloud service's *serverless* implementation.
-
 ## Deployment package
 
 The FortiGate Autoscale for Azure deployment package is located in the Fortinet Autoscale for Azure GitHub project.
