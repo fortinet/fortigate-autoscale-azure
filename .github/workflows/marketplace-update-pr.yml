@@ -13,10 +13,10 @@ jobs:
     steps:
       - name: create pr
         id: create-pr
-        uses: fortinet/github-action-version-pr@1.0.0
+        uses: fortinet/github-action-version-pr@1.0.6
         with:
-          base-branch: marketplace_updates
-          head-branch: main
+          base-branch: main
+          head-branch: marketplace_updates
           github-token: ${{ secrets.GITHUB_TOKEN }}
           pr-create-draft: false
           pr-fail-if-exist: false

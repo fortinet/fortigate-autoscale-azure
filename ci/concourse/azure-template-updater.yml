@@ -79,4 +79,4 @@ jobs:
         params:
           repository: git-repo-fortigate-autoscale-azure-updated
           branch: ((gitrepo.head_branch))
-          merge: true
+          force: true

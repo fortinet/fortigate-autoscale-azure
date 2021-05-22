@@ -20,13 +20,14 @@ git fetch -fpP
 exists=`git show-ref refs/heads/$3`
 echo "branch $3 ref: $exists"
 if [ -n "$exists" ]; then
-    echo "branch exists"
-    eval "git checkout $3 && git pull"
+    echo "branch exists, replace it with main"
+    eval "git branch -d $3"
 else
     echo "branch not found"
-    eval "git checkout -b $3"
 fi
 
+# force drop the current working branch $3 and checkout main to replace it
+eval "git checkout main && git pull && git branch -d $3 && git checkout -b $3 && git branch -u push-target $3"
 
 # do npm install and build project before running scripts
 npm install
@@ -42,5 +43,5 @@ npm run lint-fix
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 git add -u
-git commit -m "auto update by Azure marketplace offer changes" --no-gpg-sign
+git commit -m "auto update by Azure marketplace offer changes" --no-gpg-sign --allow-empty
 
