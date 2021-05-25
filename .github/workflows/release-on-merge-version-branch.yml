@@ -5,12 +5,18 @@ on:
     branches:
       - main
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: >-
+          The pull request id that triggers the release (for manual trigger only)
+        required: false
 jobs:
   main_job:
     runs-on: ubuntu-latest
     name: process pull request merge event
     # conditionally run only when the pull request is merged.
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event.inputs.pr-number != ''
     steps:
       # check if this pull request coming from a version-branch
       # if yes then proceed to create a release
@@ -19,7 +25,7 @@ jobs:
         name: fetch versioning info
         uses: fortinet/github-action-version-branch@1.1.2
         with:
-          pr-number: ${{ github.event.number }}
+          pr-number: ${{ github.event.number || github.event.inputs.pr-number}}
           github-token: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       # create a release
       - name: 'prep: git checkout'
