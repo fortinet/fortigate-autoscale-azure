@@ -56,18 +56,14 @@ jobs:
             - name: resource-azure-list-fortigate-images-byol
             - name: resource-azure-list-fortigate-images-payg
             - name: resource-azure-list-fortianalyzer-images-byol
-          outputs:
-            - name: git-repo-fortigate-autoscale-azure-updated
           run:
-            path: 'sh'
+            path: 'git-repo-fortigate-autoscale-azure/scripts/update-template.sh'
             args:
-              # the first arg is the script to call
-              - git-repo-fortigate-autoscale-azure/scripts/update-template.sh
-              # base repo folder (the repo the files will be updated from)
+              # directory to the github repo
               - git-repo-fortigate-autoscale-azure
-              # head repo folder (the repo the updated files will be contained)
-              - git-repo-fortigate-autoscale-azure-updated
-              # branch name
+              # name of the base branch
+              - ((gitrepo.base_branch))
+              # name of the head branch that will contain the changes
               - ((gitrepo.head_branch))
               # the following args must come in a pair: name=<something>,value=<something>
               - name=fortigate-byol,value=../resource-azure-list-fortigate-images-byol/api-response.json
@@ -77,6 +73,5 @@ jobs:
               - name=fortianalyzer-semver-range,value=>=6.4.4
       - put: git-repo-fortigate-autoscale-azure
         params:
-          repository: git-repo-fortigate-autoscale-azure-updated
           branch: ((gitrepo.head_branch))
           force: true

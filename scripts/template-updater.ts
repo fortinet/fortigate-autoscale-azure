@@ -3,6 +3,8 @@ import path from 'path';
 import semver from 'semver';
 import { err, JSONable, log } from './lib-concourse';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 function readFile(filePath: string): string {
     log(`reading content from file: ${filePath}`);
     if (fs.existsSync(filePath)) {
@@ -120,11 +122,11 @@ function main(): void {
     // argv exlanations by index:
     // 0: node process location
     // 1: script location
-    // 2: base repo directory
-    // 3: head repo directory
-    // 4: head branch name
+    // 2: base branch name
+    // 3: head branch name
+    // 4 - n: additional parameters
     // rest: parameters to pass to this script
-    const params = extractParams(process.argv.slice(5));
+    const params = extractParams(process.argv.slice(4));
     log(JSON.stringify(params));
     // read template file
     const filePathTemplateMain = path.resolve(
