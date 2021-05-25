@@ -29,7 +29,8 @@ jobs:
       - name: build project
         run: npm run build
       - name: make release assets
-        run: npm run make-release
+        # the make release command may vary
+        run: npm run make-dist
       - id: create-release
         name: create release
         # run only if the merged pull request is from a version branch
