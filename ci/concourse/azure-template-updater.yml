@@ -49,19 +49,17 @@ jobs:
           image_resource:
             type: docker-image
             source:
-              repository: node
-              tag: 14-alpine
+              repository: alpine/git
           inputs:
             - name: git-repo-fortigate-autoscale-azure
           run:
-            path: bash
+            path: sh
             args:
               - -c
               - |
                 cd git-repo-fortigate-autoscale-azure
                 git checkout ((gitrepo.head_branch)) || git checkout ((gitrepo.base_branch)) -b ((gitrepo.head_branch))
                 git reset --hard origin/main
-                git branch -u push-target ((gitrepo.head_branch))
       - task: npm-install-dependencies
         config:
           platform: linux
@@ -99,11 +97,11 @@ jobs:
             path: node
             args:
               # script to run
-              - build/scripts/template-updater.js
+              - git-repo-fortigate-autoscale-azure/build/scripts/template-updater.js
               # the following args must come in a pair: name=<something>,value=<something>
-              - name=fortigate-byol,value=../resource-azure-list-fortigate-images-byol/api-response.json
-              - name=fortigate-payg,value=../resource-azure-list-fortigate-images-payg/api-response.json
-              - name=fortianalyzer-byol,value=../resource-azure-list-fortianalyzer-images-byol/api-response.json
+              - name=fortigate-byol,value=resource-azure-list-fortigate-images-byol/api-response.json
+              - name=fortigate-payg,value=resource-azure-list-fortigate-images-payg/api-response.json
+              - name=fortianalyzer-byol,value=resource-azure-list-fortianalyzer-images-byol/api-response.json
               - name=fortigate-semver-range,value=>=6.4.4
               - name=fortianalyzer-semver-range,value=>=6.4.4
       - task: npm-lint
@@ -129,12 +127,11 @@ jobs:
           image_resource:
             type: docker-image
             source:
-              repository: node
-              tag: alpine/git
+              repository: alpine/git
           inputs:
             - name: git-repo-fortigate-autoscale-azure
           run:
-            path: bash
+            path: sh
             args:
               - -c
               - |

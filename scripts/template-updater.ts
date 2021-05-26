@@ -127,9 +127,11 @@ function main(): void {
     log(JSON.stringify(params));
     // read template file
     const filePathTemplateMain = path.resolve(
+        process.cwd(),
         'templates/deploy_fortigate_autoscale.hybrid_licensing.json'
     );
     const filePathTemplateParams = path.resolve(
+        process.cwd(),
         'templates/deploy_fortigate_autoscale.hybrid_licensing.params.json'
     );
     const templateMain = readJSONTemplate(filePathTemplateMain) as { [key: string]: any };
@@ -141,8 +143,8 @@ function main(): void {
         (params['fortigate-byol'] || params['fortigate-payg'])
     ) {
         const fosVersions = filterVersions(
-            params['fortigate-byol'] && path.resolve(params['fortigate-byol']),
-            params['fortigate-payg'] && path.resolve(params['fortigate-payg']),
+            params['fortigate-byol'] && path.resolve(process.cwd(), params['fortigate-byol']),
+            params['fortigate-payg'] && path.resolve(process.cwd(), params['fortigate-payg']),
             params['fortigate-semver-range']
         );
         log('updating fos versions.', `valid versions: ${JSON.stringify(fosVersions)}`);
@@ -164,8 +166,10 @@ function main(): void {
         (params['fortianalyzer-byol'] || params['fortianalyzer-payg'])
     ) {
         const fazVersions = filterVersions(
-            params['fortianalyzer-byol'] && path.resolve(params['fortianalyzer-byol']),
-            params['fortianalyzer-payg'] && path.resolve(params['fortianalyzer-payg']),
+            params['fortianalyzer-byol'] &&
+                path.resolve(process.cwd(), params['fortianalyzer-byol']),
+            params['fortianalyzer-payg'] &&
+                path.resolve(process.cwd(), params['fortianalyzer-payg']),
             params['fortianalyzer-semver-range']
         );
         log('updating faz versions.', `valid versions: ${JSON.stringify(fazVersions)}`);
