@@ -7,7 +7,7 @@ gitrepo:
   # the base branch of the git repo
   base_branch:
   # the branch that will contain the marketplace updates.
-  head_branch:
+  update_branch:
   # private ssh key to get access to the repo, the corresponding public key must be also added to GitHub
   private_key:
 

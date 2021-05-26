@@ -32,7 +32,7 @@ npm --version
 # change dir to the git repo directory ($1)
 cd $1
 
-# checkout base branch ($2) into head branch ($3) for new changes
+# checkout base branch ($2) into update_branch ($3) for new changes
 git checkout $2 || git checkout $1 -b $3
 
 # do npm install and build project before running scripts

@@ -69,7 +69,7 @@ jobs:
               - |
                 cd git-repo-fortigate-autoscale-azure-updated
                 git fetch ../git-repo-fortigate-autoscale-azure main
-                git checkout ((gitrepo.head_branch)) || git checkout ((gitrepo.base_branch)) -b ((gitrepo.head_branch))
+                git checkout ((gitrepo.update_branch)) || git checkout ((gitrepo.base_branch)) -b ((gitrepo.update_branch))
                 git reset --hard FETCH_HEAD
       - task: npm-install-dependencies
         config:
@@ -162,5 +162,5 @@ jobs:
       - put: git-repo-fortigate-autoscale-azure-updated
         params:
           repository: git-repo-fortigate-autoscale-azure-updated
-          branch: ((gitrepo.head_branch))
+          branch: ((gitrepo.update_branch))
           force: true

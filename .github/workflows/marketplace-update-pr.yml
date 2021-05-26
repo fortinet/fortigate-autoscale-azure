@@ -1,5 +1,5 @@
 name: >-
-  Create a marketplace update pull request from head branch to base branch
+  Create a marketplace update pull request from update_branch to base branch
 
 on:
   # Run whenever new commits are pushed to the target branches defined as gibelow.
