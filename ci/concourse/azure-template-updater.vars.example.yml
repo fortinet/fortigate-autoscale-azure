@@ -10,6 +10,8 @@ gitrepo:
   update_branch:
   # private ssh key to get access to the repo, the corresponding public key must be also added to GitHub
   private_key:
+  # if private ssh key is protected by a passphrase, specify it here
+  private_key_passphrase:
 
 # the following configurations are related to the use of 'concourse-resource-type-azure-rest-api'
 # for more informatioin, please see the README.md on: https://github.com/fortinet/concourse-resource-type-azure-rest-api

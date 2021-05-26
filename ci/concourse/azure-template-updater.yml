@@ -12,12 +12,14 @@ resources:
       uri: ((gitrepo.url))
       branch: ((gitrepo.base_branch))
       private_key: ((gitrepo.private_key))
+      private_key_passphrase: ((gitrepo.private_key_passphrase))
   - name: git-repo-fortigate-autoscale-azure-updated
     type: git
     source:
       uri: ((gitrepo.url))
       branch: ((gitrepo.base_branch))
       private_key: ((gitrepo.private_key))
+      private_key_passphrase: ((gitrepo.private_key_passphrase))
   - name: resource-azure-list-fortigate-images-byol
     type: azure-rest-api
     source:
