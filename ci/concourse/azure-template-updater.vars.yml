@@ -1,4 +1,5 @@
-# every entry here can use the ((var)) format again if
+# This vars file shows the full set of variables used in the azure-template-updater.yml
+# Specifying each to customize the Azure template updater pipeline.
 gitrepo:
   # url is the remote url to clone the repo
   url:
