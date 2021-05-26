@@ -109,11 +109,10 @@ jobs:
           outputs:
             - name: git-repo-fortigate-autoscale-azure-updated
           run:
-            path: node
+            path: git-repo-fortigate-autoscale-azure-updated/build/scripts/template-updater.js
             args:
               # first arg is the script to run
               # working directory will be resolved into 'git-repo-fortigate-autoscale-azure-updated'
-              - git-repo-fortigate-autoscale-azure-updated/build/scripts/template-updater.js
               - fortigate-byol=../resource-azure-list-fortigate-images-byol/api-response.json
               - fortigate-payg./resource-azure-list-fortigate-images-payg/api-response.json
               - fortianalyzer-byol./resource-azure-list-fortianalyzer-images-byol/api-response.json
