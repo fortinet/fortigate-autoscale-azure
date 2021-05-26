@@ -122,11 +122,8 @@ function main(): void {
     // argv exlanations by index:
     // 0: node process location
     // 1: script location
-    // 2: base branch name
-    // 3: head branch name
-    // 4 - n: additional parameters
-    // rest: parameters to pass to this script
-    const params = extractParams(process.argv.slice(4));
+    // 2 - n: parameters to pass to this script
+    const params = extractParams(process.argv.slice(2));
     log(JSON.stringify(params));
     // read template file
     const filePathTemplateMain = path.resolve(
