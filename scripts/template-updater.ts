@@ -118,6 +118,7 @@ function main(): void {
     // log(`running script: ${__filename}`);
     // log('stdin: ', JSON.stringify(input, null, 4));
     log('cwd:', process.cwd());
+    const currentWorkingDir = path.resolve(path.dirname(__filename), '../../');
     log('argv:', JSON.stringify(process.argv, null, 4));
     // argv exlanations by index:
     // 0: node process location
@@ -127,11 +128,11 @@ function main(): void {
     log(JSON.stringify(params));
     // read template file
     const filePathTemplateMain = path.resolve(
-        process.cwd(),
+        currentWorkingDir,
         'templates/deploy_fortigate_autoscale.hybrid_licensing.json'
     );
     const filePathTemplateParams = path.resolve(
-        process.cwd(),
+        currentWorkingDir,
         'templates/deploy_fortigate_autoscale.hybrid_licensing.params.json'
     );
     const templateMain = readJSONTemplate(filePathTemplateMain) as { [key: string]: any };
@@ -143,8 +144,8 @@ function main(): void {
         (params['fortigate-byol'] || params['fortigate-payg'])
     ) {
         const fosVersions = filterVersions(
-            params['fortigate-byol'] && path.resolve(process.cwd(), params['fortigate-byol']),
-            params['fortigate-payg'] && path.resolve(process.cwd(), params['fortigate-payg']),
+            params['fortigate-byol'] && path.resolve(currentWorkingDir, params['fortigate-byol']),
+            params['fortigate-payg'] && path.resolve(currentWorkingDir, params['fortigate-payg']),
             params['fortigate-semver-range']
         );
         log('updating fos versions.', `valid versions: ${JSON.stringify(fosVersions)}`);
@@ -167,9 +168,9 @@ function main(): void {
     ) {
         const fazVersions = filterVersions(
             params['fortianalyzer-byol'] &&
-                path.resolve(process.cwd(), params['fortianalyzer-byol']),
+                path.resolve(currentWorkingDir, params['fortianalyzer-byol']),
             params['fortianalyzer-payg'] &&
-                path.resolve(process.cwd(), params['fortianalyzer-payg']),
+                path.resolve(currentWorkingDir, params['fortianalyzer-payg']),
             params['fortianalyzer-semver-range']
         );
         log('updating faz versions.', `valid versions: ${JSON.stringify(fazVersions)}`);

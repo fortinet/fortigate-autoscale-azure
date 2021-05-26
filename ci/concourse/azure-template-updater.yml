@@ -52,6 +52,8 @@ jobs:
               repository: alpine/git
           inputs:
             - name: git-repo-fortigate-autoscale-azure
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure
           run:
             path: sh
             args:
@@ -69,6 +71,8 @@ jobs:
               repository: node
               tag: 14-buster
           inputs:
+            - name: git-repo-fortigate-autoscale-azure
+          outputs:
             - name: git-repo-fortigate-autoscale-azure
           run:
             path: bash
@@ -93,15 +97,18 @@ jobs:
             - name: resource-azure-list-fortigate-images-byol
             - name: resource-azure-list-fortigate-images-payg
             - name: resource-azure-list-fortianalyzer-images-byol
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure
           run:
             path: node
             args:
-              # script to run
+              # first arg is the script to run
+              # working directory will be resolved into 'git-repo-fortigate-autoscale-azure'
               - git-repo-fortigate-autoscale-azure/build/scripts/template-updater.js
               # the following args must come in a pair: name=<something>,value=<something>
-              - name=fortigate-byol,value=resource-azure-list-fortigate-images-byol/api-response.json
-              - name=fortigate-payg,value=resource-azure-list-fortigate-images-payg/api-response.json
-              - name=fortianalyzer-byol,value=resource-azure-list-fortianalyzer-images-byol/api-response.json
+              - name=fortigate-byol,value=../resource-azure-list-fortigate-images-byol/api-response.json
+              - name=fortigate-payg,value=../resource-azure-list-fortigate-images-payg/api-response.json
+              - name=fortianalyzer-byol,value=../resource-azure-list-fortianalyzer-images-byol/api-response.json
               - name=fortigate-semver-range,value=>=6.4.4
               - name=fortianalyzer-semver-range,value=>=6.4.4
       - task: npm-lint
@@ -113,6 +120,8 @@ jobs:
               repository: node
               tag: 14-buster
           inputs:
+            - name: git-repo-fortigate-autoscale-azure
+          outputs:
             - name: git-repo-fortigate-autoscale-azure
           run:
             path: bash
@@ -130,11 +139,14 @@ jobs:
               repository: alpine/git
           inputs:
             - name: git-repo-fortigate-autoscale-azure
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure
           run:
             path: sh
             args:
               - -c
               - |
+                cd git-repo-fortigate-autoscale-azure
                 git config user.name "github-actions[bot]"
                 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                 git add -u
