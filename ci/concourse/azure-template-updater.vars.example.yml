@@ -1,0 +1,62 @@
+# This vars file shows the full set of variables used in the azure-template-updater.yml
+# Specifying each to customize the Azure template updater pipeline.
+# top node of the github repo configuration
+gitrepo:
+  # url is the remote url to clone the repo
+  url:
+  # the base branch of the git repo
+  base_branch:
+  # the branch that will contain the marketplace updates.
+  head_branch:
+  # private ssh key to get access to the repo, the corresponding public key must be also added to GitHub
+  private_key:
+
+# the following configurations are related to the use of 'concourse-resource-type-azure-rest-api'
+# for more informatioin, please see the README.md on: https://github.com/fortinet/concourse-resource-type-azure-rest-api
+
+# the registry domain to retrieve the 'azure-rest-api-resource' from
+registry_domain:
+# top node of the Azure REST API credential configuration
+azureapi:
+  # client_id for the Azure Service Principal
+  client_id:
+  # client_secret for the Azure Service Principal
+  client_secret:
+  # tenant_id for the Azure Service Principal
+  tenant:
+  # subscription for the Azure Service Principal
+  subscription:
+# top node of the configuration for Azure REST API to retrieve marketplace vm images
+# for information about this REST API, see: https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages/list
+vmimages:
+  # the location
+  location:
+  # this node is for the FortiGate vm images
+  fgt:
+    # this node is for BYOL pricing type
+    byol:
+      # offer of the vm image
+      offer:
+      # publisher of the vm image
+      publisher:
+      # sku of the vm image
+      sku:
+    # this node is for PAYG pricing type
+    payg:
+      # offer of the vm image
+      offer:
+      # publisher of the vm image
+      publisher:
+      # sku of the vm image
+      sku:
+  # this node is for the FortiAnalyzer vm images
+  faz:
+    # this node is for BYOL pricing type
+    byol:
+      # offer of the vm image
+      offer:
+      # publisher of the vm image
+      publisher:
+      # sku of the vm image
+      sku:
+    # this node is for PAYG pricing type
