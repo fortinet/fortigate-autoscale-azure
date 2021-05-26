@@ -112,14 +112,13 @@ jobs:
             path: node
             args:
               # first arg is the script to run
-              # working directory will be resolved into 'git-repo-fortigate-autoscale-azure'
+              # working directory will be resolved into 'git-repo-fortigate-autoscale-azure-updated'
               - git-repo-fortigate-autoscale-azure-updated/build/scripts/template-updater.js
-              # the following args must come in a pair: name=<something>,value=<something>
-              - name=fortigate-byol,value=../resource-azure-list-fortigate-images-byol/api-response.json
-              - name=fortigate-payg,value=../resource-azure-list-fortigate-images-payg/api-response.json
-              - name=fortianalyzer-byol,value=../resource-azure-list-fortianalyzer-images-byol/api-response.json
-              - name=fortigate-semver-range,value=>=6.4.4
-              - name=fortianalyzer-semver-range,value=>=6.4.4
+              - fortigate-byol=../resource-azure-list-fortigate-images-byol/api-response.json
+              - fortigate-payg./resource-azure-list-fortigate-images-payg/api-response.json
+              - fortianalyzer-byol./resource-azure-list-fortianalyzer-images-byol/api-response.json
+              - fortigate-semver-range,value=>=6.4.4
+              - fortianalyzer-semver-range,value=>=6.4.4
       - task: npm-lint
         config:
           platform: linux

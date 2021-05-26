@@ -29,8 +29,8 @@ function readJSONTemplate(filePath: string): JSONable {
         return content !== null && JSON.parse(content);
     } catch (error) {
         err('error in parsing into JSON object: ', JSON.stringify(error));
+        throw error;
     }
-    return null;
 }
 
 function writeFile(filePath: string, content: string): void {
@@ -74,17 +74,13 @@ function extractVersions(filePath: string): string[] {
 }
 
 function extractParams(argv: string[]): { [key: string]: string } {
-    const params = {};
-    argv.forEach(arg => {
-        // format: name=foo,value=bar
-        const [p1, p2] = arg.split(','); // get ['name=foo', 'value=bar']
-        const name = (p1.indexOf('name=') === 0 && p1.substr('name='.length)) || null;
-        const value = (p2.indexOf('value=') === 0 && p2.substr('value='.length)) || null;
-        if (name && value) {
-            params[name] = value;
+    return argv.reduce((result, arg) => {
+        const [, key, val] = /^([^=]+)=(.*)$/.exec(arg) || [];
+        if (key && val) {
+            result[key] = val;
         }
-    });
-    return params;
+        return result;
+    }, {});
 }
 
 function filterVersions(filePathBYOL: string, filePathPAYG: string, semverRange: string): string[] {
