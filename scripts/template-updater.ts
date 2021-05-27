@@ -5,61 +5,35 @@ import semver from 'semver';
 import { err, JSONable, log } from './lib-concourse';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-function readFile(filePath: string): string {
-    log(`reading content from file: ${filePath}`);
-    if (fs.existsSync(filePath)) {
-        const stat = fs.statSync(filePath);
-        if (stat.isFile()) {
-            log(`file found: ${filePath}`);
-            const buffer = fs.readFileSync(filePath);
-            return buffer.toString();
-        } else {
-            log(`not a file: ${filePath}`);
-        }
-    } else {
-        log(`file not found: ${filePath}`);
-    }
-    log(`unable to read content from file: ${filePath}`);
-    return null;
-}
-
 function readJSONTemplate(filePath: string): JSONable {
+    let contents = '';
     try {
-        const content = readFile(filePath);
-        return content !== null && JSON.parse(content);
+        contents = fs.readFileSync(filePath).toString();
     } catch (error) {
-        err('error in parsing into JSON object: ', JSON.stringify(error));
+        err(`error in reading the JSON template: ${filePath}. error: `, JSON.stringify(error));
+        throw error;
+    }
+    try {
+        return contents !== null && JSON.parse(contents);
+    } catch (error) {
+        err('error in parsing into JSON object. error: ', JSON.stringify(error));
         throw error;
     }
 }
 
-function writeFile(filePath: string, content: string): void {
-    log(`writing content into file: ${filePath}`);
-    if (fs.existsSync(filePath)) {
-        const stat = fs.statSync(filePath);
-        if (stat.isFile()) {
-            log(`file found: ${filePath}`);
-            fs.writeFileSync(filePath, content);
-            log('write file complete');
-            return;
-        } else {
-            log(`not a file: ${filePath}`);
-        }
-    } else {
-        log(`file not found: ${filePath}`);
-    }
-    log(`unable to write content to file: ${filePath}`);
-    return;
-}
-
 function extractVersions(filePath: string): string[] {
+    let contents = '';
     try {
-        const content = readFile(filePath);
+        contents = fs.readFileSync(filePath).toString();
+    } catch (error) {
+        err(`error in reading the JSON template: ${filePath}. error: `, JSON.stringify(error));
+        throw error;
+    }
+    try {
         const items: { name: string; [key: string]: string }[] =
-            content !== null && JSON.parse(content);
+            contents !== null && JSON.parse(contents);
         if (!Array.isArray(items)) {
-            throw new Error(`Not an array: ${content}`);
+            throw new Error(`Not an array: ${contents}`);
         }
         const versions: string[] = items
             .map(v => {
@@ -111,9 +85,6 @@ function filterVersions(filePathBYOL: string, filePathPAYG: string, semverRange:
 
 function main(): void {
     let updated = false;
-    // const input = await inputFetchAll();
-    // log(`running script: ${__filename}`);
-    // log('stdin: ', JSON.stringify(input, null, 4));
     log('cwd:', process.cwd());
     const currentWorkingDir = path.resolve(path.dirname(__filename), '../../');
     log('argv:', JSON.stringify(process.argv, null, 4));
@@ -186,10 +157,11 @@ function main(): void {
     }
     // save files if updated
     if (updated) {
-        writeFile(filePathTemplateMain, JSON.stringify(templateMain));
-        writeFile(filePathTemplateParams, JSON.stringify(templateParams));
+        log(`writing content into file: ${filePathTemplateMain}`);
+        fs.writeFileSync(filePathTemplateMain, JSON.stringify(templateMain));
+        log(`writing content into file: ${filePathTemplateParams}`);
+        fs.writeFileSync(filePathTemplateParams, JSON.stringify(templateParams));
     }
-    // log('params file: ', JSON.stringify(filePathTemplateParams));
     // NOTE: the formatting of the written files may violate some linting rules. please lint them
     // again
     return;
