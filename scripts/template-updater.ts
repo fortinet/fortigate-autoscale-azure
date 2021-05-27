@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
-import { err, JSONable, log } from './lib-concourse';
+import { JSONable, log } from './lib-concourse';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function readJSONTemplate(filePath: string): JSONable {
@@ -10,13 +10,13 @@ function readJSONTemplate(filePath: string): JSONable {
     try {
         contents = fs.readFileSync(filePath).toString();
     } catch (error) {
-        err(`error in reading the JSON template: ${filePath}. error: `, JSON.stringify(error));
+        (error as Error).message = `error in reading the JSON template: ${filePath}.`;
         throw error;
     }
     try {
         return contents !== null && JSON.parse(contents);
     } catch (error) {
-        err('error in parsing into JSON object. error: ', JSON.stringify(error));
+        (error as Error).message = `error in parsing content into JSON object from file: ${filePath}.`;
         throw error;
     }
 }
@@ -26,26 +26,26 @@ function extractVersions(filePath: string): string[] {
     try {
         contents = fs.readFileSync(filePath).toString();
     } catch (error) {
-        err(`error in reading the JSON template: ${filePath}. error: `, JSON.stringify(error));
+        (error as Error).message = `error in reading the JSON template: ${filePath}.`;
         throw error;
     }
+    let items: { name: string; [key: string]: string }[] = [];
     try {
-        const items: { name: string; [key: string]: string }[] =
-            contents !== null && JSON.parse(contents);
-        if (!Array.isArray(items)) {
-            throw new Error(`Not an array: ${contents}`);
-        }
-        const versions: string[] = items
-            .map(v => {
-                return (v && v.name) || null;
-            })
-            .filter(v => !!v)
-            .sort();
-        return versions;
+        items = contents !== null && JSON.parse(contents);
     } catch (error) {
-        err('error in parsing into JSON object: ', JSON.stringify(error));
+        (error as Error).message = `error in parsing content into JSON object, content: ${contents}.`;
+        throw error;
     }
-    return [];
+    if (!Array.isArray(items)) {
+        throw new Error(`Not an array: ${contents}`);
+    }
+    const versions: string[] = items
+        .map(v => {
+            return (v && v.name) || null;
+        })
+        .filter(v => !!v)
+        .sort();
+    return versions;
 }
 
 function extractParams(argv: string[]): { [key: string]: string } {
