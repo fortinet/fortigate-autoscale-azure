@@ -18,7 +18,7 @@ npm install
 npm run build
 
 # call the template updater and propagate all args to it
-node build/scripts/template-updater.js $@
+node build/scripts/template-updater.js "$@"
 
 # run all linting
 npm run lint-fix
