@@ -95,6 +95,7 @@ jobs:
                 cd git-repo-fortigate-autoscale-azure-updated
                 npm install
                 npm run build
+                chmod +x build/scripts/template-updater.js
       - task: node-update-azure-template
         config:
           platform: linux
@@ -133,7 +134,7 @@ jobs:
           outputs:
             - name: git-repo-fortigate-autoscale-azure-updated
           run:
-            path: bash
+            path: sh
             args:
               - -c
               - |
