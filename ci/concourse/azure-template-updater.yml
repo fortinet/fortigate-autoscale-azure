@@ -1,0 +1,168 @@
+resource_types:
+  - name: azure-rest-api
+    type: docker-image
+    source:
+      repository: ((registry_domain))/azure-rest-api-resource
+      username: ((registry.username))
+      password: ((registry.password))
+resources:
+  - name: git-repo-fortigate-autoscale-azure
+    type: git
+    source:
+      uri: ((gitrepo.url))
+      branch: ((gitrepo.base_branch))
+      private_key: ((git.private_key))
+      private_key_passphrase: ((git.private_key_passphrase))
+  - name: git-repo-fortigate-autoscale-azure-updated
+    type: git
+    source:
+      uri: ((gitrepo.url))
+      branch: ((gitrepo.base_branch))
+      private_key: ((git.private_key))
+      private_key_passphrase: ((git.private_key_passphrase))
+  - name: resource-azure-list-fortigate-images-byol
+    type: azure-rest-api
+    source:
+      client_id: ((azure-rest-api.client_id))
+      client_secret: ((azure-rest-api.client_secret))
+      tenant: ((azure-rest-api.tenant))
+      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/((vmimages.location))/publishers/((vmimages.fgt.byol.publisher))/artifacttypes/vmimage/offers/((vmimages.fgt.byol.offer))/skus/((vmimages.fgt.byol.sku))/versions?api-version=2020-12-01'
+  - name: resource-azure-list-fortigate-images-payg
+    type: azure-rest-api
+    source:
+      client_id: ((azure-rest-api.client_id))
+      client_secret: ((azure-rest-api.client_secret))
+      tenant: ((azure-rest-api.tenant))
+      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/((vmimages.location))/publishers/((vmimages.fgt.payg.publisher))/artifacttypes/vmimage/offers/((vmimages.fgt.payg.offer))/skus/((vmimages.fgt.payg.sku))/versions?api-version=2020-12-01'
+  - name: resource-azure-list-fortianalyzer-images-byol
+    type: azure-rest-api
+    source:
+      # from_local_path: ../params/source
+      client_id: ((azure-rest-api.client_id))
+      client_secret: ((azure-rest-api.client_secret))
+      tenant: ((azure-rest-api.tenant))
+      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/((vmimages.location))/publishers/((vmimages.faz.byol.publisher))/artifacttypes/vmimage/offers/((vmimages.faz.byol.offer))/skus/((vmimages.faz.byol.sku))/versions?api-version=2020-12-01'
+
+jobs:
+  - name: vmimages-updater
+    public: true
+    plan:
+      - get: git-repo-fortigate-autoscale-azure
+      - get: git-repo-fortigate-autoscale-azure-updated
+      - get: resource-azure-list-fortigate-images-byol
+      - get: resource-azure-list-fortigate-images-payg
+      - get: resource-azure-list-fortianalyzer-images-byol
+      - task: git-checkout-head-branch
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: alpine/git
+          inputs:
+            - name: git-repo-fortigate-autoscale-azure
+            - name: git-repo-fortigate-autoscale-azure-updated
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                cd git-repo-fortigate-autoscale-azure-updated
+                git fetch ../git-repo-fortigate-autoscale-azure main
+                git checkout ((gitrepo.update_branch)) || git checkout ((gitrepo.base_branch)) -b ((gitrepo.update_branch))
+                git reset --hard FETCH_HEAD
+      - task: npm-install-dependencies
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: node
+              tag: 14-buster
+          inputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+          run:
+            path: bash
+            args:
+              - -c
+              - |
+                apt-get update -y
+                apt-get install libsecret-1-0 -y
+                cd git-repo-fortigate-autoscale-azure-updated
+                npm install
+                npm run build
+                chmod +x build/scripts/template-updater.js
+      - task: node-update-azure-template
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: node
+              tag: 14-alpine
+          inputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+            - name: resource-azure-list-fortigate-images-byol
+            - name: resource-azure-list-fortigate-images-payg
+            - name: resource-azure-list-fortianalyzer-images-byol
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+          run:
+            path: git-repo-fortigate-autoscale-azure-updated/build/scripts/template-updater.js
+            args:
+              # first arg is the script to run
+              # working directory will be resolved into 'git-repo-fortigate-autoscale-azure-updated'
+              - fortigate-byol=../resource-azure-list-fortigate-images-byol/api-response.json
+              - fortigate-payg./resource-azure-list-fortigate-images-payg/api-response.json
+              - fortianalyzer-byol./resource-azure-list-fortianalyzer-images-byol/api-response.json
+              - fortigate-semver-range,value=>=6.4.4
+              - fortianalyzer-semver-range,value=>=6.4.4
+      - task: npm-lint
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: node
+              tag: 14-alpine
+          inputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                cd git-repo-fortigate-autoscale-azure-updated
+                npm run lint-fix
+      - task: git-commit-changes
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: alpine/git
+          inputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+          outputs:
+            - name: git-repo-fortigate-autoscale-azure-updated
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                cd git-repo-fortigate-autoscale-azure-updated
+                git config user.name "github-actions[bot]"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                git add -u
+                git commit -m "auto update by Azure marketplace offer changes" --no-gpg-sign --allow-empty
+      - put: git-repo-fortigate-autoscale-azure-updated
+        params:
+          repository: git-repo-fortigate-autoscale-azure-updated
+          branch: ((gitrepo.update_branch))
+          force: true

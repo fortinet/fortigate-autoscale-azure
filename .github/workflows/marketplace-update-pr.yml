@@ -1,0 +1,23 @@
+name: >-
+  Create a marketplace update pull request from update_branch to base branch
+
+on:
+  # Run whenever new commits are pushed to the target branches defined as gibelow.
+  push:
+    branches:
+      - 'marketplace_updates' # only track the marketplace_updates branch
+jobs:
+  main_job:
+    runs-on: ubuntu-latest
+    name: A test job
+    steps:
+      - name: create pr
+        id: create-pr
+        uses: fortinet/github-action-version-pr@1.0.6
+        with:
+          base-branch: main
+          head-branch: marketplace_updates
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-create-draft: false
+          pr-fail-if-exist: false
+          pr-template-uri: .github/workflows/templates/marketplace-updates-pr.yml
