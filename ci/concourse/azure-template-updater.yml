@@ -2,21 +2,21 @@ resource_types:
   - name: azure-rest-api
     type: docker-image
     source:
-      repository: ((registry_domain))/azure-rest-api-resource
+      repository: ((registry.domain))/azure-rest-api-resource
       username: ((registry.username))
       password: ((registry.password))
 resources:
   - name: git-repo-fortigate-autoscale-azure
     type: git
     source:
-      uri: ((gitrepo.url))
+      uri: git@github.com:fortinet/fortigate-autoscale-azure.git
       branch: ((gitrepo.base_branch))
       private_key: ((git.private_key))
       private_key_passphrase: ((git.private_key_passphrase))
   - name: git-repo-fortigate-autoscale-azure-updated
     type: git
     source:
-      uri: ((gitrepo.url))
+      uri: git@github.com:fortinet/fortigate-autoscale-azure.git
       branch: ((gitrepo.base_branch))
       private_key: ((git.private_key))
       private_key_passphrase: ((git.private_key_passphrase))

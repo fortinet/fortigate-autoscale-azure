@@ -1,0 +1,43 @@
+# This vars file shows the full set of variables used in the azure-template-updater.yml
+# Specifying each to customize the Azure template updater pipeline.
+
+# top node of the github repo configuration
+gitrepo:
+  base_branch: main
+  # the branch that will contain the marketplace updates.
+  update_branch: marketplace_updates
+# the following configurations are related to the use of 'concourse-resource-type-azure-rest-api'
+# for more informatioin, please see the README.md on: https://github.com/fortinet/concourse-resource-type-azure-rest-api
+
+# top node of the Azure REST API credential configuration
+vmimages:
+  # the location
+  location: eastus
+  # this node is for the FortiGate vm images
+  fgt:
+    # this node is for BYOL pricing type
+    byol:
+      # offer of the vm image
+      offer: fortinet_fortigate-vm_v5
+      # publisher of the vm image
+      publisher: fortinet
+      # sku of the vm image
+      sku: fortinet_fg-vm
+    # this node is for PAYG pricing type
+    payg:
+      # offer of the vm image
+      offer: fortinet_fortigate-vm_v5
+      # publisher of the vm image
+      publisher: fortinet
+      # sku of the vm image
+      sku: fortinet_fg-vm_payg_20190624
+  # this node is for the FortiAnalyzer vm images
+  faz:
+    # this node is for BYOL pricing type
+    byol:
+      # offer of the vm image
+      offer: fortinet-fortianalyzer
+      # publisher of the vm image
+      publisher: fortinet
+      # sku of the vm image
+      sku: fortinet-fortianalyzer
