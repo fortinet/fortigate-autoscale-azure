@@ -9,15 +9,15 @@ resources:
   - name: git-repo-fortigate-autoscale-azure
     type: git
     source:
-      uri: ((gitrepo.url))
-      branch: ((gitrepo.base_branch))
+      uri: git@github.com:fortinet/fortigate-autoscale-azure.git
+      branch: main
       private_key: ((git.private_key))
       private_key_passphrase: ((git.private_key_passphrase))
   - name: git-repo-fortigate-autoscale-azure-updated
     type: git
     source:
-      uri: ((gitrepo.url))
-      branch: ((gitrepo.base_branch))
+      uri: git@github.com:fortinet/fortigate-autoscale-azure.git
+      branch: main
       private_key: ((git.private_key))
       private_key_passphrase: ((git.private_key_passphrase))
   - name: resource-azure-list-fortigate-images-byol
@@ -26,14 +26,14 @@ resources:
       client_id: ((azure-rest-api.client_id))
       client_secret: ((azure-rest-api.client_secret))
       tenant: ((azure-rest-api.tenant))
-      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/((vmimages.location))/publishers/((vmimages.fgt.byol.publisher))/artifacttypes/vmimage/offers/((vmimages.fgt.byol.offer))/skus/((vmimages.fgt.byol.sku))/versions?api-version=2020-12-01'
+      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/eastus/publishers/fortinet/artifacttypes/vmimage/offers/fortinet_fortigate-vm_v5/skus/fortinet_fg-vm/versions?api-version=2020-12-01'
   - name: resource-azure-list-fortigate-images-payg
     type: azure-rest-api
     source:
       client_id: ((azure-rest-api.client_id))
       client_secret: ((azure-rest-api.client_secret))
       tenant: ((azure-rest-api.tenant))
-      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/((vmimages.location))/publishers/((vmimages.fgt.payg.publisher))/artifacttypes/vmimage/offers/((vmimages.fgt.payg.offer))/skus/((vmimages.fgt.payg.sku))/versions?api-version=2020-12-01'
+      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/eastus/publishers/fortinet/artifacttypes/vmimage/offers/fortinet_fortigate-vm_v5/skus/fortinet_fg-vm_payg_20190624/versions?api-version=2020-12-01'
   - name: resource-azure-list-fortianalyzer-images-byol
     type: azure-rest-api
     source:
@@ -41,7 +41,7 @@ resources:
       client_id: ((azure-rest-api.client_id))
       client_secret: ((azure-rest-api.client_secret))
       tenant: ((azure-rest-api.tenant))
-      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/((vmimages.location))/publishers/((vmimages.faz.byol.publisher))/artifacttypes/vmimage/offers/((vmimages.faz.byol.offer))/skus/((vmimages.faz.byol.sku))/versions?api-version=2020-12-01'
+      url: 'https://management.azure.com/subscriptions/((azure-rest-api.subscription))/providers/Microsoft.Compute/locations/eastus/publishers/fortinet/artifacttypes/vmimage/offers/fortinet-fortianalyzer/skus/fortinet-fortianalyzer/versions?api-version=2020-12-01'
 
 jobs:
   - name: vmimages-updater
@@ -71,7 +71,7 @@ jobs:
               - |
                 cd git-repo-fortigate-autoscale-azure-updated
                 git fetch ../git-repo-fortigate-autoscale-azure main
-                git checkout ((gitrepo.update_branch)) || git checkout ((gitrepo.base_branch)) -b ((gitrepo.update_branch))
+                git checkout marketplace_updates || git checkout main -b marketplace_updates
                 git reset --hard FETCH_HEAD
       - task: npm-install-dependencies
         config:
@@ -164,5 +164,5 @@ jobs:
       - put: git-repo-fortigate-autoscale-azure-updated
         params:
           repository: git-repo-fortigate-autoscale-azure-updated
-          branch: ((gitrepo.update_branch))
+          branch: marketplace_updates
           force: true
