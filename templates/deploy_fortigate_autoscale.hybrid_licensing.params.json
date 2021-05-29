@@ -2,143 +2,51 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "3.3.0.0",
     "parameters": {
-        "AccessRestrictionIPRange": {
-            "value": ""
-        },
-        "AdminPassword": {
-            "value": ""
-        },
-        "AdminUsername": {
-            "value": "azureadmin"
-        },
-        "BYOLInstanceCount": {
-            "value": 2
-        },
-        "FortiAnalyzerAutoscaleAdminPassword": {
-            "value": ""
-        },
-        "FortiAnalyzerAutoscaleAdminUsername": {
-            "value": ""
-        },
-        "FortiAnalyzerCustomPrivateIPAddress": {
-            "value": ""
-        },
-        "FortiAnalyzerInstanceType": {
-            "value": "Standard_D2"
-        },
-        "FortiAnalyzerVersion": {
-            "value": "6.4.5"
-        },
-        "FortiGatePSKSecret": {
-            "value": ""
-        },
-        "FOSVersion": {
-            "value": "6.4.5"
-        },
-        "FrontendIPDeploymentMethod": {
-            "value": "create new public IP address"
-        },
-        "FrontendIPName": {
-            "value": ""
-        },
-        "HeartBeatDelayAllowance": {
-            "value": 30
-        },
-        "HeartBeatInterval": {
-            "value": 60
-        },
-        "HeartBeatLossCount": {
-            "value": 3
-        },
-        "InstanceType": {
-            "value": "Standard_F4"
-        },
-        "LoadBalancerIP": {
-            "value": "10"
-        },
-        "MaxBYOLInstanceCount": {
-            "value": 2
-        },
-        "MaxPAYGInstanceCount": {
-            "value": 6
-        },
-        "MinBYOLInstanceCount": {
-            "value": 2
-        },
-        "MinPAYGInstanceCount": {
-            "value": 0
-        },
-        "NetworkSecurityGroupName": {
-            "value": ""
-        },
-        "PAYGInstanceCount": {
-            "value": 0
-        },
-        "PackageResURL": {
-            "value": ""
-        },
-        "PrimaryElectionTimeout": {
-            "value": 90
-        },
-        "ResourceNamePrefix": {
-            "value": ""
-        },
-        "ScaleInThreshold": {
-            "value": 20
-        },
-        "ScaleOutThreshold": {
-            "value": 80
-        },
-        "ServicePlanTier": {
-            "value": "Premium (P1V2)"
-        },
-        "ServicePrincipalAppID": {
-            "value": ""
-        },
-        "ServicePrincipalAppSecret": {
-            "value": ""
-        },
-        "ServicePrincipalObjectID": {
-            "value": ""
-        },
-        "StorageAccountType": {
-            "value": "Standard_LRS"
-        },
-        "Subnet1AddressRange": {
-            "value": "10.0.0.0/24"
-        },
-        "Subnet1Name": {
-            "value": ""
-        },
-        "Subnet2AddressRange": {
-            "value": "10.0.1.0/24"
-        },
-        "Subnet2Name": {
-            "value": ""
-        },
-        "Subnet3AddressRange": {
-            "value": "10.0.2.0/24"
-        },
-        "Subnet3Name": {
-            "value": ""
-        },
-        "Subnet4AddressRange": {
-            "value": "10.0.3.0/24"
-        },
-        "Subnet4Name": {
-            "value": ""
-        },
-        "VnetAddressSpace": {
-            "value": "10.0.0.0/16"
-        },
-        "VnetDeploymentMethod": {
-            "value": "create new"
-        },
-        "VnetName": {
-            "value": ""
-        },
-        "VnetResourceGroupName": {
-            "value": ""
-        }
+        "AccessRestrictionIPRange": { "value": "" },
+        "AdminPassword": { "value": "" },
+        "AdminUsername": { "value": "azureadmin" },
+        "BYOLInstanceCount": { "value": 2 },
+        "FortiAnalyzerAutoscaleAdminPassword": { "value": "" },
+        "FortiAnalyzerAutoscaleAdminUsername": { "value": "" },
+        "FortiAnalyzerCustomPrivateIPAddress": { "value": "" },
+        "FortiAnalyzerInstanceType": { "value": "Standard_D2" },
+        "FortiAnalyzerVersion": { "value": "6.4.5" },
+        "FortiGatePSKSecret": { "value": "" },
+        "FOSVersion": { "value": "7.0.0" },
+        "FrontendIPDeploymentMethod": { "value": "create new public IP address" },
+        "FrontendIPName": { "value": "" },
+        "HeartBeatDelayAllowance": { "value": 30 },
+        "HeartBeatInterval": { "value": 60 },
+        "HeartBeatLossCount": { "value": 3 },
+        "InstanceType": { "value": "Standard_F4" },
+        "LoadBalancerIP": { "value": "10" },
+        "MaxBYOLInstanceCount": { "value": 2 },
+        "MaxPAYGInstanceCount": { "value": 6 },
+        "MinBYOLInstanceCount": { "value": 2 },
+        "MinPAYGInstanceCount": { "value": 0 },
+        "NetworkSecurityGroupName": { "value": "" },
+        "PAYGInstanceCount": { "value": 0 },
+        "PackageResURL": { "value": "" },
+        "PrimaryElectionTimeout": { "value": 90 },
+        "ResourceNamePrefix": { "value": "" },
+        "ScaleInThreshold": { "value": 20 },
+        "ScaleOutThreshold": { "value": 80 },
+        "ServicePlanTier": { "value": "Premium (P1V2)" },
+        "ServicePrincipalAppID": { "value": "" },
+        "ServicePrincipalAppSecret": { "value": "" },
+        "ServicePrincipalObjectID": { "value": "" },
+        "StorageAccountType": { "value": "Standard_LRS" },
+        "Subnet1AddressRange": { "value": "10.0.0.0/24" },
+        "Subnet1Name": { "value": "" },
+        "Subnet2AddressRange": { "value": "10.0.1.0/24" },
+        "Subnet2Name": { "value": "" },
+        "Subnet3AddressRange": { "value": "10.0.2.0/24" },
+        "Subnet3Name": { "value": "" },
+        "Subnet4AddressRange": { "value": "10.0.3.0/24" },
+        "Subnet4Name": { "value": "" },
+        "VnetAddressSpace": { "value": "10.0.0.0/16" },
+        "VnetDeploymentMethod": { "value": "create new" },
+        "VnetName": { "value": "" },
+        "VnetResourceGroupName": { "value": "" }
     }
 }
