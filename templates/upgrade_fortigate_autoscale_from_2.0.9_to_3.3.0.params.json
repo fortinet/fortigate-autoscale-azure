@@ -1,0 +1,126 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "AccessRestrictionIPRange": {
+            "value": ""
+        },
+        "AdminPassword": {
+            "value": ""
+        },
+        "AdminUsername": {
+            "value": "azureadmin"
+        },
+        "BYOLInstanceCount": {
+            "value": 2
+        },
+        "FOSVersion": {
+            "value": "6.4.5"
+        },
+        "FortiAnalyzerAutoscaleAdminPassword": {
+            "value": ""
+        },
+        "FortiAnalyzerAutoscaleAdminUsername": {
+            "value": ""
+        },
+        "FortiAnalyzerCustomPrivateIpAddress": {
+            "value": ""
+        },
+        "FortiAnalyzerInstanceType": {
+            "value": "Standard_DS2_v2"
+        },
+        "FortiAnalyzerIntegrationOptions": {
+            "value": "no"
+        },
+        "FortiAnalyzerVersion": {
+            "value": "6.4.5"
+        },
+        "FortiGatePSKSecret": {
+            "value": ""
+        },
+        "HeartBeatDelayAllowance": {
+            "value": 30
+        },
+        "HeartBeatInterval": {
+            "value": 60
+        },
+        "HeartBeatLossCount": {
+            "value": 3
+        },
+        "InstanceType": {
+            "value": "Standard_F4"
+        },
+        "MaxBYOLInstanceCount": {
+            "value": 2
+        },
+        "MaxPAYGInstanceCount": {
+            "value": 6
+        },
+        "MinBYOLInstanceCount": {
+            "value": 2
+        },
+        "MinPAYGInstanceCount": {
+            "value": 0
+        },
+        "OldBYOLScaleSetName": {
+            "value": ""
+        },
+        "OldPAYGScaleSetName": {
+            "value": ""
+        },
+        "PAYGInstanceCount": {
+            "value": 0
+        },
+        "PackageResURL": {
+            "value": "https://github.com/fortinet/fortigate-autoscale-azure/releases/download/3.3.0-dev.11/fortigate-autoscale-azure-funcapp.zip"
+        },
+        "PrimaryElectionTimeout": {
+            "value": 90
+        },
+        "ResourceNamePrefix": {
+            "value": ""
+        },
+        "ScaleInThreshold": {
+            "value": 20
+        },
+        "ScaleOutThreshold": {
+            "value": 80
+        },
+        "ServicePlanTier": {
+            "value": "Premium (P1V2)"
+        },
+        "ServicePrincipalAppID": {
+            "value": ""
+        },
+        "ServicePrincipalAppSecret": {
+            "value": ""
+        },
+        "ServicePrincipalObjectID": {
+            "value": ""
+        },
+        "StorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "Subnet1Name": {
+            "value": ""
+        },
+        "Subnet2Name": {
+            "value": ""
+        },
+        "Subnet3Name": {
+            "value": ""
+        },
+        "Subnet4Name": {
+            "value": ""
+        },
+        "VnetResourceGroupName": {
+            "value": ""
+        },
+        "VnetAddressSpace": {
+            "value": ""
+        },
+        "VnetName": {
+            "value": ""
+        }
+    }
+}

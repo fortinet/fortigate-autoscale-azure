@@ -123,8 +123,8 @@
         }
     },
     "variables": {
-        "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
-        "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
+        "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-', parameters('VmssNameBYOL'))]",
+        "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-', parameters('VmssNamePAYG'))]",
         "autoscaleSettingsPresets": {
             "byolonly": {
                 "byol": [
