@@ -160,18 +160,6 @@
                 "description": "Minimum number of FortiGate instances in the PAYG VMSS. For specific use cases, set to 0 for BYOL-only, >= 2 for PAYG-only, and >= 0 for hybrid licensing."
             }
         },
-        "OldBYOLScaleSetName": {
-            "type": "String",
-            "metadata": {
-                "description": "'BYOLScaleSetName' value found in the output of the old deployment template."
-            }
-        },
-        "OldPAYGScaleSetName": {
-            "type": "String",
-            "metadata": {
-                "description": "'PAYGScaleSetName' value found in the output of the old deployment template."
-            }
-        },
         "PAYGInstanceCount": {
             "defaultValue": 0,
             "minValue": 0,
@@ -303,7 +291,7 @@
         "cmdDeleteOldDatabase": "[concat('az cosmosdb database delete -y -g ', resourceGroup().name, ' -n ', variables('databaseName'), ';')]",
         "cmdDeleteOldDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountNameOld'), ';')]",
         "cmdDeleteOldDatabaseAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldDatabase'), variables('cmdDeleteOldDatabaseAccount'))]",
-        "cmdDeleteOldVMSS": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', parameters('OldBYOLScaleSetName'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', parameters('OldPAYGScaleSetName'), ';')]",
+        "cmdDeleteOldVMSS": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNameBYOLOld'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNamePAYGOld'), ';')]",
         "cmdDeleteOldVMSSAll": "[concat(variables('cmdDeleteOldAutoscaleSettings'), variables('cmdDeleteOldVMSS'), ';')]",
         "databaseAccountNameOld": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
         "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba002')]",
@@ -386,9 +374,9 @@
             "version": "[parameters('FOSVersion')]"
         },
         "vmssNameBYOL": "[concat(parameters('ResourceNamePrefix'), 'byol002')]",
-        "vmssNameBYOLOld": "[parameters('OldBYOLScaleSetName')]",
+        "vmssNameBYOLOld": "[concat(parameters('ResourceNamePrefix'), 'byol')]",
         "vmssNamePAYG": "[concat(parameters('ResourceNamePrefix'), 'payg002')]",
-        "vmssNamePAYGOld": "[parameters('OldPAYGScaleSetName')]",
+        "vmssNamePAYGOld": "[concat(parameters('ResourceNamePrefix'), 'payg')]",
         "vmssNamePrimary": "[if(variables('ifPAYGOnly'), variables('vmssNamePAYG'), variables('vmssNameBYOL'))]",
         "vnetID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', variables('vNetName'))]"
     },
