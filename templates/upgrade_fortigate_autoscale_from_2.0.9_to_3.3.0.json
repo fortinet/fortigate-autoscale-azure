@@ -301,10 +301,11 @@
         "cmdDeleteOldAutoscaleAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldVMSSAll'), variables('cmdDeleteOldDatabaseAll'))]",
         "cmdDeleteOldAutoscaleSettings": "[concat('az monitor autoscale delete', ' -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNameBYOLOld'), ';', 'az monitor autoscale delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNamePAYGOld'), ';')]",
         "cmdDeleteOldDatabase": "[concat('az cosmosdb database delete -y -g ', resourceGroup().name, ' -n ', variables('databaseName'), ';')]",
-        "cmdDeleteOldDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
+        "cmdDeleteOldDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountNameOld'), ';')]",
         "cmdDeleteOldDatabaseAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldDatabase'), variables('cmdDeleteOldDatabaseAccount'))]",
         "cmdDeleteOldVMSS": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', parameters('OldBYOLScaleSetName'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', parameters('OldPAYGScaleSetName'), ';')]",
         "cmdDeleteOldVMSSAll": "[concat(variables('cmdDeleteOldAutoscaleSettings'), variables('cmdDeleteOldVMSS'), ';')]",
+        "databaseAccountNameOld": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
         "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba002')]",
         "databaseName": "FortiGateAutoscale",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
@@ -388,7 +389,7 @@
         "vmssNameBYOLOld": "[parameters('OldBYOLScaleSetName')]",
         "vmssNamePAYG": "[concat(parameters('ResourceNamePrefix'), 'payg002')]",
         "vmssNamePAYGOld": "[parameters('OldPAYGScaleSetName')]",
-        "vmssNamePrimary": "[if(variables('ifPAYGOnly'), variables('vmssNamePAYGOld'), variables('vmssNameBYOLOld'))]",
+        "vmssNamePrimary": "[if(variables('ifPAYGOnly'), variables('vmssNamePAYG'), variables('vmssNameBYOL'))]",
         "vnetID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', variables('vNetName'))]"
     },
     "resources": [

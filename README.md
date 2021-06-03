@@ -1,5 +1,7 @@
 # FortiGate Autoscale for Azure
 
+[![version on main branch](https://img.shields.io/github/package-json/v/fortinet/fortigate-autoscale-azure?label=version%20on%20main%20branch)](./) [![latest release version](https://img.shields.io/github/v/release/fortinet/fortigate-autoscale-azure?label=latest%20release%20version)](https://github.com/fortinet/fortigate-autoscale-azure/releases/latest) [![platform](https://img.shields.io/badge/platform-Azure-green.svg)](./) [![supported FOS version](https://img.shields.io/badge/supported%20FOS%20version-6.4.5-green.svg)](./)
+
 An implementation of FortiGate Autoscale for the Microsoft Azure platform API with a Cosmos DB storage backend.
 
 This project contains the code and templates for the **Microsoft Azure** deployment. For deployment on other cloud platforms, visit the relevant repository:
