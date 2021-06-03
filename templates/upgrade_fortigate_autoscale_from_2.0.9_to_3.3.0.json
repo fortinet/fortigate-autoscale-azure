@@ -1070,10 +1070,10 @@
                         "value": "[parameters('PrimaryElectionTimeout')]"
                     },
                     "ScaleSetNameBYOL": {
-                        "value": "[variables('vmssNameBYOLOld')]"
+                        "value": "[variables('vmssNameBYOL')]"
                     },
                     "ScaleSetNamePAYG": {
-                        "value": "[variables('vmssNamePAYGOld')]"
+                        "value": "[variables('vmssNamePAYG')]"
                     },
                     "ScaleSetNamePrimary": {
                         "value": "[variables('vmssNamePrimary')]"
