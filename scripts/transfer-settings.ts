@@ -22,28 +22,6 @@ async function getAcknowledgement(): Promise<boolean> {
     return String(res.acknowledgement).toLowerCase() === 'yes';
 }
 
-// async function getServicePrincipal(): Promise<ServicePrincipal> {
-//     console.info(
-//         chalk.yellow('Please provide a service principal to use to access to your db accounts.')
-//     );
-//     const res = await prompts([
-//         {
-//             type: 'text',
-//             name: 'clientId',
-//             message: "Please input the 'client id' of the service principal."
-//         },
-//         {
-//             type: 'password',
-//             name: 'secret',
-//             message: "Please input the 'secret' of the service principal."
-//         }
-//     ]);
-//     return {
-//         clientId: res.clientId,
-//         secret: res.secret
-//     };
-// }
-
 async function createDBConnection(): Promise<Database> {
     const res = await prompts([
         {
