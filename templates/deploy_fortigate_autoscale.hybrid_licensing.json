@@ -234,19 +234,19 @@
             }
         },
         "ServicePrincipalAppID": {
-            "type": "String",
+            "type": "securestring",
             "metadata": {
                 "description": "Application ID for the Registered app used as the Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
         },
         "ServicePrincipalAppSecret": {
-            "type": "String",
+            "type": "securestring",
             "metadata": {
                 "description": "Password (Authentication key) for the Registered app used as the Autoscale Function App API request service principal."
             }
         },
         "ServicePrincipalObjectID": {
-            "type": "String",
+            "type": "securestring",
             "metadata": {
                 "description": "Object ID for the Registered app used as Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
