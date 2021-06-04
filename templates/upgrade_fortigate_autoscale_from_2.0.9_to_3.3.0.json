@@ -286,11 +286,15 @@
         "autoscaleAssetContainerName": "fortigate-autoscale",
         "autoscaleSettingsNameBYOLOld": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
         "autoscaleSettingsNamePAYGOld": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
-        "cmdDeleteOldAutoscaleAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldVMSSAll'), variables('cmdDeleteOldDatabaseAll'))]",
+        "cmdDeleteOldAutoscaleAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldFuncAppAll'), variables('cmdDeleteOldVMSSAll'), variables('cmdDeleteOldDatabaseAll'))]",
         "cmdDeleteOldAutoscaleSettings": "[concat('az monitor autoscale delete', ' -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNameBYOLOld'), ';', 'az monitor autoscale delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNamePAYGOld'), ';')]",
         "cmdDeleteOldDatabase": "[concat('az cosmosdb database delete -y -g ', resourceGroup().name, ' --name ', variables('databaseAccountName'), ' --db-name ', variables('databaseName'), ';')]",
         "cmdDeleteOldDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountNameOld'), ';')]",
         "cmdDeleteOldDatabaseAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldDatabase'), variables('cmdDeleteOldDatabaseAccount'))]",
+        "cmdDeleteOldFuncAppAll": "[concat(variables('cmdDeleteOldFuncAppInsights'),variables('cmdDeleteOldFuncAppSite'),variables('cmdDeleteOldFuncAppServerFarm'))]",
+        "cmdDeleteOldFuncAppInsights": "[concat('az monitor app-insights component delete', ' -a ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteOldFuncAppServerFarm": "[concat('az appservice plan delete -y', ' -n ', variables('hostingPlanNameOld'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteOldFuncAppSite": "[concat('az webapp delete -y', ' -n ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteOldVMSS": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNameBYOLOld'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNamePAYGOld'), ';')]",
         "cmdDeleteOldVMSSAll": "[concat(variables('cmdDeleteOldAutoscaleSettings'), variables('cmdDeleteOldVMSS'))]",
         "databaseAccountNameOld": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
@@ -332,6 +336,8 @@
             }
         ],
         "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp002')]",
+        "functionAppNameOld": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
+        "hostingPlanNameOld": "[concat(variables('functionAppNameOld'),'-service-plan')]",
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
         "internalLoadBalancerName": "[concat(parameters('ResourceNamePrefix'), '-internal-load-balancer')]",
@@ -1255,7 +1261,7 @@
         },
         "cmdDeleteOldAutoscaleComponents": {
             "type": "String",
-            "value": "[concat(variables('cmdDeleteOldAutoscaleAll'))]"
+            "value": "[variables('cmdDeleteOldAutoscaleAll')]"
         },
         "deploymentPackageVersion": {
             "type": "string",
