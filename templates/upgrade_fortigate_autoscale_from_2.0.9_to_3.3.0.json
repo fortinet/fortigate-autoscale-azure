@@ -211,19 +211,19 @@
             }
         },
         "ServicePrincipalAppID": {
-            "type": "String",
+            "type": "SecureString",
             "metadata": {
                 "description": "Application ID for the Registered app used as the Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
         },
         "ServicePrincipalAppSecret": {
-            "type": "String",
+            "type": "SecureString",
             "metadata": {
                 "description": "Password (Authentication key) for the Registered app used as the Autoscale Function App API request service principal."
             }
         },
         "ServicePrincipalObjectID": {
-            "type": "String",
+            "type": "SecureString",
             "metadata": {
                 "description": "Object ID for the Registered app used as Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
@@ -288,13 +288,13 @@
         "autoscaleSettingsNamePAYGOld": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
         "cmdDeleteOldAutoscaleAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldFuncAppAll'), variables('cmdDeleteOldVMSSAll'), variables('cmdDeleteOldDatabaseAll'))]",
         "cmdDeleteOldAutoscaleSettings": "[concat('az monitor autoscale delete', ' -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNameBYOLOld'), ';', 'az monitor autoscale delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNamePAYGOld'), ';')]",
-        "cmdDeleteOldDatabase": "[concat('az cosmosdb database delete -y -g ', resourceGroup().name, ' --name ', variables('databaseAccountName'), ' --db-name ', variables('databaseName'), ';')]",
+        "cmdDeleteOldDatabase": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountName'), ' -n ', variables('databaseName'), ';')]",
         "cmdDeleteOldDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountNameOld'), ';')]",
         "cmdDeleteOldDatabaseAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldDatabase'), variables('cmdDeleteOldDatabaseAccount'))]",
         "cmdDeleteOldFuncAppAll": "[concat(variables('cmdDeleteOldFuncAppInsights'),variables('cmdDeleteOldFuncAppSite'),variables('cmdDeleteOldFuncAppServerFarm'))]",
         "cmdDeleteOldFuncAppInsights": "[concat('az monitor app-insights component delete', ' -a ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteOldFuncAppServerFarm": "[concat('az appservice plan delete -y', ' -n ', variables('hostingPlanNameOld'), ' -g ', resourceGroup().name, ';')]",
-        "cmdDeleteOldFuncAppSite": "[concat('az webapp delete -y', ' -n ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteOldFuncAppSite": "[concat('az webapp delete', ' -n ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteOldVMSS": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNameBYOLOld'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNamePAYGOld'), ';')]",
         "cmdDeleteOldVMSSAll": "[concat(variables('cmdDeleteOldAutoscaleSettings'), variables('cmdDeleteOldVMSS'))]",
         "databaseAccountNameOld": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
