@@ -39,6 +39,9 @@
         "FunctionNameFazAuthHandler": {
             "type": "String"
         },
+        "FunctionKeyFgtAsHandler": {
+            "type": "securestring"
+        },
         "FunctionNameFgtAsHandler": {
             "type": "String"
         },
@@ -244,7 +247,7 @@
                         },
                         {
                             "name": "autoscale-handler-url",
-                            "value": "[concat(variables('funcappURL'), '/api/', parameters('FunctionNameFgtAsHandler'))]"
+                            "value": "[concat(variables('funcappURL'), '/api/', parameters('FunctionNameFgtAsHandler'),  '?code=', parameters('FunctionKeyFgtAsHandler'))]"
                         },
                         {
                             "name": "byol-scaling-group-desired-capacity",
