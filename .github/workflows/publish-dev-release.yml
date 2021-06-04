@@ -17,6 +17,7 @@ on:
         description: >-
           The branch name prefix. Default: devrel_
         required: false
+        default: devrel_
       no-publish:
         description: >-
           Boolean indicator to skip the publication steps.
@@ -100,3 +101,7 @@ jobs:
           file: ./fortigate-autoscale-azure*.zip
           file_glob: true
           overwrite: true
+      - id: delete-devrel-branch
+        name: delete devrel branch
+        if: ${{ github.event.inputs['no-publish'] != 'true'  }}
+        run: git push -d origin $(git branch --show-current)
