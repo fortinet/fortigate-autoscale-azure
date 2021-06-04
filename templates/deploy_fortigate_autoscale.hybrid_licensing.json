@@ -234,19 +234,19 @@
             }
         },
         "ServicePrincipalAppID": {
-            "type": "String",
+            "type": "securestring",
             "metadata": {
                 "description": "Application ID for the Registered app used as the Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
         },
         "ServicePrincipalAppSecret": {
-            "type": "String",
+            "type": "securestring",
             "metadata": {
                 "description": "Password (Authentication key) for the Registered app used as the Autoscale Function App API request service principal."
             }
         },
         "ServicePrincipalObjectID": {
-            "type": "String",
+            "type": "securestring",
             "metadata": {
                 "description": "Object ID for the Registered app used as Autoscale Function App API request service principal. This is under Azure Active Directory > App registrations > {your app}."
             }
@@ -352,7 +352,7 @@
         "autoscaleAssetContainerName": "fortigate-autoscale",
         "cmdDeleteAutoscaleAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteVNetAll'), variables('cmdDeleteDatabaseAll'))]",
         "cmdDeleteDatabaseAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteDatabase'), variables('cmdDeleteDatabaseAccount'))]",
-        "cmdDeleteDatabase": "[concat('az cosmosdb database delete -y -g ', resourceGroup().name, ' -n ', variables('databaseName'), ';')]",
+        "cmdDeleteDatabase": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountName'), ' -n ', variables('databaseName'), ';')]",
         "cmdDeleteDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
         "cmdDeleteLBS": "[concat('az network lb delete -g ', variables('vNetResourceGroupName'),' -n ', variables('externalLoadBalancerName'), ';', 'az network lb delete -g ', variables('vNetResourceGroupName'),' -n ', variables('internalLoadBalancerName'), ';')]",
         "cmdDeleteNetworkSecurityGroup": "[if(variables('ifCreateVNet'), concat('az network nsg delete -g ', variables('vNetResourceGroupName'),' -n ', variables('networkSecurityGroupName'), ';'), '')]",
