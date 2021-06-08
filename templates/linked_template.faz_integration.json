@@ -20,6 +20,9 @@
         "FortiAnalyzerInstanceType": {
             "type": "String"
         },
+        "FortiAnalyzerPublicIPAddressID": {
+            "type": "String"
+        },
         "SubnetId": {
             "type": "String"
         },
@@ -34,18 +37,20 @@
     "variables": {
         "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteFazPublicIp'), variables('cmdDeleteFazNic'), variables('cmdDeleteFazVm'))]",
         "cmdDeleteFazNic": "[concat('az network nic delete', ' -g ', resourceGroup().name, ' -n ', variables('fazNic0Name'), ';')]",
-        "cmdDeleteFazPublicIp": "[concat('az network public-ip delete', ' -g ', resourceGroup().name, ' -n ', variables('fazPubIpName'), ';')]",
+        "cmdDeleteFazPublicIp": "[if(variables('ifCreateNewPublicIP'), concat('az network public-ip delete', ' -g ', resourceGroup().name, ' -n ', variables('fazPubIpName'), ';'), '')]",
         "cmdDeleteFazVm": "[concat('az vm delete -y', ' -g ', resourceGroup().name, ' -n ', variables('fazName'), ';')]",
         "fazName": "[concat(toLower(parameters('UniqueResourceNamePrefix')),'faz001')]",
         "fazNic0Name": "[concat(toLower(variables('fazName')),'-nic0')]",
-        "fazPubIpId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName'))]",
-        "fazPubIpName": "[concat(toLower(variables('fazName')),'-public-ip')]"
+        "fazPubIpId": "[if(variables('ifCreateNewPublicIP'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('fazPubIpName')), parameters('FortiAnalyzerPublicIPAddressID'))]",
+        "fazPubIpName": "[concat(toLower(variables('fazName')),'-public-ip')]",
+        "ifCreateNewPublicIP": "[empty(parameters('FortiAnalyzerPublicIPAddressID'))]"
     },
     "resources": [
         {
             "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2020-07-01",
+            "apiVersion": "2019-04-01",
             "name": "[variables('fazPubIpName')]",
+            "condition": "[variables('ifCreateNewPublicIP')]",
             "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Standard",
@@ -56,7 +61,7 @@
             }
         },
         {
-            "apiVersion": "2020-07-01",
+            "apiVersion": "2019-04-01",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('fazNic0Name')]",
             "location": "[resourceGroup().location]",

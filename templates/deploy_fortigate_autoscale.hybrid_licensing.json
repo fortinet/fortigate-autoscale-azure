@@ -66,6 +66,13 @@
                 "description": "Choose 'yes' to incorporate FortiAnalyzer into FortiGate Autoscale for Azure to use extended features that include storing logs into FortiAnalyzer."
             }
         },
+        "FortiAnalyzerPublicIPAddressID": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "ID of the Public IP address to associate with the FortiAnalyer. When provided, it will be used associat with the FortiAnalyzer. If the parameter is left empty, a new public IP address will be allocated in the resource group that contains the FortiAnalyzer."
+            }
+        },
         "FortiAnalyzerVersion": {
             "defaultValue": "6.4.5",
             "allowedValues": ["6.4.5", "6.2.5"],
@@ -1533,6 +1540,9 @@
                     },
                     "FortiAnalyzerCustomPrivateIPAddress": {
                         "value": "[parameters('FortiAnalyzerCustomPrivateIPAddress')]"
+                    },
+                    "FortiAnalyzerPublicIPAddressID": {
+                        "value": "[parameters('FortiAnalyzerPublicIPAddressID')]"
                     },
                     "FortiAnalyzerInstanceType": {
                         "value": "[parameters('FortiAnalyzerInstanceType')]"
