@@ -1721,7 +1721,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "CreateVirtualMachineScaleSet",
-            "dependsOn": ["CreateFunctionApp"],
+            "dependsOn": ["CreateFunctionApp", "VNetRelatedResources"],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
