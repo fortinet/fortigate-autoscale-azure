@@ -141,7 +141,7 @@
         },
         "fazPublicIp": {
             "type": "String",
-            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses/', variables('fazPubIpName')), '2020-07-01').IpAddress]"
+            "value": "[reference(if(variables('ifCreateNewPublicIP'), resourceId('Microsoft.Network/publicIPAddresses/', variables('fazPubIpName')), parameters('FortiAnalyzerPublicIPAddressID')), '2020-07-01').IpAddress]"
         }
     }
 }
