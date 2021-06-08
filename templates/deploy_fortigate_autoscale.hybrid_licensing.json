@@ -88,19 +88,11 @@
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
             }
         },
-        "FrontendIPDeploymentMethod": {
-            "defaultValue": "create new public IP address",
-            "allowedValues": ["create new public IP address", "use existing public IP address"],
-            "type": "String",
-            "metadata": {
-                "description": "Deployment method for the Frontend Public IP address for the external load balancer. If set to 'create new public IP address', the IP address will be deployed to the resource group where the VNet is located. If set to 'use existing public IP address', the existing IP address must reside in the same resource group as the VNet and it must be of the 'standard' SKU in order to match the VMSS."
-            }
-        },
-        "FrontendIPName": {
+        "FrontendIPAddressID": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of the Frontend Public IP address. When the parameter 'Frontend IP Deployment Method' is set to 'create new public IP address', this parameter can be left empty and a name will be generated."
+                "description": "ID of the Frontend Public IP address. When provided, it will be used as the frontend IP address associated with the external load balancer. If the parameter is left empty, a new public IP address will be allocated in the resource group that contains the virtual network components."
             }
         },
         "HeartBeatDelayAllowance": {
@@ -356,7 +348,7 @@
         "cmdDeleteDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
         "cmdDeleteLBS": "[concat('az network lb delete -g ', variables('vNetResourceGroupName'),' -n ', variables('externalLoadBalancerName'), ';', 'az network lb delete -g ', variables('vNetResourceGroupName'),' -n ', variables('internalLoadBalancerName'), ';')]",
         "cmdDeleteNetworkSecurityGroup": "[if(variables('ifCreateVNet'), concat('az network nsg delete -g ', variables('vNetResourceGroupName'),' -n ', variables('networkSecurityGroupName'), ';'), '')]",
-        "cmdDeletePublicIP": "[if(variables('ifCreateNewPublicIP'), concat('az network public-ip delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('publicIPAddressName'), ';'), '')]",
+        "cmdDeletePublicIP": "[if(variables('ifCreateNewPublicIP'), concat('az network public-ip delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('newPublicIPAddressName'), ';'), '')]",
         "cmdDeleteRouteTable1": "[if(variables('ifCreateVNet'), concat('az network route-table delete -g ', variables('vNetResourceGroupName'),' -n ', variables('intRouteTable1Name'), ';'), '')]",
         "cmdDeleteRouteTable2": "[if(variables('ifCreateVNet'), concat('az network route-table delete -g ', variables('vNetResourceGroupName'),' -n ', variables('intRouteTable2Name'), ';'), '')]",
         "cmdDeleteRouteTable3": "[if(variables('ifCreateVNet'), concat('az network route-table delete -g ', variables('vNetResourceGroupName'),' -n ', variables('intRouteTable3Name'), ';'), '')]",
@@ -425,7 +417,7 @@
         ],
         "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
-        "ifCreateNewPublicIP": "[equals(parameters('FrontendIPDeploymentMethod'), 'create new public IP address')]",
+        "ifCreateNewPublicIP": "[empty(parameters('FrontendIPAddressID'))]",
         "ifCreateVNet": "[equals(parameters('VnetDeploymentMethod'), 'create new')]",
         "ifCreateVNetInSameRSG": "[and(variables('ifCreateVNet'), or(equals(parameters('VnetResourceGroupName'), ''), equals(parameters('VnetResourceGroupName'), resourceGroup().name)))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
@@ -456,8 +448,8 @@
         "natBackendPortHTTPS": 8443,
         "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
         "networkSecurityGroupName": "[if(and(variables('ifCreateVNet'), empty(parameters('NetworkSecurityGroupName'))), concat(parameters('ResourceNamePrefix'), '-network-security-group'), if(empty(parameters('NetworkSecurityGroupName')), 'not-applicable', parameters('NetworkSecurityGroupName')))]",
-        "publicIPAddressId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
-        "publicIPAddressName": "[if(and(variables('ifCreateNewPublicIP'), empty(parameters('FrontendIPName'))), concat(variables('vNetName'), '-ext-lb-public-ip'), parameters('FrontendIPName'))]",
+        "newPublicIPAddressName": "[concat(variables('vNetName'), '-ext-lb-public-ip')]",
+        "publicIPAddressId": "[if(variables('ifCreateNewPublicIP'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('newPublicIPAddressName')), parameters('FrontendIPAddressID'))]",
         "storageAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'sta001')]",
         "subnet1Id": "[concat(variables('vnetID'), '/subnets/', variables('subnet1Name'))]",
         "subnet1Name": "[if(and(variables('ifCreateVNet'), empty(parameters('Subnet1Name'))), concat(variables('vNetName'), '-subnet1'), parameters('Subnet1Name'))]",
@@ -788,7 +780,7 @@
                             "condition": "[variables('ifCreateNewPublicIP')]",
                             "type": "Microsoft.Network/publicIPAddresses",
                             "apiVersion": "2019-04-01",
-                            "name": "[variables('publicIPAddressName')]",
+                            "name": "[variables('newPublicIPAddressName')]",
                             "location": "[variables('location')]",
                             "sku": {
                                 "name": "Standard"
