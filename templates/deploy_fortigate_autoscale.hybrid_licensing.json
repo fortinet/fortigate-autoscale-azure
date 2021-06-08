@@ -932,7 +932,7 @@
                             "sku": {
                                 "name": "Standard"
                             },
-                            "dependsOn": ["[variables('publicIPAddressId')]"],
+                            "dependsOn": ["[variables('newPublicIPAddressName')]"],
                             "properties": {
                                 "frontendIPConfigurations": [
                                     {
