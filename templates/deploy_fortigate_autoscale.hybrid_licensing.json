@@ -352,7 +352,7 @@
         "autoscaleAssetContainerName": "fortigate-autoscale",
         "cmdDeleteAutoscaleAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteVNetAll'), variables('cmdDeleteDatabaseAll'))]",
         "cmdDeleteDatabaseAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteDatabase'), variables('cmdDeleteDatabaseAccount'))]",
-        "cmdDeleteDatabase": "[concat('az cosmosdb database delete -y -g ', resourceGroup().name, ' -n ', variables('databaseName'), ';')]",
+        "cmdDeleteDatabase": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountName'), ' -n ', variables('databaseName'), ';')]",
         "cmdDeleteDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
         "cmdDeleteLBS": "[concat('az network lb delete -g ', variables('vNetResourceGroupName'),' -n ', variables('externalLoadBalancerName'), ';', 'az network lb delete -g ', variables('vNetResourceGroupName'),' -n ', variables('internalLoadBalancerName'), ';')]",
         "cmdDeleteNetworkSecurityGroup": "[if(variables('ifCreateVNet'), concat('az network nsg delete -g ', variables('vNetResourceGroupName'),' -n ', variables('networkSecurityGroupName'), ';'), '')]",
