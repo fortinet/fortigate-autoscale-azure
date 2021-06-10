@@ -1598,9 +1598,10 @@
             "apiVersion": "2018-05-01",
             "name": "SetupFunctionApp",
             "dependsOn": [
-                "VNetRelatedResources",
+                "[variables('databaseAccountName')]",
                 "CreateFunctionApp",
-                "FortiAnalyzerIntegrationResources"
+                "FortiAnalyzerIntegrationResources",
+                "VNetRelatedResources"
             ],
             "properties": {
                 "mode": "Incremental",
