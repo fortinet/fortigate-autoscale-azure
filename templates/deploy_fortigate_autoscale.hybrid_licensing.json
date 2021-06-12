@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.1.0",
+    "contentVersion": "3.3.2.0",
     "parameters": {
         "AccessRestrictionIPRange": {
             "defaultValue": "",
@@ -191,7 +191,7 @@
         },
         "PackageResURL": {
             "type": "String",
-            "defaultValue": "https://github.com/fortinet/fortigate-autoscale-azure/releases/download/3.3.1/fortigate-autoscale-azure-funcapp.zip",
+            "defaultValue": "https://github.com/fortinet/fortigate-autoscale-azure/releases/download/3.3.2/fortigate-autoscale-azure-funcapp.zip",
             "metadata": {
                 "description": "The public URL of the function source file named fortigate-autoscale-azure-funcapp.zip, and can be found inside fortigate-autoscale-azure-template-deployment.zip. The public URL of the deployment package zip file that contains the resource used to deploy the Function App. This URL must be accessible by Azure. The default URL points to the GitHub release corresponding to this ARM template contentVersion."
             }
@@ -1523,7 +1523,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1/templates/linked_template.faz_integration.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.faz_integration.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -1569,7 +1569,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1/templates/linked_template.function_app.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.function_app.json"
                 },
                 "parameters": {
                     "FunctionAppName": {
@@ -1600,14 +1600,15 @@
             "apiVersion": "2018-05-01",
             "name": "SetupFunctionApp",
             "dependsOn": [
-                "VNetRelatedResources",
+                "[variables('databaseAccountName')]",
                 "CreateFunctionApp",
-                "FortiAnalyzerIntegrationResources"
+                "FortiAnalyzerIntegrationResources",
+                "VNetRelatedResources"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1/templates/linked_template.function_app.setup.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.function_app.setup.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
@@ -1725,7 +1726,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.1/templates/linked_template.vmss.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.vmss.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -1891,7 +1892,7 @@
         },
         "deploymentPackageVersion": {
             "type": "string",
-            "value": "3.3.1"
+            "value": "3.3.2"
         },
         "fazPublicIp": {
             "type": "String",
