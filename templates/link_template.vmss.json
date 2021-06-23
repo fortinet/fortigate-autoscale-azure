@@ -283,7 +283,8 @@
                 }
             ]
         },
-        "extraSubnetIds": "[skip(parameters('SubnetIds'), 1)]",
+        "extraSubnetIds": "[if(variables('ifHasExtraSubnets'), skip(parameters('SubnetIds'), 1), parameters('SubnetIds'))]",
+        "ifHasExtraSubnets": "[greater(length(parameters('SubnetIds')), 1)]",
         "networkInterfaceConfigurationExtra": {
             "copy": [
                 {
@@ -328,7 +329,7 @@
                 ]
             }
         },
-        "networkInterfaceConfigurations": "[union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').networkInterfaceConfigurationExtraCopyIt)]"
+        "networkInterfaceConfigurations": "[if(variables('ifHasExtraSubnets'), union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').networkInterfaceConfigurationExtraCopyIt), createArray(variables('networkInterfaceConfigurationMain')))]"
     },
     "resources": [
         {
