@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "AllowAccessFromSubnetIds": {
+            "type": "array"
+        },
+        "CommaSeparatedIPAddressString": {
+            "type": "string"
+        },
+        "DatabaseAccountName": {
+            "type": "String"
+        }
+    },
+    "variables": {
+        "virtualNetworkRules": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[length(parameters('AllowAccessFromSubnetIds'))]",
+                    "input": {
+                        "id": "[parameters('AllowAccessFromSubnetIds')[copyIndex('iterations')]]",
+                        "ignoreMissingVNetServiceEndpoint": false
+                    }
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-08-01",
+            "type": "Microsoft.DocumentDb/databaseAccounts",
+            "name": "[parameters('DatabaseAccountName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "ipRangeFilter": "[parameters('CommaSeparatedIPAddressString')]",
+                "isVirtualNetworkFilterEnabled": true,
+                "virtualNetworkRules": "[variables('virtualNetworkRules').iterations]",
+                "locations": [
+                    {
+                        "locationName": "[resourceGroup().location]"
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}

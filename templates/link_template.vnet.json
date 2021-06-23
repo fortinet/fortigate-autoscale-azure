@@ -1,0 +1,187 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "Subnets": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "UniqueResourceNamePrefix": {
+            "type": "String"
+        },
+        "VnetAddressSpace": {
+            "type": "String"
+        },
+        "VNetName": {
+            "type": "String"
+        }
+    },
+    "variables": {
+        "cmdDeassociateNSGFromSubnets": {
+            "copy": [
+                {
+                    "name": "cmdDeassociateNSGCopyIt",
+                    "count": "[length(parameters('Subnets'))]",
+                    "input": "[concat('az network vnet subnet update -g ', resourceGroup().name, ' -n ', parameters('Subnets')[copyIndex('cmdDeassociateNSGCopyIt')].name, ' --vnet-name ', parameters('VNetName'),' --remove networkSecurityGroup', ';')]"
+                }
+            ]
+        },
+        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';')]",
+        "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupName') , ';')]",
+        "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', parameters('VNetName') , ';')]",
+        "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
+        "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-network-security-group')]",
+        "serviceEndpoints": [
+            {
+                "service": "Microsoft.AzureCosmosDB",
+                "locations": ["*"]
+            },
+            {
+                "service": "Microsoft.Web",
+                "locations": ["*"]
+            }
+        ],
+        "subnet1Id": "[parameters('Subnets')[0].id]",
+        "subnet1Name": "[parameters('Subnets')[0].name]",
+        "subnets": {
+            "copy": [
+                {
+                    "name": "subnetsCopyIt",
+                    "count": "[length(parameters('Subnets'))]",
+                    "input": {
+                        "name": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].name]",
+                        "properties": {
+                            "addressPrefix": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].addressRange]",
+                            "networkSecurityGroup": {
+                                "id": "[variables('networkSecurityGroupId')]"
+                            },
+                            "serviceEndpoints": "[if(equals(copyIndex('subnetsCopyIt'), 0), variables('serviceEndpoints'), createArray())]"
+                        }
+                    }
+                }
+            ]
+        },
+        "vNetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('VNetName'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-04-01",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('networkSecurityGroupName')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowAllInbound",
+                        "properties": {
+                            "description": "Allow all in",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowAllOutbound",
+                        "properties": {
+                            "description": "Allow all out",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 105,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+            "apiVersion": "2019-04-01",
+            "dependsOn": ["[variables('networkSecurityGroupName')]"],
+            "location": "[resourceGroup().location]",
+            "name": "[parameters('VNetName')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": ["[parameters('VnetAddressSpace')]"]
+                },
+                "Subnets": "[variables('subnets').subnetsCopyIt]"
+            },
+            "type": "Microsoft.Network/virtualNetworks"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "CmdDeassociateNSG",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/template_function.join_string_array.json"
+                },
+                "parameters": {
+                    "InputString": {
+                        "value": ""
+                    },
+                    "Delimiter": {
+                        "value": ""
+                    },
+                    "StringArray": {
+                        "value": "[variables('cmdDeassociateNSGFromSubnets').cmdDeassociateNSGCopyIt]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]"
+        }
+    ],
+    "outputs": {
+        "cmdDeleteAll": {
+            "type": "String",
+            "value": "[concat(variables('cmdDeleteAll'), reference('CmdDeassociateNSG').outputs.outputString.value, variables('cmdDeleteNSG'), variables('cmdDeleteVNet'))]"
+        },
+        "networkSecurityGroupName": {
+            "type": "String",
+            "value": "[variables('networkSecurityGroupName')]"
+        },
+        "subnet1Id": {
+            "type": "String",
+            "value": "[variables('subnet1Id')]"
+        },
+        "subnet1Name": {
+            "type": "String",
+            "value": "[variables('subnet1Name')]"
+        },
+        "subnetCount": {
+            "type": "Int",
+            "value": "[length(parameters('Subnets'))]"
+        },
+        "subnetIds": {
+            "type": "Array",
+            "copy": {
+                "count": "[length(parameters('Subnets'))]",
+                "input": "[parameters('Subnets')[copyIndex()].id]"
+            }
+        },
+        "subnetNames": {
+            "type": "Array",
+            "copy": {
+                "count": "[length(parameters('Subnets'))]",
+                "input": "[parameters('Subnets')[copyIndex()].name]"
+            }
+        },
+        "vNetId": {
+            "type": "String",
+            "value": "[variables('vNetId')]"
+        },
+        "vNetName": {
+            "type": "String",
+            "value": "[parameters('VNetName')]"
+        }
+    }
+}
