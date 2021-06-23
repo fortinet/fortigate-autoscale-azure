@@ -39,6 +39,9 @@
         "FunctionNameFazAuthHandler": {
             "type": "String"
         },
+        "FunctionKeyFgtAsHandler": {
+            "type": "securestring"
+        },
         "FunctionNameFgtAsHandler": {
             "type": "String"
         },
