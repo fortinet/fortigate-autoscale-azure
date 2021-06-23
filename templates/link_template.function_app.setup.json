@@ -162,6 +162,9 @@
                     "FunctionNameFazAuthHandler": {
                         "value": "[parameters('FunctionNameFazAuthHandler')]"
                     },
+                    "FunctionKeyFgtAsHandler": {
+                        "value": "[listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  parameters('FunctionNameFgtAsHandler')), '2019-08-01').default]"
+                    },
                     "FunctionNameFgtAsHandler": {
                         "value": "[parameters('FunctionNameFgtAsHandler')]"
                     },
