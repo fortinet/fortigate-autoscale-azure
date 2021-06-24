@@ -262,9 +262,10 @@
         },
         "UpgradeIteration": {
             "type": "Int",
-            "defaultValue": 1,
+            "defaultValue": 2,
+            "minValue": 2,
             "metadata": {
-                "description": "The upgrade iteration number, starting from 1. Increase it by 1 when starts a new deployment if any previous iteration has failed. The iteration number can be found in the output of any upgrade deployment."
+                "description": "The upgrade iteration number, starting from 2. Increase it by 1 when starts a new deployment if any previous upgrade iteration has failed. The iteration number can be found as 'upgradeIteration' in the output of any upgrade deployment."
             }
         },
         "VNetResourceGroupName": {
@@ -304,8 +305,13 @@
         "cmdDeleteOldFuncAppSite": "[concat('az webapp delete', ' -n ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteOldVMSS": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNameBYOLOld'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNamePAYGOld'), ';')]",
         "cmdDeleteOldVMSSAll": "[concat(variables('cmdDeleteOldAutoscaleSettings'), variables('cmdDeleteOldVMSS'))]",
+        "cmdDeleteUpgradeIterationSome": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteUpgradeIterationKeyVault'), variables('cmdDeleteUpgradeIterationDatabase'), variables('cmdDeleteUpgradeIterationDatabaseAccount'), variables('cmdDeleteUpgradeIterationStorageAccount'))]",
+        "cmdDeleteUpgradeIterationDatabase": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountName'), ' -n ', variables('databaseName'), ';')]",
+        "cmdDeleteUpgradeIterationDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
+        "cmdDeleteUpgradeIterationKeyVault": "[concat('az keyvault delete -n ', variables('keyVaultName'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteUpgradeIterationStorageAccount": "[concat('az storage account delete -n ', variables('storageAccountName'), ' -g ', resourceGroup().name, ';')]",
         "databaseAccountNameOld": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
-        "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba', parameters('UpgradeIteration'))]",
+        "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba', variables('upgradeIterationNumber'))]",
         "databaseName": "FortiGateAutoscale",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "databaseSharedThroughputBase": 500,
@@ -342,13 +348,13 @@
                 "name": "allow-FortiGate-subnet"
             }
         ],
-        "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp', parameters('UpgradeIteration'))]",
+        "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp', variables('upgradeIterationNumber'))]",
         "functionAppNameOld": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
         "hostingPlanNameOld": "[concat(variables('functionAppNameOld'),'-service-plan')]",
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
         "internalLoadBalancerName": "[concat(parameters('ResourceNamePrefix'), '-internal-load-balancer')]",
-        "keyVaultName": "[if(empty(parameters('KeyVaultName')), concat(toLower(variables('uniqueResourceNamePrefix')),'kv', parameters('UpgradeIteration')), parameters('KeyVaultName'))]",
+        "keyVaultName": "[if(empty(parameters('KeyVaultName')), concat(toLower(variables('uniqueResourceNamePrefix')),'kv', variables('upgradeIterationNumber')), parameters('KeyVaultName'))]",
         "licenseFileDirectory": "license-files",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'paygonly', if(variables('ifBYOLOnly'), 'byolonly', 'hybrid'))]",
         "licensingModelName": "[if(variables('ifPAYGOnly'), 'PAYG-Only', if(variables('ifBYOLOnly'), 'BYOL-Only', 'Hybrid'))]",
@@ -358,7 +364,7 @@
         "loadBalancerBackendIPPoolNameSubnet4": "[concat(parameters('ResourceNamePrefix'), '-backend-ip-pool-subnet-4')]",
         "location": "[resourceGroup().location]",
         "natBackendPortHTTPS": 8443,
-        "storageAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'sta', parameters('UpgradeIteration'))]",
+        "storageAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'sta', variables('upgradeIterationNumber'))]",
         "subnet1Id": "[concat(variables('vnetID'), '/subnets/', variables('subnet1Name'))]",
         "subnet1Name": "[parameters('Subnet1Name')]",
         "subnet2Name": "[parameters('Subnet2Name')]",
@@ -366,6 +372,7 @@
         "subnet4Name": "[parameters('Subnet4Name')]",
         "uniqueId": "[take(uniquestring(resourceGroup().id), 8)]",
         "uniqueResourceNamePrefix": "[concat(parameters('ResourceNamePrefix'), variables('uniqueId'))]",
+        "upgradeIterationNumber": "[padLeft(parameters('UpgradeIteration'),3,'0')]",
         "vNetName": "[parameters('VnetName')]",
         "vNetResourceGroupName": "[parameters('VNetResourceGroupName')]",
         "vmImgReferenceFazBYOL": {
@@ -386,9 +393,9 @@
             "sku": "fortinet_fg-vm_payg_20190624",
             "version": "[parameters('FOSVersion')]"
         },
-        "vmssNameBYOL": "[concat(parameters('ResourceNamePrefix'), 'byol', parameters('UpgradeIteration'))]",
+        "vmssNameBYOL": "[concat(parameters('ResourceNamePrefix'), 'byol', variables('upgradeIterationNumber'))]",
         "vmssNameBYOLOld": "[concat(parameters('ResourceNamePrefix'), 'byol')]",
-        "vmssNamePAYG": "[concat(parameters('ResourceNamePrefix'), 'payg', parameters('UpgradeIteration'))]",
+        "vmssNamePAYG": "[concat(parameters('ResourceNamePrefix'), 'payg', variables('upgradeIterationNumber'))]",
         "vmssNamePAYGOld": "[concat(parameters('ResourceNamePrefix'), 'payg')]",
         "vmssNamePrimary": "[if(variables('ifPAYGOnly'), variables('vmssNamePAYG'), variables('vmssNameBYOL'))]",
         "vnetID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', variables('vNetName'))]"
@@ -1269,6 +1276,10 @@
         "cmdDeleteOldAutoscaleComponents": {
             "type": "String",
             "value": "[variables('cmdDeleteOldAutoscaleAll')]"
+        },
+        "cmdDeleteUpgradeIteration": {
+            "type": "String",
+            "value": "[concat(variables('cmdDeleteUpgradeIterationSome'), reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value)]"
         },
         "deploymentPackageVersion": {
             "type": "string",
