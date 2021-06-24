@@ -9,6 +9,9 @@
             "defaultValue": "azureadmin",
             "type": "String"
         },
+        "AvailabilityZones": {
+            "type": "Array"
+        },
         "BYOLInstanceCount": {
             "defaultValue": 2,
             "minValue": 0,
@@ -63,6 +66,9 @@
         },
         "ScaleOutThreshold": {
             "type": "Int"
+        },
+        "SinglePlacementGroup": {
+            "type": "Bool"
         },
         "StorageAccountName": {
             "type": "String"
@@ -344,6 +350,7 @@
             },
             "properties": {
                 "overprovision": false,
+                "singlePlacementGroup": "[parameters('SinglePlacementGroup')]",
                 "upgradePolicy": {
                     "mode": "Manual"
                 },
@@ -377,13 +384,15 @@
                     "networkProfile": {
                         "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurations')]"
                     }
-                }
+                },
+                "zoneBalance": false
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
                 "tier": "Standard",
                 "capacity": 0
-            }
+            },
+            "zones": "[parameters('AvailabilityZones')]"
         },
         {
             "type": "Microsoft.Compute/virtualMachineScaleSets",
@@ -397,6 +406,7 @@
             },
             "properties": {
                 "overprovision": false,
+                "singlePlacementGroup": "[parameters('SinglePlacementGroup')]",
                 "upgradePolicy": {
                     "mode": "Manual"
                 },
@@ -432,13 +442,15 @@
                     "networkProfile": {
                         "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurations')]"
                     }
-                }
+                },
+                "zoneBalance": false
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
                 "tier": "Standard",
                 "capacity": 0
-            }
+            },
+            "zones": "[parameters('AvailabilityZones')]"
         },
         {
             "type": "Microsoft.Insights/autoscaleSettings",
