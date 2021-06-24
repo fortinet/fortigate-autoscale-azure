@@ -18,7 +18,7 @@
     "lint-check": "npm run lint-check-code && npm run lint-check-template",
     "lint-fix-code": "npx ftnt-devops-ci f -fl  -F .eslintignore -L .eslintignore \"**/*{.js,.json,.ts}\"",
     "lint-fix-template": "npx ftnt-devops-ci f -f -F .eslintignore -L .eslintignore \"**/*.json\" --parser \"json\"",
-    "lint-fix": "npm run lint-fix-code",
+    "lint-fix": "npm run lint-fix-code && npm run lint-fix-template",
     "make-dist": "npm-run-all build bundle && node build/scripts/make-dist.js",
     "pre-push": "npm-run-all lint-check audit-production test build",
     "sync-version": "node build/scripts/sync-version.js",

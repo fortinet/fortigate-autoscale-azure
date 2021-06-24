@@ -307,6 +307,21 @@
                 "description": "Name of subnet 4, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
+        "VMSSAvailabilityZones": {
+            "defaultValue": [],
+            "type": "Array",
+            "metadata": {
+                "description": "An array of the availability zones the VMSS will be created with. Input format: [1, 2, 3]. The template does not validate the input availability zone against the region. Please find the right number of availability zones of regions from: https://docs.microsoft.com/en-us/azure/availability-zones/az-region"
+            }
+        },
+        "VMSSPlacementGroups": {
+            "allowedValues": ["single", "multiple"],
+            "defaultValue": "single",
+            "type": "String",
+            "metadata": {
+                "description": "The VMSS placement group options. For mor information, please see: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#placement-groups"
+            }
+        },
         "VnetAddressSpace": {
             "defaultValue": "10.0.0.0/16",
             "type": "String",
@@ -699,6 +714,9 @@
                     "AdminUsername": {
                         "value": "[parameters('AdminUsername')]"
                     },
+                    "AvailabilityZones": {
+                        "value": "[parameters('VMSSAvailabilityZones')]"
+                    },
                     "BYOLInstanceCount": {
                         "value": "[parameters('BYOLInstanceCount')]"
                     },
@@ -749,6 +767,9 @@
                     },
                     "ScaleOutThreshold": {
                         "value": "[parameters('ScaleOutThreshold')]"
+                    },
+                    "SinglePlacementGroup": {
+                        "value": "[equals(parameters('VMSSPlacementGroups'), 'single')]"
                     },
                     "StorageAccountName": {
                         "value": "[variables('storageAccountName')]"
