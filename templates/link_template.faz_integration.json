@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.2.0",
+    "contentVersion": "3.3.0.0",
     "parameters": {
         "AdminPassword": {
             "type": "SecureString"
@@ -48,7 +48,7 @@
     "resources": [
         {
             "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2020-07-01",
             "name": "[variables('fazPubIpName')]",
             "condition": "[variables('ifCreateNewPublicIP')]",
             "location": "[resourceGroup().location]",
@@ -61,7 +61,7 @@
             }
         },
         {
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2020-07-01",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('fazNic0Name')]",
             "location": "[resourceGroup().location]",

@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "3.3.2.0",
+    "contentVersion": "3.3.0.0",
     "parameters": {
         "AccessRestrictionIPRange": {
             "value": ""
@@ -13,6 +13,12 @@
         },
         "BYOLInstanceCount": {
             "value": 2
+        },
+        "ExternalLoadBalancerFrontendIPName": {
+            "value": ""
+        },
+        "ExternalLoadBalancerFrontendIPResourceGroup": {
+            "value": ""
         },
         "FortiAnalyzerAutoscaleAdminPassword": {
             "value": ""
@@ -34,12 +40,6 @@
         },
         "FOSVersion": {
             "value": "6.4.5"
-        },
-        "FrontendIPDeploymentMethod": {
-            "value": "create new public IP address"
-        },
-        "FrontendIPName": {
-            "value": ""
         },
         "HeartBeatDelayAllowance": {
             "value": 30
@@ -68,9 +68,6 @@
         "MinPAYGInstanceCount": {
             "value": 0
         },
-        "NetworkSecurityGroupName": {
-            "value": ""
-        },
         "PAYGInstanceCount": {
             "value": 0
         },
@@ -78,7 +75,7 @@
             "value": ""
         },
         "PrimaryElectionTimeout": {
-            "value": 90
+            "value": 600
         },
         "ResourceNamePrefix": {
             "value": ""

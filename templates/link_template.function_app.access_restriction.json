@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "AllowAccessFromIPAddresses": {
+            "type": "array"
+        },
+        "AllowAccessFromSubnetIds": {
+            "type": "array"
+        },
+        "FunctionAppName": {
+            "type": "String"
+        }
+    },
+    "variables": {
+        "funcAppAccessRestrictions": "[concat(variables('funcAppVNetSubnetRestrictions').iterations, variables('funcAppIPAddressRestrictions').iterations)]",
+        "funcAppIPAddressRestrictions": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[length(parameters('AllowAccessFromIPAddresses'))]",
+                    "input": {
+                        "name": "[concat('allow-ip-config', copyIndex('iterations', 1))]",
+                        "ipAddress": "[parameters('AllowAccessFromIPAddresses')[copyIndex('iterations')]]",
+                        "action": "Allow",
+                        "tag": "Default",
+                        "priority": "[add(200, copyIndex('iterations', 1))]"
+                    }
+                }
+            ]
+        },
+        "funcAppVNetSubnetRestrictions": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[length(parameters('AllowAccessFromSubnetIds'))]",
+                    "input": {
+                        "vnetSubnetResourceId": "[parameters('AllowAccessFromSubnetIds')[copyIndex('iterations')]]",
+                        "action": "Allow",
+                        "tag": "Default",
+                        "priority": "[add(100, copyIndex('iterations', 1))]",
+                        "name": "[concat('allow-vnet-subnet-config', copyIndex('iterations', 1))]"
+                    }
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('FunctionAppName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "functionapp",
+            "properties": {
+                "siteConfig": {
+                    "ipSecurityRestrictions": "[variables('funcAppAccessRestrictions')]"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
