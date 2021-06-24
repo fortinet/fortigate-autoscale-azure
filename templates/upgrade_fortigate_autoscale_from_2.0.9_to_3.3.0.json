@@ -1279,7 +1279,7 @@
         },
         "cmdDeleteUpgradeIteration": {
             "type": "String",
-            "value": "[concat(variables('cmdDeleteUpgradeIterationSome'), reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value)]"
+            "value": "[concat(variables('cmdDeleteUpgradeIterationSome'), reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value)]"
         },
         "deploymentPackageVersion": {
             "type": "string",
