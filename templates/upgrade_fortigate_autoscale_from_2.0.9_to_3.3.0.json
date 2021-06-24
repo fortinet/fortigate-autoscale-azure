@@ -294,22 +294,17 @@
         "autoscaleAssetContainerName": "fortigate-autoscale",
         "autoscaleSettingsNameBYOLOld": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
         "autoscaleSettingsNamePAYGOld": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
-        "cmdDeleteOldAutoscaleAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldFuncAppAll'), variables('cmdDeleteOldVMSSAll'), variables('cmdDeleteOldDatabaseAll'))]",
-        "cmdDeleteOldAutoscaleSettings": "[concat('az monitor autoscale delete', ' -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNameBYOLOld'), ';', 'az monitor autoscale delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNamePAYGOld'), ';')]",
-        "cmdDeleteOldDatabase": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountNameOld'), ' -n ', variables('databaseName'), ';')]",
-        "cmdDeleteOldDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountNameOld'), ';')]",
-        "cmdDeleteOldDatabaseAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteOldDatabase'), variables('cmdDeleteOldDatabaseAccount'))]",
-        "cmdDeleteOldFuncAppAll": "[concat(variables('cmdDeleteOldFuncAppInsights'),variables('cmdDeleteOldFuncAppSite'),variables('cmdDeleteOldFuncAppServerFarm'))]",
-        "cmdDeleteOldFuncAppInsights": "[concat('az monitor app-insights component delete', ' -a ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
-        "cmdDeleteOldFuncAppServerFarm": "[concat('az appservice plan delete -y', ' -n ', variables('hostingPlanNameOld'), ' -g ', resourceGroup().name, ';')]",
-        "cmdDeleteOldFuncAppSite": "[concat('az webapp delete', ' -n ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
-        "cmdDeleteOldVMSS": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNameBYOLOld'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNamePAYGOld'), ';')]",
-        "cmdDeleteOldVMSSAll": "[concat(variables('cmdDeleteOldAutoscaleSettings'), variables('cmdDeleteOldVMSS'))]",
-        "cmdDeleteUpgradeIterationSome": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteUpgradeIterationKeyVault'), variables('cmdDeleteUpgradeIterationDatabase'), variables('cmdDeleteUpgradeIterationDatabaseAccount'), variables('cmdDeleteUpgradeIterationStorageAccount'))]",
-        "cmdDeleteUpgradeIterationDatabase": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountName'), ' -n ', variables('databaseName'), ';')]",
-        "cmdDeleteUpgradeIterationDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
-        "cmdDeleteUpgradeIterationKeyVault": "[concat('az keyvault delete -n ', variables('keyVaultName'), ' -g ', resourceGroup().name, ';')]",
-        "cmdDeleteUpgradeIterationStorageAccount": "[concat('az storage account delete -n ', variables('storageAccountName'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteAutoscaleAllOld": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteFunctionAppAllOld'), variables('cmdDeleteVMSSAllOld'), variables('cmdDeleteDatabaseAllOld'))]",
+        "cmdDeleteAutoscaleSettingsOld": "[concat('az monitor autoscale delete', ' -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNameBYOLOld'), ';', 'az monitor autoscale delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNamePAYGOld'), ';')]",
+        "cmdDeleteDatabaseOld": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountNameOld'), ' -n ', variables('databaseName'), ';')]",
+        "cmdDeleteDatabaseAccountOld": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountNameOld'), ';')]",
+        "cmdDeleteDatabaseAllOld": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteDatabaseOld'), variables('cmdDeleteDatabaseAccountOld'))]",
+        "cmdDeleteFunctionAppAllOld": "[concat(variables('cmdDeleteFunctionAppInsightsOld'),variables('cmdDeleteFunctionAppSiteOld'),variables('cmdDeleteFunctionAppServerFarmOld'))]",
+        "cmdDeleteFunctionAppInsightsOld": "[concat('az monitor app-insights component delete', ' -a ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteFunctionAppServerFarmOld": "[concat('az appservice plan delete -y', ' -n ', variables('hostingPlanNameOld'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteFunctionAppSiteOld": "[concat('az webapp delete', ' -n ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteVMSSOld": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNameBYOLOld'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNamePAYGOld'), ';')]",
+        "cmdDeleteVMSSAllOld": "[concat(variables('cmdDeleteAutoscaleSettingsOld'), variables('cmdDeleteVMSSOld'))]",
         "databaseAccountNameOld": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
         "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba', variables('upgradeIterationNumber'))]",
         "databaseName": "FortiGateAutoscale",
@@ -1273,13 +1268,9 @@
             "type": "String",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolScaleSetName.value]"
         },
-        "cmdDeleteOldAutoscaleComponents": {
+        "cleanUpOldComponentCmdDeleteAllInOne": {
             "type": "String",
-            "value": "[variables('cmdDeleteOldAutoscaleAll')]"
-        },
-        "cmdDeleteUpgradeIteration": {
-            "type": "String",
-            "value": "[concat(variables('cmdDeleteUpgradeIterationSome'), reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value)]"
+            "value": "[variables('cmdDeleteAutoscaleAllOld')]"
         },
         "deploymentPackageVersion": {
             "type": "string",
