@@ -114,16 +114,22 @@
             "value": ""
         },
         "Subnet3AddressRange": {
-            "value": "10.0.2.0/24"
+            "value": ""
         },
         "Subnet3Name": {
             "value": ""
         },
         "Subnet4AddressRange": {
-            "value": "10.0.3.0/24"
+            "value": ""
         },
         "Subnet4Name": {
             "value": ""
+        },
+        "VMSSAvailabilityZones": {
+            "value": []
+        },
+        "VMSSPlacementGroups": {
+            "value": "single"
         },
         "VnetAddressSpace": {
             "value": "10.0.0.0/16"

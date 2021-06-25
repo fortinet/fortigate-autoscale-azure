@@ -252,7 +252,6 @@
             }
         },
         "Subnet1AddressRange": {
-            "defaultValue": "",
             "type": "String",
             "metadata": {
                 "description": "Defines the subnet 1 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
@@ -323,7 +322,6 @@
             }
         },
         "VnetAddressSpace": {
-            "defaultValue": "10.0.0.0/16",
             "type": "String",
             "metadata": {
                 "description": "IP address space of the VNet in CIDR notation. E.g. 10.0.0.0/16. Required when using an existing VNet; the value should match the address space of the target VNet."
