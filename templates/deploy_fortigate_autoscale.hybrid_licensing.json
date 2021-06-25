@@ -135,13 +135,6 @@
                 "description": "Size of the VMs in the VMSS."
             }
         },
-        "LoadBalancerIP": {
-            "defaultValue": "10",
-            "type": "String",
-            "metadata": {
-                "description": "The last octet of the Frontend Private IP address to be used by the Load Balancer. For example, if set to 10, the Private IP address for the Load Balancer in the subnet with prefix 10.0.1.0/24 would be 10.0.1.10."
-            }
-        },
         "MaxBYOLInstanceCount": {
             "defaultValue": 2,
             "minValue": 0,
@@ -257,6 +250,12 @@
                 "description": "Defines the subnet 1 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
+        "Subnet1LoadBalancerIP": {
+            "type": "String",
+            "metadata": {
+                "description": "The IP address from the subnet 1 address range that will be used by the external load balancer.Must be a valid IP address within the address range defined in parameter 'Subnet 1 Address Range'."
+            }
+        },
         "Subnet1Name": {
             "defaultValue": "",
             "type": "String",
@@ -367,7 +366,7 @@
         "ifCreateVNet": "[equals(parameters('VnetDeploymentMethod'), 'create new')]",
         "ifCreateVNetInSameRSG": "[and(variables('ifCreateVNet'), or(equals(parameters('VnetResourceGroupName'), ''), equals(parameters('VnetResourceGroupName'), resourceGroup().name)))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
-        "internalLoadBalancerIPAddress": "[concat(substring(variables('subnet1').addressRange, 0, lastIndexOf(variables('subnet1').addressRange, '.')),'.', parameters('LoadBalancerIP'))]",
+        "internalLoadBalancerIPAddress": "[parameters('Subnet1LoadBalancerIP')]",
         "keyVaultName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'kv001')]",
         "licenseFileDirectory": "license-files",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'paygonly', if(variables('ifBYOLOnly'), 'byolonly', 'hybrid'))]",

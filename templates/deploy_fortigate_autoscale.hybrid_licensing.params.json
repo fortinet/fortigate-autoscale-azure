@@ -53,9 +53,6 @@
         "InstanceType": {
             "value": "Standard_F4"
         },
-        "LoadBalancerIP": {
-            "value": "10"
-        },
         "MaxBYOLInstanceCount": {
             "value": 2
         },
@@ -103,6 +100,9 @@
         },
         "Subnet1AddressRange": {
             "value": "10.0.0.0/24"
+        },
+        "Subnet1LoadBalancerIP": {
+            "value": "10.0.0.200"
         },
         "Subnet1Name": {
             "value": ""
