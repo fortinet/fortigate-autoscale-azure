@@ -2,7 +2,7 @@ import { CosmosClient, Database, FeedResponse, SqlQuerySpec } from '@azure/cosmo
 import {
     AzureSettings,
     AzureSettingsDbItem
-} from '@fortinet/fortigate-autoscale/azure/azure-db-definitions';
+} from '@fortinet/fortigate-autoscale/dist/azure/azure-db-definitions';
 import chalk from 'chalk';
 import * as HttpStatusCodes from 'http-status-codes';
 import prompts from 'prompts';
