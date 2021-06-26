@@ -12,7 +12,7 @@ import {
     AzurePlatformAdaptee,
     AzurePlatformAdapter,
     FortiGateAutoscaleServiceType
-} from '@fortinet/fortigate-autoscale/azure';
+} from '@fortinet/fortigate-autoscale/dist/azure';
 
 export interface TimerInfo {
     schedule: unknown;
