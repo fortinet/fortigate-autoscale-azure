@@ -839,6 +839,7 @@
             "apiVersion": "2018-05-01",
             "name": "SetupFunctionApp",
             "dependsOn": [
+                "[variables('databaseAccountName')]",
                 "CreateVirtualNetwork",
                 "CreateFunctionApp",
                 "FortiAnalyzerIntegrationResources"
