@@ -295,6 +295,7 @@
         },
         "extraSubnetIds": "[if(variables('ifHasExtraSubnets'), skip(parameters('SubnetIds'), 1), parameters('SubnetIds'))]",
         "ifHasExtraSubnets": "[greater(length(parameters('SubnetIds')), 1)]",
+        "ifZonal": "[greater(length(parameters('AvailabilityZones')), 0)]",
         "networkInterfaceConfigurationExtra": {
             "copy": [
                 {
@@ -339,8 +340,7 @@
                 ]
             }
         },
-        "networkInterfaceConfigurations": "[if(variables('ifHasExtraSubnets'), union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').networkInterfaceConfigurationExtraCopyIt), createArray(variables('networkInterfaceConfigurationMain')))]",
-        "zoneBalance": "[if(greater(length(parameters('AvailabilityZones')), 0), parameters('ZoneBalance'), 'null')]"
+        "networkInterfaceConfigurations": "[if(variables('ifHasExtraSubnets'), union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').networkInterfaceConfigurationExtraCopyIt), createArray(variables('networkInterfaceConfigurationMain')))]"
     },
     "resources": [
         {
@@ -390,7 +390,7 @@
                         "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurations')]"
                     }
                 },
-                "zoneBalance": "[json(variables('zoneBalance'))]"
+                "zoneBalance": "[if(variables('ifZonal'), parameters('ZoneBalance'), json('null'))]"
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
@@ -448,7 +448,7 @@
                         "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurations')]"
                     }
                 },
-                "zoneBalance": "[json(variables('zoneBalance'))]"
+                "zoneBalance": "[if(variables('ifZonal'), parameters('ZoneBalance'), json('null'))]"
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
