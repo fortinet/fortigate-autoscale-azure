@@ -90,6 +90,10 @@
         },
         "VmssNamePAYG": {
             "type": "String"
+        },
+        "ZoneBalance": {
+            "type": "Bool",
+            "allowedValues": [true, false]
         }
     },
     "variables": {
@@ -335,7 +339,8 @@
                 ]
             }
         },
-        "networkInterfaceConfigurations": "[if(variables('ifHasExtraSubnets'), union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').networkInterfaceConfigurationExtraCopyIt), createArray(variables('networkInterfaceConfigurationMain')))]"
+        "networkInterfaceConfigurations": "[if(variables('ifHasExtraSubnets'), union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').networkInterfaceConfigurationExtraCopyIt), createArray(variables('networkInterfaceConfigurationMain')))]",
+        "zoneBalance": "[if(greater(length(parameters('AvailabilityZones')), 0), parameters('ZoneBalance'), 'null')]"
     },
     "resources": [
         {
@@ -385,7 +390,7 @@
                         "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurations')]"
                     }
                 },
-                "zoneBalance": false
+                "zoneBalance": "[json(variables('zoneBalance'))]"
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
@@ -443,7 +448,7 @@
                         "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurations')]"
                     }
                 },
-                "zoneBalance": false
+                "zoneBalance": "[json(variables('zoneBalance'))]"
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
