@@ -250,12 +250,6 @@
                 "description": "Defines the subnet 1 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
             }
         },
-        "Subnet1LoadBalancerIP": {
-            "type": "String",
-            "metadata": {
-                "description": "The IP address from the subnet 1 address range that will be used by the external load balancer.Must be a valid IP address within the address range defined in parameter 'Subnet 1 Address Range'."
-            }
-        },
         "Subnet1Name": {
             "defaultValue": "",
             "type": "String",
@@ -374,7 +368,6 @@
         "ifCreateVNet": "[equals(parameters('VnetDeploymentMethod'), 'create new')]",
         "ifCreateVNetInSameRSG": "[and(variables('ifCreateVNet'), or(equals(parameters('VnetResourceGroupName'), ''), equals(parameters('VnetResourceGroupName'), resourceGroup().name)))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
-        "internalLoadBalancerIPAddress": "[parameters('Subnet1LoadBalancerIP')]",
         "keyVaultName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'kv001')]",
         "licenseFileDirectory": "license-files",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'paygonly', if(variables('ifBYOLOnly'), 'byolonly', 'hybrid'))]",
@@ -595,9 +588,6 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.load_balancer.json"
                 },
                 "parameters": {
-                    "UniqueResourceNamePrefix": {
-                        "value": "[variables('uniqueResourceNamePrefix')]"
-                    },
                     "ExternalLBFrontendIPId": {
                         "value": "[parameters('FrontendIPAddressID')]"
                     },
@@ -611,10 +601,13 @@
                         "value": ["Tcp", "80", "80", "Tcp", "443", "443"]
                     },
                     "InternalLBFrontendIPAddress": {
-                        "value": "[variables('internalLoadBalancerIPAddress')]"
+                        "value": ""
                     },
                     "InternalLBFrontendSubnetId": {
-                        "value": "[variables('subnet1').id]"
+                        "value": ""
+                    },
+                    "UniqueResourceNamePrefix": {
+                        "value": "[variables('uniqueResourceNamePrefix')]"
                     }
                 }
             },
