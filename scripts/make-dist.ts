@@ -78,10 +78,6 @@ const deploymentPackageRequiredFileLocations = [
     'README.md',
     'LICENSE',
     {
-        src: 'build/scripts/transfer-settings.js',
-        des: 'build/scripts'
-    },
-    {
         src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/baseconfig',
         des: 'assets/configset'
     },
