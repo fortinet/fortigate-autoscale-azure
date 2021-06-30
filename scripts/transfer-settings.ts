@@ -141,6 +141,22 @@ async function saveSetting(
     return setting;
 }
 
+async function clearCache(db: Database): Promise<void> {
+    const item = await db.container('ApiRequestCache').item('loadSettings', 'loadSettings');
+    let res = await item.read();
+    if (res.statusCode === HttpStatusCodes.OK) {
+        res = await item.delete();
+        console.log(chalk.green('setting cache deleted.'));
+    } else if (res.statusCode === HttpStatusCodes.NOT_FOUND) {
+        // not found, don't try to delete
+        console.log(chalk.yellow('setting cache not found. skipped deleting it.'));
+        return;
+    }
+    if (res.statusCode !== HttpStatusCodes.OK && res.statusCode !== HttpStatusCodes.NO_CONTENT) {
+        throw new Error(`clearCache failed with unexpected status code: ${res.statusCode}`);
+    }
+}
+
 async function saveSettings(db: Database, settings: AzureSettingsDbItem[]): Promise<void> {
     const logs = await Promise.all(
         settings.map(setting => {
@@ -162,6 +178,8 @@ async function saveSettings(db: Database, settings: AzureSettingsDbItem[]): Prom
     }).forEach(log => {
         console.info(log);
     });
+    // clear cache
+    await clearCache(db);
     console.info(chalk.yellow('Completed!'));
 }
 
@@ -178,11 +196,23 @@ async function main(): Promise<void> {
         const dbNew = await createDBConnection();
         const settingsOld = await loadSettings(dbOld);
         const settingsNew = await loadSettings(dbNew);
+        // NOTE: give a warning if the new DB isn't initialized yet.
+        if (settingsNew.length === 0) {
+            console.warn(
+                `${chalk.yellow(
+                    'WARNING: No setting item found in the new database. ' +
+                        'You need to follow the provided instructions to complete ' +
+                        'the upgrade process.'
+                )}`
+            );
+            throw new Error(
+                "The New database doesn't contain setting items. Cannot transfer settings to it."
+            );
+        }
         const converted = convert(settingsOld, settingsNew);
         await saveSettings(dbNew, converted);
     } catch (error) {
         if (error instanceof Error) {
-            console.error(chalk.red(error.message));
             console.error(chalk.red(error.stack));
         } else {
             console.error(JSON.stringify(error));
