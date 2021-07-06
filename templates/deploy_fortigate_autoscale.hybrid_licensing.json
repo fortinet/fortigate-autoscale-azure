@@ -773,7 +773,7 @@
                         "value": "[variables('storageAccountName')]"
                     },
                     "SubnetIds": {
-                        "value": "[if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.subnetIds.value, variables('subnetIds'))]"
+                        "value": "[if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.subnetIds.value, variables('subnetIds').subnetIdsCopyIt)]"
                     },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
