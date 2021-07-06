@@ -612,7 +612,7 @@
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
-            "resourceGroup": "[variables('vNetResourceGroupName')]"
+            "resourceGroup": "[resourceGroup().name]"
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -659,7 +659,7 @@
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
-            "resourceGroup": "[variables('vNetResourceGroupName')]"
+            "resourceGroup": "[resourceGroup().name]"
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -796,7 +796,7 @@
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
-            "resourceGroup": "[variables('vNetResourceGroupName')]"
+            "resourceGroup": "[resourceGroup().name]"
         },
         {
             "type": "Microsoft.Resources/deployments",
