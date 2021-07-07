@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "Subnet1AddressRange": {
+            "type": "String"
+        },
+        "Subnet1Name": {
+            "type": "String"
+        },
+        "VNetName": {
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2020-07-01",
+            "location": "[resourceGroup().location]",
+            "name": "[concat(parameters('VNetName'), '/', parameters('Subnet1Name'))]",
+            "properties": {
+                "addressPrefix": "[parameters('Subnet1AddressRange')]",
+                "serviceEndpoints": [
+                    {
+                        "service": "Microsoft.AzureCosmosDB",
+                        "locations": ["*"]
+                    },
+                    {
+                        "service": "Microsoft.Web",
+                        "locations": ["*"]
+                    }
+                ]
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+        }
+    ],
+    "outputs": {}
+}
