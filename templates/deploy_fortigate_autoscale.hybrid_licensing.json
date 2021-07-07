@@ -581,6 +581,31 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "dependsOn": ["CreateVirtualNetwork"],
+            "name": "UpdateVirtualNetwork",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.vnet.configuration.json"
+                },
+                "parameters": {
+                    "Subnet1AddressRange": {
+                        "value": "[parameters('Subnet1AddressRange')]"
+                    },
+                    "Subnet1Name": {
+                        "value": "[parameters('Subnet1Name')]"
+                    },
+                    "VNetName": {
+                        "value": "[variables('vNetName')]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[variables('vNetResourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": ["CreateVirtualNetwork"],
             "name": "CreateLoadBalancers",
             "properties": {
                 "mode": "Incremental",
@@ -805,7 +830,8 @@
             "dependsOn": [
                 "[variables('databaseAccountName')]",
                 "CreateVirtualNetwork",
-                "CreateFunctionApp"
+                "CreateFunctionApp",
+                "UpdateVirtualNetwork"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -835,7 +861,8 @@
                 "[variables('databaseAccountName')]",
                 "CreateVirtualNetwork",
                 "CreateFunctionApp",
-                "FortiAnalyzerIntegrationResources"
+                "FortiAnalyzerIntegrationResources",
+                "UpdateVirtualNetwork"
             ],
             "properties": {
                 "mode": "Incremental",
