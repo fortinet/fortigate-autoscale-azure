@@ -1,0 +1,73 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "3.3.0.0",
+    "parameters": {
+        "ResourceNamePrefix": {
+            "type": "String",
+            "metadata": {
+                "description": "'ResourceNamePrefix' value found in the input of the old deployment template."
+            }
+        },
+        "UpgradeIteration": {
+            "type": "Int",
+            "defaultValue": 2,
+            "minValue": 2,
+            "maxValue": 9,
+            "metadata": {
+                "description": "The upgrade iteration number, ranging from 2 to 9. Increase it by 1 when starts a new deployment if any previous upgrade iteration has failed. The iteration number can be found as 'upgradeIteration' in the output of any upgrade deployment. If it already reached 9, please do not attempt to increase it over 9, instead, consider deleting any unused iteration and reuse its number."
+            }
+        },
+        "VNetResourceGroupName": {
+            "type": "String",
+            "metadata": {
+                "description": "'VNetResourceGroupName' value found in the output of the old deployment template."
+            }
+        }
+    },
+    "variables": {
+        "cmdCreateExtLBBackendIPPoolAll": "[concat('az account set -s ', subscription().subscriptionId, '; ', variables('cmdCreateExtLBBackendIPPoolSubnet1'), variables('cmdCreateExtLBBackendIPPoolSubnet2'), variables('cmdCreateExtLBBackendIPPoolSubnet3'), variables('cmdCreateExtLBBackendIPPoolSubnet4'))]",
+        "cmdCreateExtLBBackendIPPoolSubnet1": "[concat('az network lb address-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerBackendIPPoolNameSubnet1'), ';')]",
+        "cmdCreateExtLBBackendIPPoolSubnet2": "[concat('az network lb address-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerBackendIPPoolNameSubnet2'), ';')]",
+        "cmdCreateExtLBBackendIPPoolSubnet3": "[concat('az network lb address-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerBackendIPPoolNameSubnet3'), ';')]",
+        "cmdCreateExtLBBackendIPPoolSubnet4": "[concat('az network lb address-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerBackendIPPoolNameSubnet4'), ';')]",
+        "cmdCreateExtLBInboundNATPoolAll": "[concat('az account set -s ', subscription().subscriptionId, '; ', variables('cmdCreateExtLBInboundNATPoolVMSSBYOLSSH'), variables('cmdCreateExtLBInboundNATPoolVMSSBYOLHTTPS'), variables('cmdCreateExtLBInboundNATPoolVMSSPAYGSSH'), variables('cmdCreateExtLBInboundNATPoolVMSSPAYGHTTPS'))]",
+        "cmdCreateExtLBInboundNATPoolVMSSBYOLHTTPS": "[concat('az network lb inbound-nat-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' --frontend-port-range-start ', variables('extLBFrontendPortRangeVMSSBYOLHTTPS')[0],' --frontend-port-range-end ', variables('extLBFrontendPortRangeVMSSBYOLHTTPS')[1], ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPS'), ' --backend-port ', variables('natBackendPortHTTPS'), ' --protocol Tcp;')]",
+        "cmdCreateExtLBInboundNATPoolVMSSBYOLSSH": "[concat('az network lb inbound-nat-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' --frontend-port-range-start ', variables('extLBFrontendPortRangeVMSSBYOLSSH')[0],' --frontend-port-range-end ', variables('extLBFrontendPortRangeVMSSBYOLSSH')[1], ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLSSH'), ' --backend-port ', variables('natBackendPort'), ' --protocol Tcp;')]",
+        "cmdCreateExtLBInboundNATPoolVMSSPAYGHTTPS": "[concat('az network lb inbound-nat-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' --frontend-port-range-start ', variables('extLBFrontendPortRangeVMSSPAYGHTTPS')[0],' --frontend-port-range-end ', variables('extLBFrontendPortRangeVMSSPAYGHTTPS')[1], ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPS'), ' --backend-port ', variables('natBackendPortHTTPS'), ' --protocol Tcp;')]",
+        "cmdCreateExtLBInboundNATPoolVMSSPAYGSSH": "[concat('az network lb inbound-nat-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' --frontend-port-range-start ', variables('extLBFrontendPortRangeVMSSPAYGSSH')[0],' --frontend-port-range-end ', variables('extLBFrontendPortRangeVMSSPAYGSSH')[1], ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGSSH'), ' --backend-port ', variables('natBackendPort'), ' --protocol Tcp;')]",
+        "cmdUpdateExternalLoadBalancer": "[concat(variables('cmdCreateExtLBInboundNATPoolAll'))]",
+        "cmdUpdateLoadBalancerAll": "[concat('az account set -s ', subscription().subscriptionId, '; ', variables('cmdUpdateExternalLoadBalancer'))]",
+        "extLBFrontendPortRangeLength": 1000,
+        "extLBFrontendPortRangeMax": "[add(variables('extLBFrontendPortRangeMin'), add(variables('extLBFrontendPortRangeLength') , -1))]",
+        "extLBFrontendPortRangeMin": "[mul(variables('extLBFrontendPortRangeLength'), add(parameters('UpgradeIteration'), -1))]",
+        "extLBFrontendPortRangeVMSSBYOLHTTPS": "[createArray(add(40000, variables('extLBFrontendPortRangeMin')), add(40000, variables('extLBFrontendPortRangeMax')))]",
+        "extLBFrontendPortRangeVMSSBYOLSSH": "[createArray(add(50000, variables('extLBFrontendPortRangeMin')), add(50000, variables('extLBFrontendPortRangeMax')))]",
+        "extLBFrontendPortRangeVMSSPAYGHTTPS": "[createArray(add(20000, variables('extLBFrontendPortRangeMin')), add(20000, variables('extLBFrontendPortRangeMax')))]",
+        "extLBFrontendPortRangeVMSSPAYGSSH": "[createArray(add(30000, variables('extLBFrontendPortRangeMin')), add(30000, variables('extLBFrontendPortRangeMax')))]",
+        "externalLoadBalancerName": "[concat(parameters('ResourceNamePrefix'), '-external-load-balancer')]",
+        "loadBalancerBackendIPPoolNameSubnet1": "[concat(parameters('ResourceNamePrefix'), '-subnet-1-', variables('upgradeIterationNumber'))]",
+        "loadBalancerBackendIPPoolNameSubnet2": "[concat(parameters('ResourceNamePrefix'), '-subnet-2-', variables('upgradeIterationNumber'))]",
+        "loadBalancerBackendIPPoolNameSubnet3": "[concat(parameters('ResourceNamePrefix'), '-subnet-3-', variables('upgradeIterationNumber'))]",
+        "loadBalancerBackendIPPoolNameSubnet4": "[concat(parameters('ResourceNamePrefix'), '-subnet-4-', variables('upgradeIterationNumber'))]",
+        "loadBalancerInboundNatPoolNameVMSSBYOLHTTPS": "[concat('vmss-', variables('vmssNameBYOL'), '-https')]",
+        "loadBalancerInboundNatPoolNameVMSSBYOLSSH": "[concat('vmss-', variables('vmssNameBYOL'), '-ssh')]",
+        "loadBalancerInboundNatPoolNameVMSSPAYGHTTPS": "[concat('vmss-', variables('vmssNamePAYG'), '-https')]",
+        "loadBalancerInboundNatPoolNameVMSSPAYGSSH": "[concat('vmss-', variables('vmssNamePAYG'), '-ssh')]",
+        "natBackendPort": 22,
+        "natBackendPortHTTPS": 8443,
+        "upgradeIterationNumber": "[padLeft(parameters('UpgradeIteration'),3,'0')]",
+        "vmssNameBYOL": "[concat(parameters('ResourceNamePrefix'), 'byol', variables('upgradeIterationNumber'))]",
+        "vmssNamePAYG": "[concat(parameters('ResourceNamePrefix'), 'payg', variables('upgradeIterationNumber'))]"
+    },
+    "resources": [],
+    "outputs": {
+        "cmdUpdateAllInOne": {
+            "type": "String",
+            "value": "[variables('cmdUpdateLoadBalancerAll')]"
+        },
+        "cmdCreateExtLBInboundNATPoolAll": {
+            "type": "String",
+            "value": "[variables('cmdCreateExtLBInboundNATPoolAll')]"
+        }
+    }
+}

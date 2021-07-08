@@ -239,31 +239,32 @@
         "Subnet1Name": {
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 1, the subnet in which to deploy the FortiGate VMSS. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 1 of the existing VNet used in the old deployment."
             }
         },
         "Subnet2Name": {
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 2, a subnet to be protected by the FortiGate. Required when using an existing Net; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 2 of the existing VNet used in the old deployment."
             }
         },
         "Subnet3Name": {
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 3, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 3 of the existing VNet used in the old deployment."
             }
         },
         "Subnet4Name": {
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 4, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 4 of the existing VNet used in the old deployment."
             }
         },
         "UpgradeIteration": {
             "type": "Int",
             "defaultValue": 2,
             "minValue": 2,
+            "maxValue": 9,
             "metadata": {
                 "description": "The upgrade iteration number, starting from 2. Increase it by 1 when starts a new deployment if any previous upgrade iteration has failed. The iteration number can be found as 'upgradeIteration' in the output of any upgrade deployment."
             }
@@ -277,13 +278,13 @@
         "VnetAddressSpace": {
             "type": "String",
             "metadata": {
-                "description": "IP address space of the existing VNet in CIDR notation. E.g. 10.0.0.0/16."
+                "description": "IP address space of the existing VNet used in the old deployment. E.g. 10.0.0.0/16."
             }
         },
         "VnetName": {
             "type": "String",
             "metadata": {
-                "description": "Name of the existing VNet that connects to FortiGate Autoscale."
+                "description": "Name of the existing VNet used in the old deployment."
             }
         }
     },
@@ -296,26 +297,26 @@
         "autoscaleSettingsNamePAYGOld": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
         "cmdDeleteAutoscaleAllOld": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteFunctionAppAllOld'), variables('cmdDeleteVMSSAllOld'), variables('cmdDeleteDatabaseAllOld'))]",
         "cmdDeleteAutoscaleSettingsOld": "[concat('az monitor autoscale delete', ' -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNameBYOLOld'), ';', 'az monitor autoscale delete -g ', variables('vNetResourceGroupName'), ' -n ', variables('autoscaleSettingsNamePAYGOld'), ';')]",
-        "cmdDeleteDatabaseOld": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountNameOld'), ' -n ', variables('databaseName'), ';')]",
         "cmdDeleteDatabaseAccountOld": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountNameOld'), ';')]",
         "cmdDeleteDatabaseAllOld": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteDatabaseOld'), variables('cmdDeleteDatabaseAccountOld'))]",
+        "cmdDeleteDatabaseOld": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountNameOld'), ' -n ', variables('databaseName'), ';')]",
         "cmdDeleteFunctionAppAllOld": "[concat(variables('cmdDeleteFunctionAppInsightsOld'),variables('cmdDeleteFunctionAppSiteOld'),variables('cmdDeleteFunctionAppServerFarmOld'))]",
         "cmdDeleteFunctionAppInsightsOld": "[concat('az monitor app-insights component delete', ' -a ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteFunctionAppServerFarmOld": "[concat('az appservice plan delete -y', ' -n ', variables('hostingPlanNameOld'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteFunctionAppSiteOld": "[concat('az webapp delete', ' -n ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
-        "cmdDeleteVMSSOld": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNameBYOLOld'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNamePAYGOld'), ';')]",
         "cmdDeleteVMSSAllOld": "[concat(variables('cmdDeleteAutoscaleSettingsOld'), variables('cmdDeleteVMSSOld'))]",
-        "databaseAccountNameOld": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
+        "cmdDeleteVMSSOld": "[concat('az vmss delete', ' -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNameBYOLOld'), ';', 'az vmss delete -g ', variables('vNetResourceGroupName'),' -n ', variables('vmssNamePAYGOld'), ';')]",
         "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba', variables('upgradeIterationNumber'))]",
+        "databaseAccountNameOld": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
         "databaseName": "FortiGateAutoscale",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "databaseSharedThroughputBase": 500,
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
         "enableHybridLicensing": true,
-        "extLBInboundNatPoolHTTPSBYOL": "[concat(variables('vmssNameBYOLOld'), '-nat-pool-https', variables('upgradeIterationNumber'))]",
-        "extLBInboundNatPoolHTTPSPAYG": "[concat(variables('vmssNamePAYGOld'), '-nat-pool-https', variables('upgradeIterationNumber'))]",
-        "extLBInboundNatPoolSSHBYOL": "[concat(variables('vmssNameBYOLOld'), '-nat-pool-ssh', variables('upgradeIterationNumber'))]",
-        "extLBInboundNatPoolSSHPAYG": "[concat(variables('vmssNamePAYGOld'), '-nat-pool-ssh', variables('upgradeIterationNumber'))]",
+        "extLBInboundNatPoolHTTPSBYOL": "[concat('vmss-', variables('vmssNameBYOL'), '-https')]",
+        "extLBInboundNatPoolHTTPSPAYG": "[concat('vmss-', variables('vmssNamePAYG'), '-https')]",
+        "extLBInboundNatPoolSSHBYOL": "[concat('vmss-', variables('vmssNameBYOL'), '-ssh')]",
+        "extLBInboundNatPoolSSHPAYG": "[concat('vmss-', variables('vmssNamePAYG'), '-ssh')]",
         "externalLoadBalancerName": "[concat(parameters('ResourceNamePrefix'), '-external-load-balancer')]",
         "funcAppIPResrictionPriority": 100,
         "funcAppIPResrictions": {
@@ -1323,6 +1324,14 @@
         "upgradeIteration": {
             "type": "Int",
             "value": "[parameters('UpgradeIteration')]"
+        },
+        "upgradeFromVersion": {
+            "type": "string",
+            "value": "2.0.9"
+        },
+        "upgradeToVersion": {
+            "type": "string",
+            "value": "3.3.0"
         },
         "vNetResourceGroupName": {
             "type": "String",

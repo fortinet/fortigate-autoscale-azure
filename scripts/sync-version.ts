@@ -17,6 +17,7 @@ if (!semver.valid(verStr)) {
 }
 
 let workingDir = './templates';
+const syncVersionOnPackageResURL = false; // toggle to sync version on the PackageResURL parameter
 
 if (process.argv.length > 2 && process.argv[1] === '--dir' && process.argv[2]) {
     if (path.resolve(rootDir, process.argv[2]).startsWith(rootDir) === false) {
@@ -64,8 +65,10 @@ function syncVersionInTemplates(templateDir: string, newVersion: semver.SemVer):
                     // both template file and parameter file may contain the parameter. however,
                     // the parameters in the file parameter file may not have the defaultValue prop.
                     // so only set which it contains a defaultValue prop.
+                    // if syncVersionOnPackageResURL is set to false, do not update it.
                     if (
                         key === 'PackageResURL' &&
+                        syncVersionOnPackageResURL &&
                         templateJSON.parameters[key].defaultValue !== undefined
                     ) {
                         templateJSON.parameters[
