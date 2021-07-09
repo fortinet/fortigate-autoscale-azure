@@ -25,11 +25,6 @@
         }
     },
     "variables": {
-        "cmdCreateExtLBBackendIPPoolAll": "[concat('az account set -s ', subscription().subscriptionId, '; ', variables('cmdCreateExtLBBackendIPPoolSubnet1'), variables('cmdCreateExtLBBackendIPPoolSubnet2'), variables('cmdCreateExtLBBackendIPPoolSubnet3'), variables('cmdCreateExtLBBackendIPPoolSubnet4'))]",
-        "cmdCreateExtLBBackendIPPoolSubnet1": "[concat('az network lb address-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerBackendIPPoolNameSubnet1'), ';')]",
-        "cmdCreateExtLBBackendIPPoolSubnet2": "[concat('az network lb address-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerBackendIPPoolNameSubnet2'), ';')]",
-        "cmdCreateExtLBBackendIPPoolSubnet3": "[concat('az network lb address-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerBackendIPPoolNameSubnet3'), ';')]",
-        "cmdCreateExtLBBackendIPPoolSubnet4": "[concat('az network lb address-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerBackendIPPoolNameSubnet4'), ';')]",
         "cmdCreateExtLBInboundNATPoolAll": "[concat('az account set -s ', subscription().subscriptionId, '; ', variables('cmdCreateExtLBInboundNATPoolVMSSBYOLSSH'), variables('cmdCreateExtLBInboundNATPoolVMSSBYOLHTTPS'), variables('cmdCreateExtLBInboundNATPoolVMSSPAYGSSH'), variables('cmdCreateExtLBInboundNATPoolVMSSPAYGHTTPS'))]",
         "cmdCreateExtLBInboundNATPoolVMSSBYOLHTTPS": "[concat('az network lb inbound-nat-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' --frontend-port-range-start ', variables('extLBFrontendPortRangeVMSSBYOLHTTPS')[0],' --frontend-port-range-end ', variables('extLBFrontendPortRangeVMSSBYOLHTTPS')[1], ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPS'), ' --backend-port ', variables('natBackendPortHTTPS'), ' --protocol Tcp;')]",
         "cmdCreateExtLBInboundNATPoolVMSSBYOLSSH": "[concat('az network lb inbound-nat-pool create -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' --frontend-port-range-start ', variables('extLBFrontendPortRangeVMSSBYOLSSH')[0],' --frontend-port-range-end ', variables('extLBFrontendPortRangeVMSSBYOLSSH')[1], ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLSSH'), ' --backend-port ', variables('natBackendPort'), ' --protocol Tcp;')]",
@@ -45,10 +40,6 @@
         "extLBFrontendPortRangeVMSSPAYGHTTPS": "[createArray(add(20000, variables('extLBFrontendPortRangeMin')), add(20000, variables('extLBFrontendPortRangeMax')))]",
         "extLBFrontendPortRangeVMSSPAYGSSH": "[createArray(add(30000, variables('extLBFrontendPortRangeMin')), add(30000, variables('extLBFrontendPortRangeMax')))]",
         "externalLoadBalancerName": "[concat(parameters('ResourceNamePrefix'), '-external-load-balancer')]",
-        "loadBalancerBackendIPPoolNameSubnet1": "[concat(parameters('ResourceNamePrefix'), '-subnet-1-', variables('upgradeIterationNumber'))]",
-        "loadBalancerBackendIPPoolNameSubnet2": "[concat(parameters('ResourceNamePrefix'), '-subnet-2-', variables('upgradeIterationNumber'))]",
-        "loadBalancerBackendIPPoolNameSubnet3": "[concat(parameters('ResourceNamePrefix'), '-subnet-3-', variables('upgradeIterationNumber'))]",
-        "loadBalancerBackendIPPoolNameSubnet4": "[concat(parameters('ResourceNamePrefix'), '-subnet-4-', variables('upgradeIterationNumber'))]",
         "loadBalancerInboundNatPoolNameVMSSBYOLHTTPS": "[concat('vmss-', variables('vmssNameBYOL'), '-https')]",
         "loadBalancerInboundNatPoolNameVMSSBYOLSSH": "[concat('vmss-', variables('vmssNameBYOL'), '-ssh')]",
         "loadBalancerInboundNatPoolNameVMSSPAYGHTTPS": "[concat('vmss-', variables('vmssNamePAYG'), '-https')]",
