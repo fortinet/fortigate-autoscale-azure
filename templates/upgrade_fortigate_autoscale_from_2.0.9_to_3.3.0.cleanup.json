@@ -58,7 +58,7 @@
         "cmdDeleteFunctionAppSiteOld": "[concat('az webapp delete', ' -n ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteFunctionAppSiteUI": "[concat('az webapp delete', ' -n ', variables('functionAppName'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteKeyVaultUI": "[concat('az keyvault delete -n ', variables('keyVaultName'), ' -g ', resourceGroup().name, ';')]",
-        "cmdDeleteKeyVaultPermanentUI": "[concat('az keyvault purge -n ', variables('keyVaultName'), ' -g ', resourceGroup().name, ';')]",
+        "cmdDeleteKeyVaultPermanentUI": "[concat('az keyvault purge -n ', variables('keyVaultName'), ' --no-wait;')]",
         "cmdDeleteStorageAccountUI": "[concat('az storage account delete -yn ', variables('storageAccountName'), ' -g ', resourceGroup().name, ';')]",
         "cmdDeleteVMSSAllOld": "[concat(variables('cmdDeleteAutoscaleSettingsOld'), variables('cmdDeleteVMSSOld'))]",
         "cmdDeleteVMSSAllUI": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteAutoscaleSettingsUI'), variables('cmdDeleteVMSSUI'))]",
