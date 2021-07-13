@@ -975,8 +975,8 @@
                     "VnetName": {
                         "value": "[variables('vNetName')]"
                     },
-                    "VnetResourceGroupName": {
-                        "value": "[variables('vNetResourceGroupName')]"
+                    "VmssResourceGroupName": {
+                        "value": "[resourceGroup().name]"
                     }
                 }
             },

@@ -111,7 +111,7 @@
         "VnetName": {
             "type": "String"
         },
-        "VnetResourceGroupName": {
+        "VmssResourceGroupName": {
             "type": "String"
         }
     },
@@ -203,7 +203,7 @@
                         },
                         {
                             "name": "RESOURCE_GROUP",
-                            "value": "[parameters('VnetResourceGroupName')]"
+                            "value": "[parameters('VmssResourceGroupName')]"
                         },
                         {
                             "name": "SUBSCRIPTION_ID",
