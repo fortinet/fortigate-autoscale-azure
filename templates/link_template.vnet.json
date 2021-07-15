@@ -27,10 +27,13 @@
             ]
         },
         "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';')]",
-        "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupNameExternal') , ';')]",
+        "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupNameExternal') , ';', 'az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupNameInternal') , ';')]",
         "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', parameters('VNetName') , ';')]",
-        "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupNameExternal'))]",
-        "networkSecurityGroupNameExternal": "[concat(parameters('UniqueResourceNamePrefix'), '-network-security-group')]",
+        "networkSecurityGroupIdExternal": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupNameExternal'))]",
+        "networkSecurityGroupIdInternal": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupNameInternal'))]",
+        "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-nsg')]",
+        "networkSecurityGroupNameExternal": "[concat(variables('networkSecurityGroupName'), '-ext-lb')]",
+        "networkSecurityGroupNameInternal": "[concat(variables('networkSecurityGroupName'), '-int-lb')]",
         "serviceEndpoints": [
             {
                 "service": "Microsoft.AzureCosmosDB",
@@ -53,7 +56,7 @@
                         "properties": {
                             "addressPrefix": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].addressRange]",
                             "networkSecurityGroup": {
-                                "id": "[variables('networkSecurityGroupId')]"
+                                "id": "[if(equals(copyIndex('subnetsCopyIt'), 0), variables('networkSecurityGroupIdExternal'), variables('networkSecurityGroupIdInternal'))]"
                             },
                             "serviceEndpoints": "[if(equals(copyIndex('subnetsCopyIt'), 0), variables('serviceEndpoints'), createArray())]"
                         }
@@ -71,7 +74,7 @@
             "properties": {
                 "securityRules": [
                     {
-                        "name": "AllowAllInbound",
+                        "name": "AllowAllInBound",
                         "properties": {
                             "description": "Allow all in",
                             "protocol": "*",
@@ -104,7 +107,7 @@
         },
         {
             "apiVersion": "2019-04-01",
-            "dependsOn": ["[variables('networkSecurityGroupNameExternal')]"],
+            "dependsOn": ["[variables('networkSecurityGroupNameInternal')]"],
             "location": "[resourceGroup().location]",
             "name": "[parameters('VNetName')]",
             "properties": {
@@ -145,7 +148,7 @@
             "type": "String",
             "value": "[concat(variables('cmdDeleteAll'), reference('CmdDeassociateNSG').outputs.outputString.value, variables('cmdDeleteNSG'), variables('cmdDeleteVNet'))]"
         },
-        "networkSecurityGroupName": {
+        "networkSecurityGroupNameExternal": {
             "type": "String",
             "value": "[variables('networkSecurityGroupNameExternal')]"
         },

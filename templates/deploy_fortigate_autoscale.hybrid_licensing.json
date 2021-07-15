@@ -616,11 +616,11 @@
                     "ExternalLBFrontendIPId": {
                         "value": "[parameters('FrontendIPAddressID')]"
                     },
-                    "ExternalLBInboundSSHPortRange": {
-                        "value": "[createArray(29001, 39000)]"
+                    "ExternalLBNATBackendPortHTTPS": {
+                        "value": 8443
                     },
-                    "ExternalLBInboundHTTPSPortRange": {
-                        "value": "[createArray(39001, 49000)]"
+                    "ExternalLBNATBackendPortSSH": {
+                        "value": 22
                     },
                     "ExternalLBRules": {
                         "value": ["Tcp", "80", "80", "Tcp", "443", "443"]
@@ -633,6 +633,12 @@
                     },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
+                    },
+                    "VMSSNameBYOL": {
+                        "value": "[variables('vmssNameBYOL')]"
+                    },
+                    "VMSSNamePAYG": {
+                        "value": "[variables('vmssNamePAYG')]"
                     }
                 }
             },
@@ -1021,13 +1027,17 @@
             "type": "String",
             "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
         },
-        "licensingModel": {
+        "externalLBInboundNatPortRanges": {
             "type": "String",
-            "value": "[reference('CreateVirtualMachineScaleSet').outputs.licensingModel.value]"
+            "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value]"
         },
         "licenseFileDirectory": {
             "type": "String",
             "value": "[variables('licenseFileDirectory')]"
+        },
+        "licensingModel": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.licensingModel.value]"
         },
         "paygAutoscaleSettingsName": {
             "type": "String",

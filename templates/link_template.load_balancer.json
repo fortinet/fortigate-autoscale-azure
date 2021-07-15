@@ -5,11 +5,11 @@
         "ExternalLBFrontendIPId": {
             "type": "String"
         },
-        "ExternalLBInboundHTTPSPortRange": {
-            "type": "Array"
+        "ExternalLBNATBackendPortHTTPS": {
+            "type": "Int"
         },
-        "ExternalLBInboundSSHPortRange": {
-            "type": "Array"
+        "ExternalLBNATBackendPortSSH": {
+            "type": "Int"
         },
         "ExternalLBRules": {
             "type": "Array"
@@ -22,6 +22,12 @@
         },
         "UniqueResourceNamePrefix": {
             "type": "String"
+        },
+        "VMSSNameBYOL": {
+            "type": "String"
+        },
+        "VMSSNamePAYG": {
+            "type": "String"
         }
     },
     "variables": {
@@ -29,6 +35,13 @@
         "cmdDeleteExternalLB": "[concat('az network lb delete -g ', resourceGroup().name,' -n ', variables('externalLoadBalancerName'), ';')]",
         "cmdDeleteExternalLBPublicFrontendIP": "[if(variables('ifCreateExternalLBPublicFrontendIP'), concat('az network public-ip delete -g ', resourceGroup().name,' -n ', variables('externalLBFrontendIPName'), ';'), '')]",
         "cmdDeleteInternalLB": "[concat('az network lb delete -g ', resourceGroup().name,' -n ', variables('internalLoadBalancerName'), ';')]",
+        "extLBInboundNATFrontendPortRangeLength": 1000,
+        "extLBInboundNATFrontendPortRangeMax": "[add(variables('extLBInboundNATFrontendPortRangeMin'), add(variables('extLBInboundNATFrontendPortRangeLength') , -1))]",
+        "extLBInboundNATFrontendPortRangeMin": 0,
+        "extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS": "[createArray(add(40000, variables('extLBInboundNATFrontendPortRangeMin')), add(40000, variables('extLBInboundNATFrontendPortRangeMax')))]",
+        "extLBInboundNATFrontendPortRangeVMSSBYOLSSH": "[createArray(add(50000, variables('extLBInboundNATFrontendPortRangeMin')), add(50000, variables('extLBInboundNATFrontendPortRangeMax')))]",
+        "extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS": "[createArray(add(20000, variables('extLBInboundNATFrontendPortRangeMin')), add(20000, variables('extLBInboundNATFrontendPortRangeMax')))]",
+        "extLBInboundNATFrontendPortRangeVMSSPAYGSSH": "[createArray(add(30000, variables('extLBInboundNATFrontendPortRangeMin')), add(30000, variables('extLBInboundNATFrontendPortRangeMax')))]",
         "externalLBBackendAddressPool": {
             "copy": [
                 {
@@ -56,18 +69,12 @@
         ],
         "externalLBFrontendIPId": "[if(variables('ifCreateExternalLBPublicFrontendIP'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('externalLBFrontendIPName')), parameters('ExternalLBFrontendIPId'))]",
         "externalLBFrontendIPName": "[concat(parameters('UniqueResourceNamePrefix'), '-ext-lb-public-ip')]",
-        "externalLBInboundHTTPSPortEnd": "[max(variables('externalLBInboundHTTPSPortRange')[0], variables('externalLBInboundHTTPSPortRange')[1])]",
-        "externalLBInboundHTTPSPortRange": "[if(empty(parameters('ExternalLBInboundHTTPSPortRange')), createArray(39001, 49000), if(equals(length(parameters('ExternalLBInboundHTTPSPortRange')), 1), createArray(int(parameters('ExternalLBInboundHTTPSPortRange')[0]), int(parameters('ExternalLBInboundHTTPSPortRange')[0])), createArray(int(parameters('ExternalLBInboundHTTPSPortRange')[0]), int(parameters('ExternalLBInboundHTTPSPortRange')[1]))))]",
-        "externalLBInboundHTTPSPortStart": "[min(variables('externalLBInboundHTTPSPortRange')[0], variables('externalLBInboundHTTPSPortRange')[1])]",
         "externalLBInboundNATPoolHTTPSName": "[concat(variables('externalLoadBalancerName'), '-inbound-nat-pool-https')]",
         "externalLBInboundNATPoolSSHName": "[concat(variables('externalLoadBalancerName'), '-inbound-nat-pool-ssh')]",
         "externalLBInboundNatPoolIds": [
             "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolHTTPSName'))]",
             "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolSSHName'))]"
         ],
-        "externalLBInboundSSHPortEnd": "[max(variables('externalLBInboundSSHPortRange')[0], variables('externalLBInboundSSHPortRange')[1])]",
-        "externalLBInboundSSHPortRange": "[if(empty(parameters('ExternalLBInboundSSHPortRange')), createArray(29001, 39000), if(equals(length(parameters('ExternalLBInboundSSHPortRange')), 1), createArray(int(parameters('ExternalLBInboundSSHPortRange')[0]), int(parameters('ExternalLBInboundSSHPortRange')[0])), createArray(int(parameters('ExternalLBInboundSSHPortRange')[0]), int(parameters('ExternalLBInboundSSHPortRange')[1]))))]",
-        "externalLBInboundSSHPortStart": "[min(variables('externalLBInboundSSHPortRange')[0], variables('externalLBInboundSSHPortRange')[1])]",
         "externalLBRules": {
             "copy": [
                 {
@@ -105,7 +112,11 @@
         "internalLoadBalancerFrontendIPConfigId1": "[concat(variables('internalLoadBalancerId'), '/frontendIPConfigurations/', variables('internalLoadBalancerFrontendIPConfigName1'))]",
         "internalLoadBalancerFrontendIPConfigName1": "[concat(variables('internalLoadBalancerName'), '-frontend-ip-config1')]",
         "internalLoadBalancerId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('internalLoadBalancerName'))]",
-        "internalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-internal-load-balancer')]"
+        "internalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-internal-load-balancer')]",
+        "loadBalancerInboundNatPoolNameVMSSBYOLHTTPS": "[concat('vmss-', parameters('VMSSNameBYOL'), '-https')]",
+        "loadBalancerInboundNatPoolNameVMSSBYOLSSH": "[concat('vmss-', parameters('VMSSNameBYOL'), '-ssh')]",
+        "loadBalancerInboundNatPoolNameVMSSPAYGHTTPS": "[concat('vmss-', parameters('VMSSNamePAYG'), '-https')]",
+        "loadBalancerInboundNatPoolNameVMSSPAYGSSH": "[concat('vmss-', parameters('VMSSNamePAYG'), '-ssh')]"
     },
     "resources": [
         {
@@ -147,27 +158,51 @@
                 "backendAddressPools": "[variables('externalLBBackendAddressPools')]",
                 "inboundNatPools": [
                     {
-                        "name": "[variables('externalLBInboundNATPoolHTTPSName')]",
+                        "name": "[variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPS')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
                             },
                             "protocol": "Tcp",
-                            "frontendPortRangeStart": "[variables('externalLBInboundHTTPSPortStart')]",
-                            "frontendPortRangeEnd": "[variables('externalLBInboundHTTPSPortEnd')]",
-                            "backendPort": 8443
+                            "frontendPortRangeStart": "[variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[0]]",
+                            "frontendPortRangeEnd": "[variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[1]]",
+                            "backendPort": "[parameters('ExternalLBNATBackendPortHTTPS')]"
                         }
                     },
                     {
-                        "name": "[variables('externalLBInboundNATPoolSSHName')]",
+                        "name": "[variables('loadBalancerInboundNatPoolNameVMSSBYOLSSH')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
                             },
                             "protocol": "Tcp",
-                            "frontendPortRangeStart": "[variables('externalLBInboundSSHPortStart')]",
-                            "frontendPortRangeEnd": "[variables('externalLBInboundSSHPortEnd')]",
-                            "backendPort": 22
+                            "frontendPortRangeStart": "[variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[0]]",
+                            "frontendPortRangeEnd": "[variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[1]]",
+                            "backendPort": "[parameters('ExternalLBNATBackendPortSSH')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPS')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPortRangeStart": "[variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[0]]",
+                            "frontendPortRangeEnd": "[variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[1]]",
+                            "backendPort": "[parameters('ExternalLBNATBackendPortHTTPS')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('loadBalancerInboundNatPoolNameVMSSPAYGSSH')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPortRangeStart": "[variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[0]]",
+                            "frontendPortRangeEnd": "[variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[1]]",
+                            "backendPort": "[parameters('ExternalLBNATBackendPortSSH')]"
                         }
                     }
                 ],
@@ -256,17 +291,21 @@
             "type": "Array",
             "value": "[variables('externalLBBackendAddressPoolIds').iterations]"
         },
-        "externalLBId": {
-            "type": "String",
-            "value": "[variables('externalLoadBalancerId')]"
-        },
         "externalLBFrontendIPId": {
             "type": "String",
             "value": "[variables('externalLBFrontendIPId')]"
         },
+        "externalLBId": {
+            "type": "String",
+            "value": "[variables('externalLoadBalancerId')]"
+        },
         "externalLBInboundNatPoolIds": {
             "type": "Array",
             "value": "[variables('externalLBInboundNatPoolIds')]"
+        },
+        "externalLBInboundNatPortRanges": {
+            "type": "Array",
+            "value": "[concat(variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[1])]"
         },
         "externalLBName": {
             "type": "String",
