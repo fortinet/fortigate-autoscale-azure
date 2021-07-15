@@ -108,7 +108,7 @@
         "VnetName": {
             "type": "String"
         },
-        "VnetResourceGroupName": {
+        "VmssResourceGroupName": {
             "type": "String"
         }
     },
@@ -234,8 +234,8 @@
                     "VnetName": {
                         "value": "[parameters('VnetName')]"
                     },
-                    "VnetResourceGroupName": {
-                        "value": "[parameters('VnetResourceGroupName')]"
+                    "VmssResourceGroupName": {
+                        "value": "[parameters('VmssResourceGroupName')]"
                     }
                 }
             },
