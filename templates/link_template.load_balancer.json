@@ -303,9 +303,13 @@
             "type": "Array",
             "value": "[variables('externalLBInboundNatPoolIds')]"
         },
+        "externalLBInboundNatPortRangesString": {
+            "type": "String",
+            "value": "[concat(variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[1])]"
+        },
         "externalLBInboundNatPortRanges": {
             "type": "Array",
-            "value": "[concat(variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[1], ',', variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[1])]"
+            "value": "[createArray(concat(variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[1]), concat(variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[1]), concat(variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[1]), concat(variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[0], '-', variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[1]))]"
         },
         "externalLBName": {
             "type": "String",

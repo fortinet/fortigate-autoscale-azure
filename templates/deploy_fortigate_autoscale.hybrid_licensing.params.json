@@ -14,12 +14,6 @@
         "BYOLInstanceCount": {
             "value": 2
         },
-        "ExternalLoadBalancerFrontendIPName": {
-            "value": ""
-        },
-        "ExternalLoadBalancerFrontendIPResourceGroup": {
-            "value": ""
-        },
         "FortiAnalyzerAutoscaleAdminPassword": {
             "value": ""
         },
@@ -101,10 +95,10 @@
         "Subnet1AddressRange": {
             "value": "10.0.0.0/24"
         },
-        "Subnet1LoadBalancerIP": {
-            "value": "10.0.0.200"
-        },
         "Subnet1Name": {
+            "value": ""
+        },
+        "Subnet1NetworkSecurityGroupName": {
             "value": ""
         },
         "Subnet2AddressRange": {

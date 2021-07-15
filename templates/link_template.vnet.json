@@ -72,6 +72,15 @@
             "location": "[resourceGroup().location]",
             "name": "[variables('networkSecurityGroupNameExternal')]",
             "properties": {
+                "securityRules": []
+            },
+            "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+            "apiVersion": "2019-04-01",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('networkSecurityGroupNameInternal')]",
+            "properties": {
                 "securityRules": [
                     {
                         "name": "AllowAllInBound",
@@ -107,7 +116,10 @@
         },
         {
             "apiVersion": "2019-04-01",
-            "dependsOn": ["[variables('networkSecurityGroupNameInternal')]"],
+            "dependsOn": [
+                "[variables('networkSecurityGroupNameExternal')]",
+                "[variables('networkSecurityGroupNameInternal')]"
+            ],
             "location": "[resourceGroup().location]",
             "name": "[parameters('VNetName')]",
             "properties": {
@@ -151,6 +163,10 @@
         "networkSecurityGroupNameExternal": {
             "type": "String",
             "value": "[variables('networkSecurityGroupNameExternal')]"
+        },
+        "networkSecurityGroupNameInternal": {
+            "type": "String",
+            "value": "[variables('networkSecurityGroupNameInternal')]"
         },
         "subnet1Id": {
             "type": "String",
