@@ -919,7 +919,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.0/templates/linked_template.faz_integration.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.faz_integration.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -962,7 +962,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.0/templates/linked_template.function_app.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.function_app.json"
                 },
                 "parameters": {
                     "FunctionAppName": {
@@ -1002,7 +1002,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.0/templates/linked_template.function_app.setup.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.function_app.setup.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
@@ -1120,7 +1120,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.0/templates/linked_template.vmss.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.vmss.json"
                 },
                 "parameters": {
                     "AdminPassword": {
