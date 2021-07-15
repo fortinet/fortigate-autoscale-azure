@@ -109,6 +109,13 @@ function convert(
                 convertedItem = { ...mapB.get('primary-election-timeout') };
                 convertedItem.settingValue = settingItem.settingValue;
                 break;
+            // skip the following unused / unimplemented items
+            case 'dynamic-nat-gateway-route-tables':
+            case 'fortigate-autoscale-elb-dns':
+            case 'fortigate-protected-internal-elb-dns':
+            case 'unique-id':
+                console.info(`skipped unused item: ${chalk.yellow(settingItem.settingKey)}`);
+                return;
             // copy the setting item from mapB
             default:
                 convertedItem = { ...mapB.get(settingItem.settingKey) };
