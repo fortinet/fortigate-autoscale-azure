@@ -27,10 +27,10 @@
             ]
         },
         "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';')]",
-        "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupName') , ';')]",
+        "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupNameExternal') , ';')]",
         "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', parameters('VNetName') , ';')]",
-        "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
-        "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-network-security-group')]",
+        "networkSecurityGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupNameExternal'))]",
+        "networkSecurityGroupNameExternal": "[concat(parameters('UniqueResourceNamePrefix'), '-network-security-group')]",
         "serviceEndpoints": [
             {
                 "service": "Microsoft.AzureCosmosDB",
@@ -67,7 +67,7 @@
         {
             "apiVersion": "2019-04-01",
             "location": "[resourceGroup().location]",
-            "name": "[variables('networkSecurityGroupName')]",
+            "name": "[variables('networkSecurityGroupNameExternal')]",
             "properties": {
                 "securityRules": [
                     {
@@ -104,7 +104,7 @@
         },
         {
             "apiVersion": "2019-04-01",
-            "dependsOn": ["[variables('networkSecurityGroupName')]"],
+            "dependsOn": ["[variables('networkSecurityGroupNameExternal')]"],
             "location": "[resourceGroup().location]",
             "name": "[parameters('VNetName')]",
             "properties": {
@@ -147,7 +147,7 @@
         },
         "networkSecurityGroupName": {
             "type": "String",
-            "value": "[variables('networkSecurityGroupName')]"
+            "value": "[variables('networkSecurityGroupNameExternal')]"
         },
         "subnet1Id": {
             "type": "String",
