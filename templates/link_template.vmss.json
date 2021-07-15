@@ -294,8 +294,11 @@
             ]
         },
         "extraSubnetIds": "[if(variables('ifHasExtraSubnets'), skip(parameters('SubnetIds'), 1), parameters('SubnetIds'))]",
+        "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifHasExtraSubnets": "[greater(length(parameters('SubnetIds')), 1)]",
+        "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
         "ifZonal": "[greater(length(parameters('AvailabilityZones')), 0)]",
+        "licensingModel": "[if(variables('ifPAYGOnly'), 'PAYG-Only', if(variables('ifBYOLOnly'), 'BYOL-Only', 'Hybrid'))]",
         "networkInterfaceConfigurationExtra": {
             "copy": [
                 {
@@ -531,6 +534,10 @@
         "cmdDeleteAll": {
             "type": "String",
             "value": "[variables('cmdDeleteAll')]"
+        },
+        "licensingModel": {
+            "type": "String",
+            "value": "[variables('licensingModel')]"
         },
         "paygAutoscaleSettingsName": {
             "type": "String",

@@ -985,13 +985,85 @@
         }
     ],
     "outputs": {
+        "autoscaleAssetContainerName": {
+            "type": "String",
+            "value": "[variables('autoscaleAssetContainerName')]"
+        },
+        "byolAutoscaleSettingsName": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolAutoscaleSettingsName.value]"
+        },
+        "byolScaleSetDefaultSize": {
+            "type": "Int",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolScaleSetDefaultSize.value]"
+        },
+        "byolScaleSetMaxSize": {
+            "type": "Int",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolScaleSetMaxSize.value]"
+        },
+        "byolScaleSetMinSize": {
+            "type": "Int",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolScaleSetMinSize.value]"
+        },
+        "byolScaleSetName": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolScaleSetName.value]"
+        },
         "cmdDeleteAll": {
             "type": "String",
-            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
+            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
         },
-        "cmdDeleteAllExceptVNet": {
+        "deploymentPackageVersion": {
+            "type": "string",
+            "value": "3.3.2"
+        },
+        "fazPublicIp": {
             "type": "String",
-            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
+            "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
+        },
+        "licensingModel": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.licensingModel.value]"
+        },
+        "licenseFileDirectory": {
+            "type": "String",
+            "value": "[variables('licenseFileDirectory')]"
+        },
+        "paygAutoscaleSettingsName": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.paygAutoscaleSettingsName.value]"
+        },
+        "paygScaleSetDefaultSize": {
+            "type": "Int",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.paygScaleSetDefaultSize.value]"
+        },
+        "paygScaleSetMaxSize": {
+            "type": "Int",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.paygScaleSetMaxSize.value]"
+        },
+        "paygScaleSetMinSize": {
+            "type": "Int",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.paygScaleSetMinSize.value]"
+        },
+        "paygScaleSetName": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.paygScaleSetName.value]"
+        },
+        "resourceGroupName": {
+            "type": "String",
+            "value": "[resourceGroup().name]"
+        },
+        "storageAccountName": {
+            "type": "String",
+            "value": "[variables('storageAccountName')]"
+        },
+        "uniqueResourceNamePrefix": {
+            "type": "String",
+            "value": "[variables('uniqueResourceNamePrefix')]"
+        },
+        "vNetResourceGroupName": {
+            "type": "String",
+            "value": "[variables('vNetResourceGroupName')]"
         }
     }
 }
