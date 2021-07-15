@@ -592,7 +592,7 @@
                         "value": "[parameters('Subnet1AddressRange')]"
                     },
                     "Subnet1Name": {
-                        "value": "[parameters('Subnet1Name')]"
+                        "value": "[variables('subnet1Name')]"
                     },
                     "VNetName": {
                         "value": "[variables('vNetName')]"
