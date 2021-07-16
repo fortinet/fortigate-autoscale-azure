@@ -69,11 +69,11 @@
         ],
         "externalLBFrontendIPId": "[if(variables('ifCreateExternalLBPublicFrontendIP'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('externalLBFrontendIPName')), parameters('ExternalLBFrontendIPId'))]",
         "externalLBFrontendIPName": "[concat(parameters('UniqueResourceNamePrefix'), '-ext-lb-public-ip')]",
-        "externalLBInboundNATPoolHTTPSName": "[concat(variables('externalLoadBalancerName'), '-inbound-nat-pool-https')]",
-        "externalLBInboundNATPoolSSHName": "[concat(variables('externalLoadBalancerName'), '-inbound-nat-pool-ssh')]",
         "externalLBInboundNatPoolIds": [
-            "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolHTTPSName'))]",
-            "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('externalLBInboundNATPoolSSHName'))]"
+            "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPS'))]",
+            "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSBYOLSSH'))]",
+            "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPS'))]",
+            "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSPAYGSSH'))]"
         ],
         "externalLBRules": {
             "copy": [
@@ -100,17 +100,16 @@
                 }
             ]
         },
-        "externalLoadBalancerBackendAddressPoolName1": "[concat(variables('externalLoadBalancerName'), '-backend-ip-pool-subnet1')]",
-        "externalLoadBalancerFrontendIPConfigId1": "[concat(variables('externalLoadBalancerId'), '/frontendIPConfigurations/', variables('externalLoadBalancerFrontendIPConfigName1'))]",
-        "externalLoadBalancerFrontendIPConfigName1": "[concat(variables('externalLoadBalancerName'), '-frontend-ip-config1')]",
+        "externalLoadBalancerBackendAddressPoolName1": "subnet1",
+        "externalLoadBalancerFrontendIPConfigId1": "[concat(variables('externalLoadBalancerId'), '/frontendIPConfigurations/', variables('frontendIPConfigName1'))]",
+        "frontendIPConfigName1": "frontend-ip-config-001",
         "externalLoadBalancerId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('externalLoadBalancerName'))]",
         "externalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-external-load-balancer')]",
         "ifCreateExternalLBPublicFrontendIP": "[empty(parameters('ExternalLBFrontendIPId'))]",
         "ifCreateInternalLB": "[and(not(empty(parameters('InternalLBFrontendIPAddress'))), not(empty(parameters('InternalLBFrontendSubnetId'))))]",
         "internalLoadBalancerBackendIPPoolId1": "[concat(variables('internalLoadBalancerId'), '/backendAddressPools/',variables('internalLoadBalancerBackendIPPoolName1'))]",
-        "internalLoadBalancerBackendIPPoolName1": "[concat(variables('internalLoadBalancerName'), '-backend-ip-pool1')]",
-        "internalLoadBalancerFrontendIPConfigId1": "[concat(variables('internalLoadBalancerId'), '/frontendIPConfigurations/', variables('internalLoadBalancerFrontendIPConfigName1'))]",
-        "internalLoadBalancerFrontendIPConfigName1": "[concat(variables('internalLoadBalancerName'), '-frontend-ip-config1')]",
+        "internalLoadBalancerBackendIPPoolName1": "backend-ip-pool-001",
+        "internalLoadBalancerFrontendIPConfigId1": "[concat(variables('internalLoadBalancerId'), '/frontendIPConfigurations/', variables('frontendIPConfigName1'))]",
         "internalLoadBalancerId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('internalLoadBalancerName'))]",
         "internalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-internal-load-balancer')]",
         "loadBalancerInboundNatPoolNameVMSSBYOLHTTPS": "[concat('vmss-', parameters('VMSSNameBYOL'), '-https')]",
@@ -147,7 +146,7 @@
             "properties": {
                 "frontendIPConfigurations": [
                     {
-                        "name": "[variables('externalLoadBalancerFrontendIPConfigName1')]",
+                        "name": "[variables('frontendIPConfigName1')]",
                         "properties": {
                             "publicIPAddress": {
                                 "id": "[variables('externalLBFrontendIPId')]"
@@ -232,7 +231,7 @@
             "properties": {
                 "frontendIPConfigurations": [
                     {
-                        "name": "[variables('internalLoadBalancerFrontendIPConfigName1')]",
+                        "name": "[variables('frontendIPConfigName1')]",
                         "properties": {
                             "privateIPAddress": "[parameters('InternalLBFrontendIPAddress')]",
                             "privateIPAllocationMethod": "Static",
