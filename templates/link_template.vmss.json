@@ -20,7 +20,10 @@
         "ExternalLBBackendAddressPoolIds": {
             "type": "Array"
         },
-        "ExternalLBInboundNatPoolIds": {
+        "ExternalLBInboundNatPoolIdsBYOL": {
+            "type": "Array"
+        },
+        "ExternalLBInboundNatPoolIdsPAYG": {
             "type": "Array"
         },
         "FunctionAppName": {
@@ -274,47 +277,56 @@
         "externalLBBackendAddressPools": {
             "copy": [
                 {
-                    "name": "iterations",
-                    "count": "[if(empty(parameters('ExternalLBBackendAddressPoolIds')), 0,length(parameters('ExternalLBBackendAddressPoolIds')))]",
+                    "name": "externalLBBackendAddressPoolsCopyIt",
+                    "count": "[length(parameters('ExternalLBBackendAddressPoolIds'))]",
                     "input": {
-                        "id": "[parameters('ExternalLBBackendAddressPoolIds')[copyIndex('iterations')]]"
+                        "id": "[parameters('ExternalLBBackendAddressPoolIds')[copyIndex('externalLBBackendAddressPoolsCopyIt')]]"
                     }
                 }
             ]
         },
-        "externlLBInboundNatPools": {
+        "externlLBInboundNatPoolsBYOL": {
             "copy": [
                 {
-                    "name": "iterations",
-                    "count": "[if(empty(parameters('ExternalLBInboundNatPoolIds')), 0,length(parameters('ExternalLBInboundNatPoolIds')))]",
+                    "name": "externlLBInboundNatPoolsBYOLCopyIt",
+                    "count": "[length(parameters('ExternalLBInboundNatPoolIdsBYOL'))]",
                     "input": {
-                        "id": "[parameters('ExternalLBInboundNatPoolIds')[copyIndex('iterations')]]"
+                        "id": "[parameters('ExternalLBInboundNatPoolIdsBYOL')[copyIndex('externlLBInboundNatPoolsBYOLCopyIt')]]"
                     }
                 }
             ]
         },
-        "extraSubnetIds": "[if(variables('ifHasExtraSubnets'), skip(parameters('SubnetIds'), 1), parameters('SubnetIds'))]",
+        "externlLBInboundNatPoolsPAYG": {
+            "copy": [
+                {
+                    "name": "externlLBInboundNatPoolsPAYGCopyIt",
+                    "count": "[length(parameters('ExternalLBInboundNatPoolIdsPAYG'))]",
+                    "input": {
+                        "id": "[parameters('ExternalLBInboundNatPoolIdsPAYG')[copyIndex('externlLBInboundNatPoolsPAYGCopyIt')]]"
+                    }
+                }
+            ]
+        },
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
-        "ifHasExtraSubnets": "[greater(length(parameters('SubnetIds')), 1)]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
         "ifZonal": "[greater(length(parameters('AvailabilityZones')), 0)]",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'PAYG-Only', if(variables('ifBYOLOnly'), 'BYOL-Only', 'Hybrid'))]",
-        "networkInterfaceConfigurationExtra": {
+        "networkInterfaceConfigurationNonLoadBalancingSubnets": {
             "copy": [
                 {
-                    "name": "networkInterfaceConfigurationExtraCopyIt",
-                    "count": "[length(variables('extraSubnetIds'))]",
+                    "name": "networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt",
+                    "count": "[length(parameters('SubnetIds'))]",
                     "input": {
-                        "name": "[concat('nic-config-subnet', copyIndex('networkInterfaceConfigurationExtraCopyIt', 2))]",
+                        "name": "[concat('nic-config-subnet', add(copyIndex('networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt'), 1))]",
                         "properties": {
                             "primary": false,
-                            "enableIPForwarding": true,
+                            "enableIPForwarding": false,
                             "ipConfigurations": [
                                 {
-                                    "name": "[concat('ip-config-subnet', copyIndex('networkInterfaceConfigurationExtraCopyIt', 2))]",
+                                    "name": "[concat('ip-config-subnet', add(copyIndex('networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt'), 1))]",
                                     "properties": {
                                         "Subnet": {
-                                            "id": "[variables('extraSubnetIds')[copyIndex('networkInterfaceConfigurationExtraCopyIt')]]"
+                                            "id": "[parameters('SubnetIds')[copyIndex('networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt')]]"
                                         }
                                     }
                                 }
@@ -324,7 +336,7 @@
                 }
             ]
         },
-        "networkInterfaceConfigurationMain": {
+        "networkInterfaceConfigurationSubnet1BYOL": {
             "name": "nic-config-subnet1",
             "properties": {
                 "primary": true,
@@ -336,14 +348,34 @@
                             "Subnet": {
                                 "id": "[parameters('SubnetIds')[0]]"
                             },
-                            "loadBalancerBackendAddressPools": "[variables('externalLBBackendAddressPools').iterations]",
-                            "loadBalancerInboundNatPools": "[variables('externlLBInboundNatPools').iterations]"
+                            "loadBalancerBackendAddressPools": "[createArray(variables('externalLBBackendAddressPools').externalLBBackendAddressPoolsCopyIt[0])]",
+                            "loadBalancerInboundNatPools": "[if(empty(variables('externlLBInboundNatPoolsBYOL').externlLBInboundNatPoolsBYOLCopyIt), null(), variables('externlLBInboundNatPoolsBYOL').externlLBInboundNatPoolsBYOLCopyIt)]"
                         }
                     }
                 ]
             }
         },
-        "networkInterfaceConfigurations": "[if(variables('ifHasExtraSubnets'), union(createArray(variables('networkInterfaceConfigurationMain')), variables('networkInterfaceConfigurationExtra').networkInterfaceConfigurationExtraCopyIt), createArray(variables('networkInterfaceConfigurationMain')))]"
+        "networkInterfaceConfigurationSubnet1PAYG": {
+            "name": "nic-config-subnet1",
+            "properties": {
+                "primary": true,
+                "enableIPForwarding": true,
+                "ipConfigurations": [
+                    {
+                        "name": "ip-config-subnet1",
+                        "properties": {
+                            "Subnet": {
+                                "id": "[parameters('SubnetIds')[0]]"
+                            },
+                            "loadBalancerBackendAddressPools": "[createArray(variables('externalLBBackendAddressPools').externalLBBackendAddressPoolsCopyIt[0])]",
+                            "loadBalancerInboundNatPools": "[if(empty(variables('externlLBInboundNatPoolsPAYG').externlLBInboundNatPoolsPAYGCopyIt), null(), variables('externlLBInboundNatPoolsPAYG').externlLBInboundNatPoolsPAYGCopyIt)]"
+                        }
+                    }
+                ]
+            }
+        },
+        "networkInterfaceConfigurationsBYOL": "[concat(createArray(variables('networkInterfaceConfigurationSubnet1BYOL')), skip(variables('networkInterfaceConfigurationNonLoadBalancingSubnets').networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt, 1))]",
+        "networkInterfaceConfigurationsPAYG": "[concat(createArray(variables('networkInterfaceConfigurationSubnet1PAYG')), skip(variables('networkInterfaceConfigurationNonLoadBalancingSubnets').networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt, 1))]"
     },
     "resources": [
         {
@@ -390,7 +422,7 @@
                         "adminPassword": "[parameters('adminPassword')]"
                     },
                     "networkProfile": {
-                        "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurations')]"
+                        "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurationsBYOL')]"
                     }
                 },
                 "zoneBalance": "[if(variables('ifZonal'), parameters('ZoneBalance'), json('null'))]"
@@ -448,7 +480,7 @@
                         "adminPassword": "[parameters('adminPassword')]"
                     },
                     "networkProfile": {
-                        "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurations')]"
+                        "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurationsPAYG')]"
                     }
                 },
                 "zoneBalance": "[if(variables('ifZonal'), parameters('ZoneBalance'), json('null'))]"
