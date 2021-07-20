@@ -1020,9 +1020,9 @@
             "type": "String",
             "value": "[variables('autoscaleAssetContainerName')]"
         },
-        "byolAutoscaleSettingsName": {
+        "autoscaleSettingsNameBYOL": {
             "type": "String",
-            "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolAutoscaleSettingsName.value]"
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNameBYOL.value]"
         },
         "byolScaleSetDefaultSize": {
             "type": "Int",
@@ -1064,9 +1064,9 @@
             "type": "String",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.licensingModel.value]"
         },
-        "paygAutoscaleSettingsName": {
+        "autoscaleSettingsNamePAYG": {
             "type": "String",
-            "value": "[reference('CreateVirtualMachineScaleSet').outputs.paygAutoscaleSettingsName.value]"
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNamePAYG.value]"
         },
         "paygScaleSetDefaultSize": {
             "type": "Int",
