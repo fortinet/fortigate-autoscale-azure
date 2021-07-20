@@ -25,7 +25,9 @@
         }
     },
     "variables": {
-        "voidNSGRules": [
+        "ifCreateNSGRulesIn": "[if(equals(length(variables('nsgRulesInParam')), 0), false(), true())]",
+        "ifCreateNSGRulesOut": "[if(equals(length(variables('nsgRulesOutParam')), 0), false(), true())]",
+        "nsgRulesExample": [
             [
                 "nsgName",
                 "ruleName",
@@ -42,11 +44,9 @@
                 ["80", "8080", "1000-1999", "array of ports for sourcePortRanges"]
             ]
         ],
-        "ifCreateNSGRulesIn": "[if(equals(length(variables('nsgRulesInParam')), 0), false(), true())]",
-        "ifCreateNSGRulesOut": "[if(equals(length(variables('nsgRulesOutParam')), 0), false(), true())]",
-        "nsgRulesIn": "[if(variables('ifCreateNSGRulesIn'), variables('nsgRulesInParam'), variables('voidNSGRules'))]",
+        "nsgRulesIn": "[if(variables('ifCreateNSGRulesIn'), variables('nsgRulesInParam'), variables('nsgRulesExample'))]",
         "nsgRulesInParam": "[concat(parameters('NetworkSecurityGroupRulesSubnet1Inbound'), parameters('NetworkSecurityGroupRulesExtraSubnetsInbound'))]",
-        "nsgRulesOut": "[if(variables('ifCreateNSGRulesOut'), variables('nsgRulesOutParam'), variables('voidNSGRules'))]",
+        "nsgRulesOut": "[if(variables('ifCreateNSGRulesOut'), variables('nsgRulesOutParam'), variables('nsgRulesExample'))]",
         "nsgRulesOutParam": "[concat(parameters('NetworkSecurityGroupRulesSubnet1Outbound'), parameters('NetworkSecurityGroupRulesExtraSubnetsOutbound'))]"
     },
     "resources": [

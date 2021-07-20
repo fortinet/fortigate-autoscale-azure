@@ -358,7 +358,8 @@
         }
     },
     "variables": {
-        "adminPortNumber": 8443,
+        "adminPortNumberHTTPS": 8443,
+        "adminPortNumberSSH": 22,
         "autoscaleAssetContainerName": "fortigate-autoscale",
         "cmdDeleteDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
         "cmdDeleteKeyVault": "[concat('az keyvault delete -g ', resourceGroup().name,' -n ', variables('keyVaultName'), ';')]",
@@ -413,7 +414,7 @@
             ]
         },
         "subnets": "[union(createArray(variables('subnet1')), if(empty(variables('subnet2').addressRange), createArray(), createArray(variables('subnet2'))), if(empty(variables('subnet3').addressRange), createArray(), createArray(variables('subnet3'))), if(empty(variables('subnet4').addressRange), createArray(), createArray(variables('subnet4'))))]",
-        "trafficPortNumber": 8443,
+        "trafficPortNumber": 443,
         "uniqueId": "[take(uniquestring(resourceGroup().id), 8)]",
         "uniqueResourceNamePrefix": "[concat(parameters('ResourceNamePrefix'), variables('uniqueId'))]",
         "vNetName": "[if(empty(parameters('VnetName')), concat(variables('uniqueResourceNamePrefix'), '-virtual-network'), parameters('VnetName'))]",
@@ -595,10 +596,10 @@
                 },
                 "parameters": {
                     "NetworkSecurityGroupRulesSubnet1Inbound": {
-                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), 'AllowLBInboundNATPool', 'Allow', '*', createArray(), null(), reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value, '2000', '*', '*', createArray(), '*', createArray()))]"
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-inbound-nat-pool'), 'Allow', '*', createArray(), null(), createArray(variables('adminPortNumberHTTPS'), variables('adminPortNumberSSH')), '2000', '*', '*', createArray(), '*', createArray()))]"
                     },
                     "NetworkSecurityGroupRulesSubnet1Outbound": {
-                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), 'AllowAllOutbound', 'Allow', '*', createArray(), '*', createArray(), '2000', '*', '*', createArray(), '*', createArray()))]"
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-outbound-all'), 'Allow', '*', createArray(), '*', createArray(), '2000', '*', '*', createArray(), '*', createArray()))]"
                     },
                     "NetworkSecurityGroupRulesExtraSubnetsInbound": {
                         "value": "[createArray()]"
@@ -638,15 +639,20 @@
                         "value": "[parameters('FrontendIPAddressID')]"
                     },
                     "ExternalLBNATBackendPortHTTPS": {
-                        "value": 8443
+                        "value": "[variables('adminPortNumberHTTPS')]"
                     },
                     "ExternalLBNATBackendPortSSH": {
-                        "value": 22
+                        "value": "[variables('adminPortNumberSSH')]"
                     },
                     "ExternalLBRules": {
                         "value": [
-                            ["0", "Tcp", "80", "80", "0"],
-                            ["0", "Tcp", "443", "443", "0"]
+                            [
+                                "0",
+                                "Tcp",
+                                "[string(variables('trafficPortNumber'))]",
+                                "[string(variables('trafficPortNumber'))]",
+                                "0"
+                            ]
                         ]
                     },
                     "InternalLBFrontendIPAddress": {
@@ -904,7 +910,7 @@
                 },
                 "parameters": {
                     "AdminPortNumber": {
-                        "value": "[variables('adminPortNumber')]"
+                        "value": "[variables('adminPortNumberHTTPS')]"
                     },
                     "AllowAccessFromIPAddresses": {
                         "value": "[if(empty(parameters('AccessRestrictionIPRange')), createArray(), split(parameters('AccessRestrictionIPRange'), ','))]"
