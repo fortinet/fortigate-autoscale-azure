@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "3.3.0.0",
     "parameters": {
-        "ExternalLBBackendPortNames": {
+        "ExternalLBBackendPoolNames": {
             "type": "Array"
         },
         "ExternalLBFrontendIPId": {
@@ -49,9 +49,9 @@
             "copy": [
                 {
                     "name": "externalLBBackendAddressPoolsOfIdCopyIt",
-                    "count": "[length(parameters('ExternalLBBackendPortNames'))]",
+                    "count": "[length(parameters('ExternalLBBackendPoolNames'))]",
                     "input": {
-                        "id": "[concat(variables('externalLoadBalancerId'), '/backendAddressPools/',parameters('ExternalLBBackendPortNames')[copyIndex('externalLBBackendAddressPoolsOfIdCopyIt')])]"
+                        "id": "[concat(variables('externalLoadBalancerId'), '/backendAddressPools/',parameters('ExternalLBBackendPoolNames')[copyIndex('externalLBBackendAddressPoolsOfIdCopyIt')])]"
                     }
                 }
             ]
@@ -69,9 +69,9 @@
             "copy": [
                 {
                     "name": "externalLBBackendAddressPoolsOfNameCopyIt",
-                    "count": "[length(parameters('ExternalLBBackendPortNames'))]",
+                    "count": "[length(parameters('ExternalLBBackendPoolNames'))]",
                     "input": {
-                        "name": "[parameters('ExternalLBBackendPortNames')[copyIndex('externalLBBackendAddressPoolsOfNameCopyIt')]]"
+                        "name": "[parameters('ExternalLBBackendPoolNames')[copyIndex('externalLBBackendAddressPoolsOfNameCopyIt')]]"
                     }
                 }
             ]
@@ -80,40 +80,62 @@
         "externalLBFrontendIPName": "[concat(parameters('UniqueResourceNamePrefix'), '-ext-lb-public-ip')]",
         "externalLBInboundNatPoolIdsBYOL": "[createArray(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPS')), resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSBYOLSSH')))]",
         "externalLBInboundNatPoolIdsPAYG": "[createArray(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPS')), resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSPAYGSSH')))]",
+        "externalLBRulesExample": [
+            [
+                "0, numeric string, as frontend ip config index, now only supports index 0",
+                "TCP or UDP as port protocol",
+                "80, numeric string, as frontend port number",
+                "80 numeric string, as backend port number",
+                "0, numeric string, backend pool index, now support 0 - 3, matching the length of parameter ExternalLBBackendPoolNames"
+            ]
+        ],
         "externalLBRules": {
             "copy": [
                 {
-                    "name": "iterations",
-                    "count": "[div(length(parameters('ExternalLBRules')), 3)]",
+                    "name": "externalLBRulesCopyIt",
+                    "count": "[length(parameters('ExternalLBRules'))]",
                     "input": {
-                        "name": "[concat(variables('externalLoadBalancerName'), '-rule-', parameters('ExternalLBRules')[add(0, copyIndex('iterations'))], '-', parameters('ExternalLBRules')[add(1, copyIndex('iterations'))], '-', parameters('ExternalLBRules')[add(2, copyIndex('iterations'))])]",
+                        "name": "[concat(variables('loadBalancerFrontendIPConfigNames')[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][0])], '-', parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][1], '-', parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][2], '-', parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][3])]",
                         "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
-                            },
-                            "backendAddressPool": "[variables('externalLBBackendAddressPoolsOfId').externalLBBackendAddressPoolsOfIdCopyIt[0]]",
-                            "protocol": "[parameters('ExternalLBRules')[add(0, mul(3, copyIndex('iterations')))]]",
-                            "frontendPort": "[int(parameters('ExternalLBRules')[add(1, mul(3, copyIndex('iterations')))])]",
-                            "backendPort": "[int(parameters('ExternalLBRules')[add(2, mul(3, copyIndex('iterations')))])]",
+                            "frontendIPConfiguration": "[variables('externalLoadBalancerFrontendIPConfigurationsOfId')[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][0])]]",
+                            "backendAddressPool": "[variables('externalLBBackendAddressPoolsOfId').externalLBBackendAddressPoolsOfIdCopyIt[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][4])]]",
+                            "protocol": "[parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][1]]",
+                            "frontendPort": "[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][2])]",
+                            "backendPort": "[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][3])]",
                             "loadDistribution": "SourceIP",
                             "enableFloatingIP": true,
                             "probe": {
-                                "id": "[concat(variables('externalLoadBalancerId'), '/probes/tcpProbe')]"
+                                "id": "[concat(variables('externalLoadBalancerId'), '/probes/', variables('externalLBProbes')[0].name)]"
                             }
                         }
                     }
                 }
             ]
         },
-        "externalLoadBalancerFrontendIPConfigId1": "[concat(variables('externalLoadBalancerId'), '/frontendIPConfigurations/', variables('frontendIPConfigName1'))]",
-        "frontendIPConfigName1": "frontend-ip-config-001",
+        "externalLBProbes": [
+            {
+                "name": "probe-tcp-22-5-3",
+                "properties": {
+                    "protocol": "Tcp",
+                    "port": 22,
+                    "intervalInSeconds": 5,
+                    "numberOfProbes": 3
+                }
+            }
+        ],
+        "externalLoadBalancerFrontendIPConfigurationsOfId": [
+            {
+                "id": "[concat(variables('externalLoadBalancerId'), '/frontendIPConfigurations/', variables('loadBalancerFrontendIPConfigNames')[0])]"
+            }
+        ],
+        "loadBalancerFrontendIPConfigNames": ["frontend-ip-config-001"],
         "externalLoadBalancerId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('externalLoadBalancerName'))]",
         "externalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-external-load-balancer')]",
         "ifCreateExternalLBPublicFrontendIP": "[empty(parameters('ExternalLBFrontendIPId'))]",
         "ifCreateInternalLB": "[and(not(empty(parameters('InternalLBFrontendIPAddress'))), not(empty(parameters('InternalLBFrontendSubnetId'))))]",
         "internalLoadBalancerBackendIPPoolId1": "[concat(variables('internalLoadBalancerId'), '/backendAddressPools/',variables('internalLoadBalancerBackendIPPoolName1'))]",
         "internalLoadBalancerBackendIPPoolName1": "backend-ip-pool-001",
-        "internalLoadBalancerFrontendIPConfigId1": "[concat(variables('internalLoadBalancerId'), '/frontendIPConfigurations/', variables('frontendIPConfigName1'))]",
+        "internalLoadBalancerFrontendIPConfigId1": "[concat(variables('internalLoadBalancerId'), '/frontendIPConfigurations/', variables('loadBalancerFrontendIPConfigNames')[0])]",
         "internalLoadBalancerId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('internalLoadBalancerName'))]",
         "internalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-internal-load-balancer')]",
         "loadBalancerInboundNatPoolNameVMSSBYOLHTTPS": "[concat('vmss-', parameters('VMSSNameBYOL'), '-https')]",
@@ -150,7 +172,7 @@
             "properties": {
                 "frontendIPConfigurations": [
                     {
-                        "name": "[variables('frontendIPConfigName1')]",
+                        "name": "[variables('loadBalancerFrontendIPConfigNames')[0]]",
                         "properties": {
                             "publicIPAddress": {
                                 "id": "[variables('externalLBFrontendIPId')]"
@@ -163,9 +185,7 @@
                     {
                         "name": "[variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPS')]",
                         "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
-                            },
+                            "frontendIPConfiguration": "[variables('externalLoadBalancerFrontendIPConfigurationsOfId')[0]]",
                             "protocol": "Tcp",
                             "frontendPortRangeStart": "[variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[0]]",
                             "frontendPortRangeEnd": "[variables('extLBInboundNATFrontendPortRangeVMSSBYOLHTTPS')[1]]",
@@ -175,9 +195,7 @@
                     {
                         "name": "[variables('loadBalancerInboundNatPoolNameVMSSBYOLSSH')]",
                         "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
-                            },
+                            "frontendIPConfiguration": "[variables('externalLoadBalancerFrontendIPConfigurationsOfId')[0]]",
                             "protocol": "Tcp",
                             "frontendPortRangeStart": "[variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[0]]",
                             "frontendPortRangeEnd": "[variables('extLBInboundNATFrontendPortRangeVMSSBYOLSSH')[1]]",
@@ -187,9 +205,7 @@
                     {
                         "name": "[variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPS')]",
                         "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
-                            },
+                            "frontendIPConfiguration": "[variables('externalLoadBalancerFrontendIPConfigurationsOfId')[0]]",
                             "protocol": "Tcp",
                             "frontendPortRangeStart": "[variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[0]]",
                             "frontendPortRangeEnd": "[variables('extLBInboundNATFrontendPortRangeVMSSPAYGHTTPS')[1]]",
@@ -199,9 +215,7 @@
                     {
                         "name": "[variables('loadBalancerInboundNatPoolNameVMSSPAYGSSH')]",
                         "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[variables('externalLoadBalancerFrontendIPConfigId1')]"
-                            },
+                            "frontendIPConfiguration": "[variables('externalLoadBalancerFrontendIPConfigurationsOfId')[0]]",
                             "protocol": "Tcp",
                             "frontendPortRangeStart": "[variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[0]]",
                             "frontendPortRangeEnd": "[variables('extLBInboundNATFrontendPortRangeVMSSPAYGSSH')[1]]",
@@ -209,10 +223,10 @@
                         }
                     }
                 ],
-                "loadBalancingRules": "[variables('externalLBRules').iterations]",
+                "loadBalancingRules": "[variables('externalLBRules').externalLBRulesCopyIt]",
                 "probes": [
                     {
-                        "name": "tcpProbe",
+                        "name": "probe-tcp-22-5-3",
                         "properties": {
                             "protocol": "Tcp",
                             "port": 22,
@@ -235,7 +249,7 @@
             "properties": {
                 "frontendIPConfigurations": [
                     {
-                        "name": "[variables('frontendIPConfigName1')]",
+                        "name": "[variables('loadBalancerFrontendIPConfigNames')[0]]",
                         "properties": {
                             "privateIPAddress": "[parameters('InternalLBFrontendIPAddress')]",
                             "privateIPAllocationMethod": "Static",

@@ -632,7 +632,7 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.load_balancer.json"
                 },
                 "parameters": {
-                    "ExternalLBBackendPortNames": {
+                    "ExternalLBBackendPoolNames": {
                         "value": ["subnet1", "subnet2", "subne3", "subnet4"]
                     },
                     "ExternalLBFrontendIPId": {
@@ -645,7 +645,10 @@
                         "value": 22
                     },
                     "ExternalLBRules": {
-                        "value": ["Tcp", "80", "80", "Tcp", "443", "443"]
+                        "value": [
+                            ["0", "Tcp", "80", "80", "0"],
+                            ["0", "Tcp", "443", "443", "0"]
+                        ]
                     },
                     "InternalLBFrontendIPAddress": {
                         "value": ""
@@ -1053,7 +1056,7 @@
             "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
         },
         "externalLBInboundNatPortRanges": {
-            "type": "String",
+            "type": "Array",
             "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value]"
         },
         "licenseFileDirectory": {
