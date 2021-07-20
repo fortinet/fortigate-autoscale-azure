@@ -254,7 +254,14 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 1, the subnet in which to deploy the FortiGate VMSS. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 1, in which the FortiGate VMSS deploys to. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+            }
+        },
+        "Subnet1NetworkSecurityGroupName": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "Name of network security group associated with the subnet 1. Subnet 1 is the subnet to deploy the FortiGate VMSS to. Required when using an existing VNet. When creating a new VNet, any input value will be ignored."
             }
         },
         "Subnet2AddressRange": {
@@ -580,7 +587,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "dependsOn": ["CreateVirtualNetwork"],
+            "dependsOn": ["CreateVirtualNetwork", "CreateLoadBalancers"],
             "name": "UpdateVirtualNetwork",
             "properties": {
                 "mode": "Incremental",
@@ -588,6 +595,18 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.vnet.configuration.json"
                 },
                 "parameters": {
+                    "NetworkSecurityGroupRulesSubnet1Inbound": {
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), 'AllowLBInboundNATPool', 'Allow', '*', createArray(), null(), reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value, '2000', '*', '*', createArray(), '*', createArray()))]"
+                    },
+                    "NetworkSecurityGroupRulesSubnet1Outbound": {
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), 'AllowAllOutbound', 'Allow', '*', createArray(), '*', createArray(), '2000', '*', '*', createArray(), '*', createArray()))]"
+                    },
+                    "NetworkSecurityGroupRulesExtraSubnetsInbound": {
+                        "value": "[createArray()]"
+                    },
+                    "NetworkSecurityGroupRulesExtraSubnetsOutbound": {
+                        "value": "[createArray()]"
+                    },
                     "Subnet1AddressRange": {
                         "value": "[parameters('Subnet1AddressRange')]"
                     },
@@ -613,17 +632,23 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.load_balancer.json"
                 },
                 "parameters": {
+                    "ExternalLBBackendPoolNames": {
+                        "value": ["subnet1", "subnet2", "subne3", "subnet4"]
+                    },
                     "ExternalLBFrontendIPId": {
                         "value": "[parameters('FrontendIPAddressID')]"
                     },
-                    "ExternalLBInboundSSHPortRange": {
-                        "value": "[createArray(29001, 39000)]"
+                    "ExternalLBNATBackendPortHTTPS": {
+                        "value": 8443
                     },
-                    "ExternalLBInboundHTTPSPortRange": {
-                        "value": "[createArray(39001, 49000)]"
+                    "ExternalLBNATBackendPortSSH": {
+                        "value": 22
                     },
                     "ExternalLBRules": {
-                        "value": ["Tcp", "80", "80", "Tcp", "443", "443"]
+                        "value": [
+                            ["0", "Tcp", "80", "80", "0"],
+                            ["0", "Tcp", "443", "443", "0"]
+                        ]
                     },
                     "InternalLBFrontendIPAddress": {
                         "value": ""
@@ -633,6 +658,12 @@
                     },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
+                    },
+                    "VMSSNameBYOL": {
+                        "value": "[variables('vmssNameBYOL')]"
+                    },
+                    "VMSSNamePAYG": {
+                        "value": "[variables('vmssNamePAYG')]"
                     }
                 }
             },
@@ -746,8 +777,11 @@
                     "ExternalLBBackendAddressPoolIds": {
                         "value": "[reference('CreateLoadBalancers').outputs.externalLBBackendAddressPoolIds.value]"
                     },
-                    "ExternalLBInboundNatPoolIds": {
-                        "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPoolIds.value]"
+                    "ExternalLBInboundNatPoolIdsBYOL": {
+                        "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPoolIdsBYOL.value]"
+                    },
+                    "ExternalLBInboundNatPoolIdsPAYG": {
+                        "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPoolIdsPAYG.value]"
                     },
                     "FunctionAppName": {
                         "value": "[variables('functionAppName')]"
@@ -989,9 +1023,9 @@
             "type": "String",
             "value": "[variables('autoscaleAssetContainerName')]"
         },
-        "byolAutoscaleSettingsName": {
+        "autoscaleSettingsNameBYOL": {
             "type": "String",
-            "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolAutoscaleSettingsName.value]"
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNameBYOL.value]"
         },
         "byolScaleSetDefaultSize": {
             "type": "Int",
@@ -1021,17 +1055,21 @@
             "type": "String",
             "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
         },
-        "licensingModel": {
-            "type": "String",
-            "value": "[reference('CreateVirtualMachineScaleSet').outputs.licensingModel.value]"
+        "externalLBInboundNatPortRanges": {
+            "type": "Array",
+            "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value]"
         },
         "licenseFileDirectory": {
             "type": "String",
             "value": "[variables('licenseFileDirectory')]"
         },
-        "paygAutoscaleSettingsName": {
+        "licensingModel": {
             "type": "String",
-            "value": "[reference('CreateVirtualMachineScaleSet').outputs.paygAutoscaleSettingsName.value]"
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.licensingModel.value]"
+        },
+        "autoscaleSettingsNamePAYG": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNamePAYG.value]"
         },
         "paygScaleSetDefaultSize": {
             "type": "Int",
