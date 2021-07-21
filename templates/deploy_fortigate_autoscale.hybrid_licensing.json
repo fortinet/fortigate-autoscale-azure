@@ -1041,6 +1041,10 @@
             "type": "String",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNameBYOL.value]"
         },
+        "autoscaleSettingsNamePAYG": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNamePAYG.value]"
+        },
         "byolScaleSetDefaultSize": {
             "type": "Int",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolScaleSetDefaultSize.value]"
@@ -1061,17 +1065,21 @@
             "type": "String",
             "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('UpdateVirtualNetwork').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
         },
+        "cmdPostDeletionCleanUp": {
+            "type": "String",
+            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('UpdateVirtualNetwork').outputs.cmdDeleteAll.value)]"
+        },
         "deploymentPackageVersion": {
             "type": "string",
             "value": "3.3.2"
         },
-        "fazPublicIp": {
-            "type": "String",
-            "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
-        },
         "externalLBInboundNatPortRanges": {
             "type": "Array",
             "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value]"
+        },
+        "fazPublicIp": {
+            "type": "String",
+            "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
         },
         "licenseFileDirectory": {
             "type": "String",
@@ -1080,10 +1088,6 @@
         "licensingModel": {
             "type": "String",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.licensingModel.value]"
-        },
-        "autoscaleSettingsNamePAYG": {
-            "type": "String",
-            "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNamePAYG.value]"
         },
         "paygScaleSetDefaultSize": {
             "type": "Int",
