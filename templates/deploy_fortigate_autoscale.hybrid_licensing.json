@@ -263,6 +263,15 @@
                 "description": "Name of network security group associated with the subnet 1. Subnet 1 is the subnet to deploy the FortiGate VMSS to. Required when using an existing VNet. When creating a new VNet, any input value will be ignored."
             }
         },
+        "Subnet1NetworkSecurityGroupRulePriority": {
+            "defaultValue": 1000,
+            "minValue": 100,
+            "maxValue": 4096,
+            "type": "Int",
+            "metadata": {
+                "description": "Starting number of the rule priority of the network security group associated with the subnet 1. Subnet 1 is the subnet to deploy the FortiGate VMSS to. When using an existing VNET, assign a number that does not conflict with the priority of any existing rule in the NSG specified in the 'Subnet 1 Network Security Group Name'."
+            }
+        },
         "Subnet2AddressRange": {
             "defaultValue": "",
             "type": "String",
@@ -596,10 +605,10 @@
                 },
                 "parameters": {
                     "NetworkSecurityGroupRulesSubnet1Inbound": {
-                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-inbound-nat-pool'), 'Allow', '*', createArray(), null(), createArray(variables('adminPortNumberHTTPS'), variables('adminPortNumberSSH')), '2000', '*', '*', createArray(), '*', createArray()))]"
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-inbound-nat-pool'), 'Allow', '*', createArray(), null(), createArray(variables('adminPortNumberHTTPS'), variables('adminPortNumberSSH')), string(parameters('Subnet1NetworkSecurityGroupRulePriority')), '*', '*', createArray(), '*', createArray()))]"
                     },
                     "NetworkSecurityGroupRulesSubnet1Outbound": {
-                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-outbound-all'), 'Allow', '*', createArray(), '*', createArray(), '2000', '*', '*', createArray(), '*', createArray()))]"
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-outbound-all'), 'Allow', '*', createArray(), '*', createArray(), string(parameters('Subnet1NetworkSecurityGroupRulePriority')), '*', '*', createArray(), '*', createArray()))]"
                     },
                     "NetworkSecurityGroupRulesExtraSubnetsInbound": {
                         "value": "[createArray()]"
@@ -1050,7 +1059,7 @@
         },
         "cmdDeleteAll": {
             "type": "String",
-            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
+            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('UpdateVirtualNetwork').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
         },
         "deploymentPackageVersion": {
             "type": "string",
