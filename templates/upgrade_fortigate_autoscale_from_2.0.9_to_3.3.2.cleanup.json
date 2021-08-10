@@ -17,7 +17,7 @@
                 "description": "The upgrade iteration number, ranging from 2 to 9. Increase it by 1 when starts a new deployment if any previous upgrade iteration has failed. The iteration number can be found as 'upgradeIteration' in the output of any upgrade deployment. If it already reached 9, please do not attempt to increase it over 9, instead, consider deleting any unused iteration and reuse its number."
             }
         },
-        "VNetResourceGroupName": {
+        "VnetResourceGroupName": {
             "type": "String",
             "metadata": {
                 "description": "'VNetResourceGroupName' value found in the output of the old deployment template."
@@ -41,14 +41,14 @@
         "cmdDeleteDatabaseUI": "[concat('az cosmosdb sql database delete -y -g ', resourceGroup().name, ' -a ', variables('databaseAccountName'), ' -n ', variables('databaseName'), ';')]",
         "cmdDeleteExtLBInboundNATPoolAllOld": "[concat(variables('cmdDeleteExtLBInboundNATPoolVMSSBYOLSSHOld'), variables('cmdDeleteExtLBInboundNATPoolVMSSBYOLHTTPSOld'), variables('cmdDeleteExtLBInboundNATPoolVMSSPAYGSSHOld'), variables('cmdDeleteExtLBInboundNATPoolVMSSPAYGHTTPSOld'))]",
         "cmdDeleteExtLBInboundNATPoolAllUI": "[concat(variables('cmdDeleteExtLBInboundNATPoolVMSSBYOLSSHUI'), variables('cmdDeleteExtLBInboundNATPoolVMSSBYOLHTTPSUI'), variables('cmdDeleteExtLBInboundNATPoolVMSSPAYGSSHUI'), variables('cmdDeleteExtLBInboundNATPoolVMSSPAYGHTTPSUI'))]",
-        "cmdDeleteExtLBInboundNATPoolVMSSBYOLHTTPSOld": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPSOld'), ';')]",
-        "cmdDeleteExtLBInboundNATPoolVMSSBYOLHTTPSUI": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPSUI'), ';')]",
-        "cmdDeleteExtLBInboundNATPoolVMSSBYOLSSHOld": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLSSHOld'), ';')]",
-        "cmdDeleteExtLBInboundNATPoolVMSSBYOLSSHUI": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLSSHUI'), ';')]",
-        "cmdDeleteExtLBInboundNATPoolVMSSPAYGHTTPSOld": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPSOld'), ';')]",
-        "cmdDeleteExtLBInboundNATPoolVMSSPAYGHTTPSUI": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPSUI'), ';')]",
-        "cmdDeleteExtLBInboundNATPoolVMSSPAYGSSHOld": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGSSHOld'), ';')]",
-        "cmdDeleteExtLBInboundNATPoolVMSSPAYGSSHUI": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VNetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGSSHUI'), ';')]",
+        "cmdDeleteExtLBInboundNATPoolVMSSBYOLHTTPSOld": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VnetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPSOld'), ';')]",
+        "cmdDeleteExtLBInboundNATPoolVMSSBYOLHTTPSUI": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VnetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPSUI'), ';')]",
+        "cmdDeleteExtLBInboundNATPoolVMSSBYOLSSHOld": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VnetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLSSHOld'), ';')]",
+        "cmdDeleteExtLBInboundNATPoolVMSSBYOLSSHUI": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VnetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSBYOLSSHUI'), ';')]",
+        "cmdDeleteExtLBInboundNATPoolVMSSPAYGHTTPSOld": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VnetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPSOld'), ';')]",
+        "cmdDeleteExtLBInboundNATPoolVMSSPAYGHTTPSUI": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VnetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPSUI'), ';')]",
+        "cmdDeleteExtLBInboundNATPoolVMSSPAYGSSHOld": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VnetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGSSHOld'), ';')]",
+        "cmdDeleteExtLBInboundNATPoolVMSSPAYGSSHUI": "[concat('az network lb inbound-nat-pool delete -g ', parameters('VnetResourceGroupName'), ' --lb-name ', variables('externalLoadBalancerName'), ' -n ', variables('loadBalancerInboundNatPoolNameVMSSPAYGSSHUI'), ';')]",
         "cmdDeleteFunctionAppAllOld": "[concat(variables('cmdDeleteFunctionAppInsightsOld'),variables('cmdDeleteFunctionAppSiteOld'),variables('cmdDeleteFunctionAppServerFarmOld'))]",
         "cmdDeleteFunctionAppAllUI": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteFunctionAppInsightsUI'), variables('cmdDeleteFunctionAppSiteUI'), variables('cmdDeleteFunctionAppServerFarmUI'))]",
         "cmdDeleteFunctionAppInsightsOld": "[concat('az monitor app-insights component delete', ' -a ', variables('functionAppNameOld'), ' -g ', resourceGroup().name, ';')]",
@@ -86,7 +86,7 @@
         "uniqueId": "[take(uniquestring(resourceGroup().id), 8)]",
         "uniqueResourceNamePrefix": "[concat(parameters('ResourceNamePrefix'), variables('uniqueId'))]",
         "upgradeIterationNumber": "[padLeft(parameters('UpgradeIteration'),3,'0')]",
-        "vNetResourceGroupName": "[parameters('VNetResourceGroupName')]",
+        "vNetResourceGroupName": "[parameters('VnetResourceGroupName')]",
         "vmssNameBYOL": "[concat(parameters('ResourceNamePrefix'), 'byol', variables('upgradeIterationNumber'))]",
         "vmssNameBYOLOld": "[concat(parameters('ResourceNamePrefix'), 'byol')]",
         "vmssNamePAYG": "[concat(parameters('ResourceNamePrefix'), 'payg', variables('upgradeIterationNumber'))]",

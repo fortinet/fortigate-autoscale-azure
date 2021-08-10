@@ -269,7 +269,7 @@
                 "description": "The upgrade iteration number, starting from 2. Increase it by 1 when starts a new deployment if any previous upgrade iteration has failed. The iteration number can be found as 'upgradeIteration' in the output of any upgrade deployment."
             }
         },
-        "VNetResourceGroupName": {
+        "VnetResourceGroupName": {
             "type": "String",
             "metadata": {
                 "description": "'VNetResourceGroupName' value found in the output of the old deployment template."
@@ -370,7 +370,7 @@
         "uniqueResourceNamePrefix": "[concat(parameters('ResourceNamePrefix'), variables('uniqueId'))]",
         "upgradeIterationNumber": "[padLeft(parameters('UpgradeIteration'),3,'0')]",
         "vNetName": "[parameters('VnetName')]",
-        "vNetResourceGroupName": "[parameters('VNetResourceGroupName')]",
+        "vNetResourceGroupName": "[parameters('VnetResourceGroupName')]",
         "vmImgReferenceFazBYOL": {
             "publisher": "fortinet",
             "offer": "fortinet-fortianalyzer",
