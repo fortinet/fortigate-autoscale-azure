@@ -318,7 +318,7 @@
             "defaultValue": "single",
             "type": "String",
             "metadata": {
-                "description": "The VMSS placement group options. For mor information, please see: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#placement-groups"
+                "description": "The VMSS placement group options. For more information, please see: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#placement-groups"
             }
         },
         "VMSSZoneBalance": {
@@ -326,7 +326,7 @@
             "defaultValue": false,
             "type": "Bool",
             "metadata": {
-                "description": "The VMSS zone balance options if 'VMSSAvailabilityZones' is provided. For mor information, please see: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#zone-balancing"
+                "description": "The VMSS zone balance options if 'VMSSAvailabilityZones' is provided. For more information, please see: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#zone-balancing"
             }
         },
         "VnetAddressSpace": {
