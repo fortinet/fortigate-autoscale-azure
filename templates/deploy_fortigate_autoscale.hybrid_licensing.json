@@ -446,8 +446,8 @@
             "sku": "fortinet_fg-vm_payg_20190624",
             "version": "[parameters('FOSVersion')]"
         },
-        "vmssNameBYOL": "[concat(variables('uniqueResourceNamePrefix'), 'byol001')]",
-        "vmssNamePAYG": "[concat(variables('uniqueResourceNamePrefix'), 'payg001')]",
+        "vmssNameBYOL": "[concat(variables('uniqueResourceNamePrefix'), 'vmssbyol001')]",
+        "vmssNamePAYG": "[concat(variables('uniqueResourceNamePrefix'), 'vmsspayg001')]",
         "vmssNamePrimary": "[if(variables('ifPAYGOnly'), variables('vmssNamePAYG'), variables('vmssNameBYOL'))]",
         "vNetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', variables('vNetName'))]"
     },
