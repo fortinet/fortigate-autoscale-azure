@@ -27,13 +27,11 @@
             ]
         },
         "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';')]",
-        "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupNameExternal') , ';', 'az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupNameInternal') , ';')]",
+        "cmdDeleteNSG": "[concat('az network nsg delete -g ', resourceGroup().name, ' -n ', variables('networkSecurityGroupNameExternal') , ';')]",
         "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', parameters('VNetName') , ';')]",
         "networkSecurityGroupIdExternal": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupNameExternal'))]",
-        "networkSecurityGroupIdInternal": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupNameInternal'))]",
         "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-nsg')]",
         "networkSecurityGroupNameExternal": "[concat(variables('networkSecurityGroupName'), '-ext-lb')]",
-        "networkSecurityGroupNameInternal": "[concat(variables('networkSecurityGroupName'), '-int-lb')]",
         "serviceEndpoints": [
             {
                 "service": "Microsoft.AzureCosmosDB",
@@ -46,6 +44,16 @@
         ],
         "subnet1Id": "[parameters('Subnets')[0].id]",
         "subnet1Name": "[parameters('Subnets')[0].name]",
+        "subnet1": {
+            "name": "[parameters('Subnets')[0].name]",
+            "properties": {
+                "addressPrefix": "[parameters('Subnets')[0].addressRange]",
+                "networkSecurityGroup": {
+                    "id": "[variables('networkSecurityGroupIdExternal')]"
+                },
+                "serviceEndpoints": "[variables('serviceEndpoints')]"
+            }
+        },
         "subnets": {
             "copy": [
                 {
@@ -55,10 +63,7 @@
                         "name": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].name]",
                         "properties": {
                             "addressPrefix": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].addressRange]",
-                            "networkSecurityGroup": {
-                                "id": "[if(equals(copyIndex('subnetsCopyIt'), 0), variables('networkSecurityGroupIdExternal'), variables('networkSecurityGroupIdInternal'))]"
-                            },
-                            "serviceEndpoints": "[if(equals(copyIndex('subnetsCopyIt'), 0), variables('serviceEndpoints'), createArray())]"
+                            "serviceEndpoints": "[createArray()]"
                         }
                     }
                 }
@@ -78,55 +83,14 @@
         },
         {
             "apiVersion": "2019-04-01",
-            "location": "[resourceGroup().location]",
-            "name": "[variables('networkSecurityGroupNameInternal')]",
-            "properties": {
-                "securityRules": [
-                    {
-                        "name": "AllowAllInBound",
-                        "properties": {
-                            "description": "Allow all in",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 100,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "AllowAllOutbound",
-                        "properties": {
-                            "description": "Allow all out",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 105,
-                            "direction": "Outbound"
-                        }
-                    }
-                ]
-            },
-            "type": "Microsoft.Network/networkSecurityGroups"
-        },
-        {
-            "apiVersion": "2019-04-01",
-            "dependsOn": [
-                "[variables('networkSecurityGroupNameExternal')]",
-                "[variables('networkSecurityGroupNameInternal')]"
-            ],
+            "dependsOn": ["[variables('networkSecurityGroupNameExternal')]"],
             "location": "[resourceGroup().location]",
             "name": "[parameters('VNetName')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": ["[parameters('VnetAddressSpace')]"]
                 },
-                "Subnets": "[variables('subnets').subnetsCopyIt]"
+                "Subnets": "[concat(createArray(variables('subnet1')), skip(variables('subnets').subnetsCopyIt, 1))]"
             },
             "type": "Microsoft.Network/virtualNetworks"
         },
@@ -163,10 +127,6 @@
         "networkSecurityGroupNameExternal": {
             "type": "String",
             "value": "[variables('networkSecurityGroupNameExternal')]"
-        },
-        "networkSecurityGroupNameInternal": {
-            "type": "String",
-            "value": "[variables('networkSecurityGroupNameInternal')]"
         },
         "subnet1Id": {
             "type": "String",
