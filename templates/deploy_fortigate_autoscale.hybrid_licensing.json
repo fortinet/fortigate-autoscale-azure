@@ -129,10 +129,9 @@
         },
         "InstanceType": {
             "defaultValue": "Standard_F4",
-            "allowedValues": ["Standard_F4s_v2", "Standard_F4s", "Standard_F4"],
             "type": "String",
             "metadata": {
-                "description": "Size of the VMs in the VMSS."
+                "description": "Size of the VMs in the VMSS. Default is Standard_F4. More options can be found in the link: https://docs.microsoft.com/en-us/azure/virtual-machines/sizes"
             }
         },
         "MaxBYOLInstanceCount": {
