@@ -246,14 +246,14 @@
         "Subnet1AddressRange": {
             "type": "String",
             "metadata": {
-                "description": "Defines the subnet 1 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Defines the subnet 1 address range in CIDR notation. When creating a new VNet, the address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. When using an existing VNet, the input value must match the address range of the subnet specified in 'Subnet 1 Name'."
             }
         },
         "Subnet1Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 1, in which the FortiGate VMSS deploys to. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 1, in which the FortiGate VMSS deploys to. When creating a new VNet, the input value will be used as the Subnet 1 name, or if left empty, a default name will be used. Required when using an existing VNet; the target subnet will be used to deploy the FortiGate VMSS."
             }
         },
         "Subnet1NetworkSecurityGroupName": {
@@ -269,49 +269,49 @@
             "maxValue": 4096,
             "type": "Int",
             "metadata": {
-                "description": "Starting number of the rule priority of the network security group associated with the subnet 1. Subnet 1 is the subnet to deploy the FortiGate VMSS to. When using an existing VNET, assign a number that does not conflict with the priority of any existing rule in the NSG specified in the 'Subnet 1 Network Security Group Name'."
+                "description": "Starting number of rule priority of the network security group associated with the subnet 1 where the Autoscale related rules will be inserted. Subnet 1 is the subnet to deploy the FortiGate VMSS to. When using an existing VNet, must assign a number that does not conflict with the priority of any existing rule in the NSG specified in the 'Subnet 1 Network Security Group Name'."
             }
         },
         "Subnet2AddressRange": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Defines the subnet 2 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Defines the subnet 2 address range in CIDR notation. When creating a new VNet, a valid non-empty input will assume the creation of the subnet 2. When using an existing VNet, a valid non-empty input is required if the 'Subnet 2 Name' parameter is also provided. Value should match the address range of the target subnet.The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited."
             }
         },
         "Subnet2Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 2, a subnet to be protected by the FortiGate. Required when using an existing Net; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 2, a subnet that will gain access from the FortiGate. When creating a new VNet that contains the 'Subnet 2', the input value will be used as the Subnet 2 name, or if left empty, a default name will be used. When using an existing Net, a valid non-empty input will assume the association of the target subnet with the Autoscale, and the target subnet will be associated as 'Subnet 2'; empty value will assume the Autoscale will deploy without using the 'Subnet 2'."
             }
         },
         "Subnet3AddressRange": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Defines the subnet 3 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Defines the subnet 3 address range in CIDR notation. When creating a new VNet, a valid non-empty input will assume the creation of the subnet 3. When using an existing VNet, a valid non-empty input is required if the 'Subnet 3 Name' parameter is also provided. Value should match the address range of the target subnet.The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited."
             }
         },
         "Subnet3Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 3, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 3, a subnet that will gain access from the FortiGate. When creating a new VNet that contains the 'Subnet 3', the input value will be used as the Subnet 3 name, or if left empty, a default name will be used. When using an existing Net, a valid non-empty input will assume the association of the target subnet with the Autoscale, and the target subnet will be associated as 'Subnet 3'; empty value will assume the Autoscale will deploy without using the 'Subnet 3'."
             }
         },
         "Subnet4AddressRange": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Defines the subnet 4 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Defines the subnet 4 address range in CIDR notation. When creating a new VNet, a valid non-empty input will assume the creation of the subnet 4. When using an existing VNet, a valid non-empty input is required if the 'Subnet 4 Name' parameter is also provided. Value should match the address range of the target subnet. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited."
             }
         },
         "Subnet4Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 4, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 4, a subnet that will gain access from the FortiGate. When creating a new VNet that contains the 'Subnet 4', the input value will be used as the Subnet 4 name, or if left empty, a default name will be used. When using an existing Net, a valid non-empty input will assume the association of the target subnet with the Autoscale, and the target subnet will be associated as 'Subnet 4'; empty value will assume the Autoscale will deploy without using the 'Subnet 4'."
             }
         },
         "VMSSAvailabilityZones": {
