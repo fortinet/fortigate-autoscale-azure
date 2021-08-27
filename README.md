@@ -8,11 +8,11 @@ This special version of the project contains specialized resources for upgrading
 
 The package is located in the Fortinet Autoscale for Azure GitHub project.
 
-To obtain the package, go to the FortiGate Autoscale for Azure [GitHub project release page](https://github.com/fortinet/fortigate-autoscale-azure/releases/tag/2.0.9-upgrade.2) and download `fortigate-autoscale-azure.zip`
+To obtain the package, go to the FortiGate Autoscale for Azure release page [2.0.9 upgrade (3.3.2)](https://github.com/fortinet/fortigate-autoscale-azure/releases/tag/2.0.9-upgrade.2) and download `fortigate-autoscale-azure.zip`
 
 ## Deployment guide
 
-An upgrading guide is available in the Appendix **Upgrading the deployment**, located on page 83 of [FortiOS_6.4_Azure_Administration_Guide.pdf](https://github.com/fortinet/fortigate-autoscale-azure/blob/2.0.9-upgrade.2/docs/FortiOS_6.4_Azure_Administration_Guide.pdf)
+An upgrading guide is available in the Appendix **Upgrading the deployment**, located on page 46 of [FortiOS_6.4_FortiGate_Autoscale_for_Azure.pdf](https://github.com/fortinet/fortigate-autoscale-azure/blob/2.0.9-upgrade.2/docs/FortiOS_6.4_FortiGate_Autoscale_for_Azure.pdf)
 
 # Support
 

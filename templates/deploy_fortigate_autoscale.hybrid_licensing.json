@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.0.0",
+    "contentVersion": "3.3.2.0",
     "parameters": {
         "AccessRestrictionIPRange": {
             "defaultValue": "",
@@ -1889,7 +1889,7 @@
         },
         "deploymentPackageVersion": {
             "type": "string",
-            "value": "3.3.0"
+            "value": "2.0.9-upgrade.2"
         },
         "fazPublicIp": {
             "type": "String",
