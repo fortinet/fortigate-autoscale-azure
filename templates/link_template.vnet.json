@@ -31,7 +31,7 @@
         "cmdDeleteVNet": "[concat('az network vnet delete -g ', resourceGroup().name, ' -n ', parameters('VNetName') , ';')]",
         "networkSecurityGroupIdExternal": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupNameExternal'))]",
         "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-nsg')]",
-        "networkSecurityGroupNameExternal": "[concat(variables('networkSecurityGroupName'), '-ext-lb')]",
+        "networkSecurityGroupNameExternal": "[concat(variables('networkSecurityGroupName'), '-external')]",
         "subnet1Id": "[parameters('Subnets')[0].id]",
         "subnet1Name": "[parameters('Subnets')[0].name]",
         "subnets": {

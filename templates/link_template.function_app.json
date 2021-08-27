@@ -23,12 +23,15 @@
         },
         "StorageAccountName": {
             "type": "String"
+        },
+        "UniqueResourceNamePrefix": {
+            "type": "String"
         }
     },
     "variables": {
         "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteInsights'), variables('cmdDeleteSite'), variables('cmdDeleteServerFarm'))]",
         "cmdDeleteInsights": "[if(variables('enableAzureAppInsights'), concat('az monitor app-insights component delete -g ', resourceGroup().name, ' -a ', parameters('FunctionAppName'), ';'), '')]",
-        "cmdDeleteServerFarm": "[concat('az appservice plan delete -y -g ', resourceGroup().name, ' -n ', variables('hostingPlanName'), ';')]",
+        "cmdDeleteServerFarm": "[concat('az appservice plan delete -y -g ', resourceGroup().name, ' -n ', variables('appServicePlanName'), ';')]",
         "cmdDeleteSite": "[concat('az webapp delete -g ', resourceGroup().name, ' -n ', parameters('FunctionAppName'), ';')]",
         "enableAzureAppInsights": "[contains(variables('functionAppInsightAvailableLocations'), resourceGroup().location)]",
         "functionAppInsightAvailableLocations": [
@@ -55,8 +58,8 @@
             "westus",
             "westus2"
         ],
-        "functionAppInsightName": "[concat(parameters('FunctionAppName'),'-insights')]",
-        "hostingPlanName": "[concat(parameters('FunctionAppName'),'-service-plan')]",
+        "appInsightName": "[concat(parameters('UniqueResourceNamePrefix'),'-appins001')]",
+        "appServicePlanName": "[concat(parameters('UniqueResourceNamePrefix'),'-appserplan001')]",
         "servicePlanTierPresets": {
             "Free (for demo only)": {
                 "sku": "Free",
@@ -81,13 +84,13 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2018-02-01",
-            "name": "[variables('hostingPlanName')]",
+            "name": "[variables('appServicePlanName')]",
             "location": "[resourceGroup().location]",
             "sku": {
                 "Name": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].skucode]"
             },
             "properties": {
-                "name": "[variables('hostingPlanName')]",
+                "name": "[variables('appServicePlanName')]",
                 "workerSize": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].workerSize]",
                 "numberOfWorkers": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].numberOfWorkers]",
                 "reserved": "[variables('servicePlanTierPresets')[parameters('ServicePlanTier')].reserved]"
@@ -99,9 +102,9 @@
             "name": "[parameters('FunctionAppName')]",
             "location": "[resourceGroup().location]",
             "kind": "functionapp",
-            "dependsOn": ["[variables('hostingPlanName')]"],
+            "dependsOn": ["[variables('appServicePlanName')]"],
             "properties": {
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
                 "siteConfig": {
                     "appSettings": [
                         {
@@ -114,7 +117,7 @@
                         },
                         {
                             "name": "[if(variables('enableAzureAppInsights'), 'APPINSIGHTS_INSTRUMENTATIONKEY', 'DEPLOYED_APPINSIGHTS')]",
-                            "value": "[if(variables('enableAzureAppInsights'), reference(resourceId('Microsoft.Insights/components/', variables('functionAppInsightName')), '2018-05-01-preview').InstrumentationKey, 'false')]"
+                            "value": "[if(variables('enableAzureAppInsights'), reference(resourceId('Microsoft.Insights/components/', variables('appInsightName')), '2018-05-01-preview').InstrumentationKey, 'false')]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -148,7 +151,7 @@
         {
             "type": "Microsoft.Insights/components",
             "apiVersion": "2018-05-01-preview",
-            "name": "[variables('functionAppInsightName')]",
+            "name": "[variables('appInsightName')]",
             "location": "[resourceGroup().location]",
             "kind": "web",
             "properties": {
@@ -159,6 +162,14 @@
         }
     ],
     "outputs": {
+        "appInsightName": {
+            "type": "String",
+            "value": "[if(variables('enableAzureAppInsights'), variables('appInsightName'), '')]"
+        },
+        "appServicePlanName": {
+            "type": "String",
+            "value": "[variables('appServicePlanName')]"
+        },
         "cmdDeleteAll": {
             "type": "String",
             "value": "[variables('cmdDeleteAll')]"
@@ -170,10 +181,6 @@
         "functionAppId": {
             "type": "String",
             "value": "[resourceId('Microsoft.Web/sites', parameters('FunctionAppName'))]"
-        },
-        "functionAppInsightName": {
-            "type": "String",
-            "value": "[if(variables('enableAzureAppInsights'), variables('functionAppInsightName'), '')]"
         },
         "functionAppName": {
             "type": "String",
