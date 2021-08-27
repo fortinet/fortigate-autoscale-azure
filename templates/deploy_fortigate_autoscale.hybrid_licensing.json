@@ -373,18 +373,18 @@
         "cmdDeleteDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
         "cmdDeleteKeyVault": "[concat('az keyvault delete -g ', resourceGroup().name,' -n ', variables('keyVaultName'), ';')]",
         "cmdDeleteStorageAccount": "[concat('az storage account delete -y -g ', resourceGroup().name, ' -n ', variables('storageAccountName'), ';')]",
-        "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
+        "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'-dba001')]",
         "databaseName": "FortiGateAutoscale",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "databaseSharedThroughputBase": 500,
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
         "enableHybridLicensing": true,
-        "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
+        "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'-funcapp001')]",
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifCreateVNet": "[equals(parameters('VnetDeploymentMethod'), 'create new')]",
         "ifCreateVNetInSameRSG": "[and(variables('ifCreateVNet'), or(equals(parameters('VnetResourceGroupName'), ''), equals(parameters('VnetResourceGroupName'), resourceGroup().name)))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
-        "keyVaultName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'kv001')]",
+        "keyVaultName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'-kv001')]",
         "licenseFileDirectory": "license-files",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'paygonly', if(variables('ifBYOLOnly'), 'byolonly', 'hybrid'))]",
         "location": "[resourceGroup().location]",
@@ -446,8 +446,8 @@
             "sku": "fortinet_fg-vm_payg_20190624",
             "version": "[parameters('FOSVersion')]"
         },
-        "vmssNameBYOL": "[concat(variables('uniqueResourceNamePrefix'), 'vmssbyol001')]",
-        "vmssNamePAYG": "[concat(variables('uniqueResourceNamePrefix'), 'vmsspayg001')]",
+        "vmssNameBYOL": "[concat(variables('uniqueResourceNamePrefix'), '-vmss-byol001')]",
+        "vmssNamePAYG": "[concat(variables('uniqueResourceNamePrefix'), '-vmss-payg001')]",
         "vmssNamePrimary": "[if(variables('ifPAYGOnly'), variables('vmssNamePAYG'), variables('vmssNameBYOL'))]",
         "vNetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', variables('vNetName'))]"
     },
@@ -762,6 +762,9 @@
                     },
                     "StorageAccountName": {
                         "value": "[variables('storageAccountName')]"
+                    },
+                    "UniqueResourceNamePrefix": {
+                        "value": "[variables('uniqueResourceNamePrefix')]"
                     }
                 }
             },
@@ -949,7 +952,7 @@
                         "value": "[parameters('FortiGatePSKSecret')]"
                     },
                     "FunctionAppInsightName": {
-                        "value": "[reference('CreateFunctionApp').outputs.functionAppInsightName.value]"
+                        "value": "[reference('CreateFunctionApp').outputs.appInsightName.value]"
                     },
                     "FunctionAppName": {
                         "value": "[variables('functionAppName')]"
