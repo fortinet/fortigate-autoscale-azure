@@ -62,9 +62,6 @@
         "PAYGInstanceCount": {
             "value": 0
         },
-        "PackageResURL": {
-            "value": ""
-        },
         "PrimaryElectionTimeout": {
             "value": 600
         },

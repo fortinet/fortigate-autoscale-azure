@@ -246,14 +246,14 @@
         "Subnet1AddressRange": {
             "type": "String",
             "metadata": {
-                "description": "Defines the subnet 1 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Defines the subnet 1 address range in CIDR notation. When creating a new VNet, the address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. When using an existing VNet, the input value must match the address range of the subnet specified in 'Subnet 1 Name'."
             }
         },
         "Subnet1Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 1, in which the FortiGate VMSS deploys to. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 1, in which the FortiGate VMSS deploys to. When creating a new VNet, the input value will be used as the Subnet 1 name, or if left empty, a default name will be used. Required when using an existing VNet; the target subnet will be used to deploy the FortiGate VMSS."
             }
         },
         "Subnet1NetworkSecurityGroupName": {
@@ -263,46 +263,55 @@
                 "description": "Name of network security group associated with the subnet 1. Subnet 1 is the subnet to deploy the FortiGate VMSS to. Required when using an existing VNet. When creating a new VNet, any input value will be ignored."
             }
         },
+        "Subnet1NetworkSecurityGroupRulePriority": {
+            "defaultValue": 1000,
+            "minValue": 100,
+            "maxValue": 4096,
+            "type": "Int",
+            "metadata": {
+                "description": "Starting number of rule priority of the network security group associated with the subnet 1 where the Autoscale related rules will be inserted. Subnet 1 is the subnet to deploy the FortiGate VMSS to. When using an existing VNet, must assign a number that does not conflict with the priority of any existing rule in the NSG specified in the 'Subnet 1 Network Security Group Name'."
+            }
+        },
         "Subnet2AddressRange": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Defines the subnet 2 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Defines the subnet 2 address range in CIDR notation. When creating a new VNet, a valid non-empty input will assume the creation of the subnet 2. When using an existing VNet, a valid non-empty input is required if the 'Subnet 2 Name' parameter is also provided. Value should match the address range of the target subnet.The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited."
             }
         },
         "Subnet2Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 2, a subnet to be protected by the FortiGate. Required when using an existing Net; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 2, a subnet that will gain access from the FortiGate. When creating a new VNet that contains the 'Subnet 2', the input value will be used as the Subnet 2 name, or if left empty, a default name will be used. When using an existing Net, a valid non-empty input will assume the association of the target subnet with the Autoscale, and the target subnet will be associated as 'Subnet 2'; empty value will assume the Autoscale will deploy without using the 'Subnet 2'."
             }
         },
         "Subnet3AddressRange": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Defines the subnet 3 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Defines the subnet 3 address range in CIDR notation. When creating a new VNet, a valid non-empty input will assume the creation of the subnet 3. When using an existing VNet, a valid non-empty input is required if the 'Subnet 3 Name' parameter is also provided. Value should match the address range of the target subnet.The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited."
             }
         },
         "Subnet3Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 3, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 3, a subnet that will gain access from the FortiGate. When creating a new VNet that contains the 'Subnet 3', the input value will be used as the Subnet 3 name, or if left empty, a default name will be used. When using an existing Net, a valid non-empty input will assume the association of the target subnet with the Autoscale, and the target subnet will be associated as 'Subnet 3'; empty value will assume the Autoscale will deploy without using the 'Subnet 3'."
             }
         },
         "Subnet4AddressRange": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Defines the subnet 4 address range in CIDR notation. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited. Required when using an existing VNet; value should match the address range of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Defines the subnet 4 address range in CIDR notation. When creating a new VNet, a valid non-empty input will assume the creation of the subnet 4. When using an existing VNet, a valid non-empty input is required if the 'Subnet 4 Name' parameter is also provided. Value should match the address range of the target subnet. The address range must be contained by the address space of the virtual network as defined in 'VNet Address Space'. After deployment, the address range of a subnet which is in use can't be edited."
             }
         },
         "Subnet4Name": {
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "Name of subnet 4, a subnet to be protected by the FortiGate. Required when using an existing VNet; the value should match the subnet of the target VNet. When creating a new VNet, any input value will be ignored."
+                "description": "Name of subnet 4, a subnet that will gain access from the FortiGate. When creating a new VNet that contains the 'Subnet 4', the input value will be used as the Subnet 4 name, or if left empty, a default name will be used. When using an existing Net, a valid non-empty input will assume the association of the target subnet with the Autoscale, and the target subnet will be associated as 'Subnet 4'; empty value will assume the Autoscale will deploy without using the 'Subnet 4'."
             }
         },
         "VMSSAvailabilityZones": {
@@ -358,23 +367,24 @@
         }
     },
     "variables": {
-        "adminPortNumber": 8443,
+        "adminPortNumberHTTPS": 8443,
+        "adminPortNumberSSH": 22,
         "autoscaleAssetContainerName": "fortigate-autoscale",
         "cmdDeleteDatabaseAccount": "[concat('az cosmosdb delete -y -g ', resourceGroup().name, ' -n ', variables('databaseAccountName'), ';')]",
         "cmdDeleteKeyVault": "[concat('az keyvault delete -g ', resourceGroup().name,' -n ', variables('keyVaultName'), ';')]",
         "cmdDeleteStorageAccount": "[concat('az storage account delete -y -g ', resourceGroup().name, ' -n ', variables('storageAccountName'), ';')]",
-        "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'dba001')]",
+        "databaseAccountName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'-dba001')]",
         "databaseName": "FortiGateAutoscale",
         "databaseSharedThroughput": "[add(add(variables('databaseSharedThroughputBase'), if(variables('enableHybridLicensing'), 200, 0)), if(variables('enableFortiAnalyzer'), 100, 0))]",
         "databaseSharedThroughputBase": 500,
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
         "enableHybridLicensing": true,
-        "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'funcapp')]",
+        "functionAppName": "[concat(variables('uniqueResourceNamePrefix'),'-funcapp001')]",
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifCreateVNet": "[equals(parameters('VnetDeploymentMethod'), 'create new')]",
         "ifCreateVNetInSameRSG": "[and(variables('ifCreateVNet'), or(equals(parameters('VnetResourceGroupName'), ''), equals(parameters('VnetResourceGroupName'), resourceGroup().name)))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
-        "keyVaultName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'kv001')]",
+        "keyVaultName": "[concat(toLower(variables('uniqueResourceNamePrefix')),'-kv001')]",
         "licenseFileDirectory": "license-files",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'paygonly', if(variables('ifBYOLOnly'), 'byolonly', 'hybrid'))]",
         "location": "[resourceGroup().location]",
@@ -413,7 +423,7 @@
             ]
         },
         "subnets": "[union(createArray(variables('subnet1')), if(empty(variables('subnet2').addressRange), createArray(), createArray(variables('subnet2'))), if(empty(variables('subnet3').addressRange), createArray(), createArray(variables('subnet3'))), if(empty(variables('subnet4').addressRange), createArray(), createArray(variables('subnet4'))))]",
-        "trafficPortNumber": 8443,
+        "trafficPortNumber": 443,
         "uniqueId": "[take(uniquestring(resourceGroup().id), 8)]",
         "uniqueResourceNamePrefix": "[concat(parameters('ResourceNamePrefix'), variables('uniqueId'))]",
         "vNetName": "[if(empty(parameters('VnetName')), concat(variables('uniqueResourceNamePrefix'), '-virtual-network'), parameters('VnetName'))]",
@@ -436,8 +446,8 @@
             "sku": "fortinet_fg-vm_payg_20190624",
             "version": "[parameters('FOSVersion')]"
         },
-        "vmssNameBYOL": "[concat(parameters('ResourceNamePrefix'), 'byol')]",
-        "vmssNamePAYG": "[concat(parameters('ResourceNamePrefix'), 'payg')]",
+        "vmssNameBYOL": "[concat(variables('uniqueResourceNamePrefix'), '-vmss-byol001')]",
+        "vmssNamePAYG": "[concat(variables('uniqueResourceNamePrefix'), '-vmss-payg001')]",
         "vmssNamePrimary": "[if(variables('ifPAYGOnly'), variables('vmssNamePAYG'), variables('vmssNameBYOL'))]",
         "vNetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', variables('vNetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', variables('vNetName'))]"
     },
@@ -595,10 +605,10 @@
                 },
                 "parameters": {
                     "NetworkSecurityGroupRulesSubnet1Inbound": {
-                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), 'AllowLBInboundNATPool', 'Allow', '*', createArray(), null(), reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value, '2000', '*', '*', createArray(), '*', createArray()))]"
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-inbound-nat-pool'), 'Allow', '*', createArray(), null(), createArray(variables('adminPortNumberHTTPS'), variables('adminPortNumberSSH')), string(parameters('Subnet1NetworkSecurityGroupRulePriority')), '*', '*', createArray(), '*', createArray()))]"
                     },
                     "NetworkSecurityGroupRulesSubnet1Outbound": {
-                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), 'AllowAllOutbound', 'Allow', '*', createArray(), '*', createArray(), '2000', '*', '*', createArray(), '*', createArray()))]"
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-outbound-all'), 'Allow', '*', createArray(), '*', createArray(), string(parameters('Subnet1NetworkSecurityGroupRulePriority')), '*', '*', createArray(), '*', createArray()))]"
                     },
                     "NetworkSecurityGroupRulesExtraSubnetsInbound": {
                         "value": "[createArray()]"
@@ -611,6 +621,9 @@
                     },
                     "Subnet1Name": {
                         "value": "[variables('subnet1Name')]"
+                    },
+                    "Subnet1NetworkSecurityGroupName": {
+                        "value": "[if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName'))]"
                     },
                     "VNetName": {
                         "value": "[variables('vNetName')]"
@@ -638,15 +651,20 @@
                         "value": "[parameters('FrontendIPAddressID')]"
                     },
                     "ExternalLBNATBackendPortHTTPS": {
-                        "value": 8443
+                        "value": "[variables('adminPortNumberHTTPS')]"
                     },
                     "ExternalLBNATBackendPortSSH": {
-                        "value": 22
+                        "value": "[variables('adminPortNumberSSH')]"
                     },
                     "ExternalLBRules": {
                         "value": [
-                            ["0", "Tcp", "80", "80", "0"],
-                            ["0", "Tcp", "443", "443", "0"]
+                            [
+                                "0",
+                                "Tcp",
+                                "[string(variables('trafficPortNumber'))]",
+                                "[string(variables('trafficPortNumber'))]",
+                                "0"
+                            ]
                         ]
                     },
                     "InternalLBFrontendIPAddress": {
@@ -744,6 +762,9 @@
                     },
                     "StorageAccountName": {
                         "value": "[variables('storageAccountName')]"
+                    },
+                    "UniqueResourceNamePrefix": {
+                        "value": "[variables('uniqueResourceNamePrefix')]"
                     }
                 }
             },
@@ -904,7 +925,7 @@
                 },
                 "parameters": {
                     "AdminPortNumber": {
-                        "value": "[variables('adminPortNumber')]"
+                        "value": "[variables('adminPortNumberHTTPS')]"
                     },
                     "AllowAccessFromIPAddresses": {
                         "value": "[if(empty(parameters('AccessRestrictionIPRange')), createArray(), split(parameters('AccessRestrictionIPRange'), ','))]"
@@ -931,7 +952,7 @@
                         "value": "[parameters('FortiGatePSKSecret')]"
                     },
                     "FunctionAppInsightName": {
-                        "value": "[reference('CreateFunctionApp').outputs.functionAppInsightName.value]"
+                        "value": "[reference('CreateFunctionApp').outputs.appInsightName.value]"
                     },
                     "FunctionAppName": {
                         "value": "[variables('functionAppName')]"
@@ -1026,6 +1047,10 @@
             "type": "String",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNameBYOL.value]"
         },
+        "autoscaleSettingsNamePAYG": {
+            "type": "String",
+            "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNamePAYG.value]"
+        },
         "byolScaleSetDefaultSize": {
             "type": "Int",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.byolScaleSetDefaultSize.value]"
@@ -1044,19 +1069,23 @@
         },
         "cmdDeleteAll": {
             "type": "String",
-            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
+            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('CreateFunctionApp').outputs.cmdDeleteAll.value, reference('UpdateVirtualNetwork').outputs.cmdDeleteAll.value, reference('CreateVirtualMachineScaleSet').outputs.cmdDeleteAll.value, reference('CreateLoadBalancers').outputs.cmdDeleteAll.value, reference('CreateDatabase').outputs.cmdDeleteAll.value, if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.cmdDeleteAll.value, ''), if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.cmdDeleteAll.value, ''), variables('cmdDeleteKeyVault'), variables('cmdDeleteDatabaseAccount'), variables('cmdDeleteStorageAccount'))]"
+        },
+        "cmdPostDeletionCleanUp": {
+            "type": "String",
+            "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('UpdateVirtualNetwork').outputs.cmdDeleteAll.value)]"
         },
         "deploymentPackageVersion": {
             "type": "string",
             "value": "3.3.2"
         },
-        "fazPublicIp": {
-            "type": "String",
-            "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
-        },
         "externalLBInboundNatPortRanges": {
             "type": "Array",
             "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value]"
+        },
+        "fazPublicIp": {
+            "type": "String",
+            "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, 'n/a')]"
         },
         "licenseFileDirectory": {
             "type": "String",
@@ -1065,10 +1094,6 @@
         "licensingModel": {
             "type": "String",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.licensingModel.value]"
-        },
-        "autoscaleSettingsNamePAYG": {
-            "type": "String",
-            "value": "[reference('CreateVirtualMachineScaleSet').outputs.autoscaleSettingsNamePAYG.value]"
         },
         "paygScaleSetDefaultSize": {
             "type": "Int",

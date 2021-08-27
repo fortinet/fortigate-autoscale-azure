@@ -20,12 +20,37 @@
         "Subnet1Name": {
             "type": "String"
         },
+        "Subnet1NetworkSecurityGroupName": {
+            "type": "String"
+        },
         "VNetName": {
             "type": "String"
         }
     },
     "variables": {
-        "voidNSGRules": [
+        "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';')]",
+        "cmdDeleteNSGRulesIn": {
+            "copy": [
+                {
+                    "name": "cmdDeleteNSGRulesInCopyIt",
+                    "count": "[length(variables('nsgRulesIn'))]",
+                    "input": "[if(variables('ifCreateNSGRulesIn'), concat('az network nsg rule delete -g ', resourceGroup().name, ' --nsg-name ', variables('nsgRulesIn')[copyIndex('cmdDeleteNSGRulesInCopyIt')][0], ' -n ', variables('nsgRulesIn')[copyIndex('cmdDeleteNSGRulesInCopyIt')][1],';'), '')]"
+                }
+            ]
+        },
+        "cmdDeleteNSGRulesOut": {
+            "copy": [
+                {
+                    "name": "cmdDeleteNSGRulesOutCopyIt",
+                    "count": "[length(variables('nsgRulesOut'))]",
+                    "input": "[if(variables('ifCreateNSGRulesOut'), concat('az network nsg rule delete -g ', resourceGroup().name, ' --nsg-name ', variables('nsgRulesOut')[copyIndex('cmdDeleteNSGRulesOutCopyIt')][0], ' -n ', variables('nsgRulesOut')[copyIndex('cmdDeleteNSGRulesOutCopyIt')][1],';'), '')]"
+                }
+            ]
+        },
+        "cmdDeleteNSGRules": "[concat(variables('cmdDeleteNSGRulesIn').cmdDeleteNSGRulesInCopyIt, variables('cmdDeleteNSGRulesOut').cmdDeleteNSGRulesOutCopyIt)]",
+        "ifCreateNSGRulesIn": "[if(equals(length(variables('nsgRulesInParam')), 0), false(), true())]",
+        "ifCreateNSGRulesOut": "[if(equals(length(variables('nsgRulesOutParam')), 0), false(), true())]",
+        "nsgRulesExample": [
             [
                 "nsgName",
                 "ruleName",
@@ -42,20 +67,45 @@
                 ["80", "8080", "1000-1999", "array of ports for sourcePortRanges"]
             ]
         ],
-        "ifCreateNSGRulesIn": "[if(equals(length(variables('nsgRulesInParam')), 0), false(), true())]",
-        "ifCreateNSGRulesOut": "[if(equals(length(variables('nsgRulesOutParam')), 0), false(), true())]",
-        "nsgRulesIn": "[if(variables('ifCreateNSGRulesIn'), variables('nsgRulesInParam'), variables('voidNSGRules'))]",
+        "nsgRulesIn": "[if(variables('ifCreateNSGRulesIn'), variables('nsgRulesInParam'), variables('nsgRulesExample'))]",
         "nsgRulesInParam": "[concat(parameters('NetworkSecurityGroupRulesSubnet1Inbound'), parameters('NetworkSecurityGroupRulesExtraSubnetsInbound'))]",
-        "nsgRulesOut": "[if(variables('ifCreateNSGRulesOut'), variables('nsgRulesOutParam'), variables('voidNSGRules'))]",
+        "nsgRulesOut": "[if(variables('ifCreateNSGRulesOut'), variables('nsgRulesOutParam'), variables('nsgRulesExample'))]",
         "nsgRulesOutParam": "[concat(parameters('NetworkSecurityGroupRulesSubnet1Outbound'), parameters('NetworkSecurityGroupRulesExtraSubnetsOutbound'))]"
     },
     "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "CmdDeleteNSGRules",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/template_function.join_string_array.json"
+                },
+                "parameters": {
+                    "InputString": {
+                        "value": ""
+                    },
+                    "Delimiter": {
+                        "value": ""
+                    },
+                    "StringArray": {
+                        "value": "[variables('cmdDeleteNSGRules')]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]"
+        },
         {
             "apiVersion": "2020-11-01",
             "location": "[resourceGroup().location]",
             "name": "[concat(parameters('VNetName'), '/', parameters('Subnet1Name'))]",
             "properties": {
                 "addressPrefix": "[parameters('Subnet1AddressRange')]",
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('Subnet1NetworkSecurityGroupName'))]"
+                },
                 "serviceEndpoints": [
                     {
                         "service": "Microsoft.AzureCosmosDB",
@@ -73,50 +123,55 @@
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
             "apiVersion": "2020-05-01",
             "condition": "[variables('ifCreateNSGRulesIn')]",
-            "name": "[concat(variables('nsgRulesIn')[copyIndex()][0], '/', if(variables('ifCreateNSGRulesIn'), variables('nsgRulesIn')[copyIndex()][1], concat('inbound-rule', copyIndex())))]",
+            "name": "[concat(variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][0], '/', if(variables('ifCreateNSGRulesIn'), variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][1], concat('inbound-rule', copyIndex('nsgRuleInCopyIt'))))]",
             "copy": {
-                "name": "nsgRule",
+                "name": "nsgRuleInCopyIt",
                 "count": "[length(variables('nsgRulesIn'))]"
             },
             "properties": {
-                "access": "[variables('nsgRulesIn')[copyIndex()][2]]",
-                "destinationAddressPrefix": "[variables('nsgRulesIn')[copyIndex()][3]]",
-                "destinationAddressPrefixes": "[variables('nsgRulesIn')[copyIndex()][4]]",
-                "destinationPortRange": "[variables('nsgRulesIn')[copyIndex()][5]]",
-                "destinationPortRanges": "[variables('nsgRulesIn')[copyIndex()][6]]",
+                "access": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][2]]",
+                "destinationAddressPrefix": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][3]]",
+                "destinationAddressPrefixes": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][4]]",
+                "destinationPortRange": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][5]]",
+                "destinationPortRanges": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][6]]",
                 "direction": "Inbound",
-                "priority": "[add(int(variables('nsgRulesIn')[copyIndex()][7]), copyIndex())]",
-                "protocol": "[variables('nsgRulesIn')[copyIndex()][8]]",
-                "sourceAddressPrefix": "[variables('nsgRulesIn')[copyIndex()][9]]",
-                "sourceAddressPrefixes": "[variables('nsgRulesIn')[copyIndex()][10]]",
-                "sourcePortRange": "[variables('nsgRulesIn')[copyIndex()][11]]",
-                "sourcePortRanges": "[variables('nsgRulesIn')[copyIndex()][12]]"
+                "priority": "[add(int(variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][7]), copyIndex('nsgRuleInCopyIt'))]",
+                "protocol": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][8]]",
+                "sourceAddressPrefix": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][9]]",
+                "sourceAddressPrefixes": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][10]]",
+                "sourcePortRange": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][11]]",
+                "sourcePortRanges": "[variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][12]]"
             }
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
             "apiVersion": "2020-05-01",
             "condition": "[variables('ifCreateNSGRulesOut')]",
-            "name": "[concat(variables('nsgRulesOut')[copyIndex()][0], '/', if(variables('ifCreateNSGRulesOut'), variables('nsgRulesOut')[copyIndex()][1], concat('outbound-rule', copyIndex())))]",
+            "name": "[concat(variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][0], '/', if(variables('ifCreateNSGRulesOut'), variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][1], concat('outbound-rule', copyIndex('nsgRuleOutCopyIt'))))]",
             "copy": {
-                "name": "nsgRule",
+                "name": "nsgRuleOutCopyIt",
                 "count": "[length(variables('nsgRulesOut'))]"
             },
             "properties": {
-                "access": "[variables('nsgRulesOut')[copyIndex()][2]]",
-                "destinationAddressPrefix": "[variables('nsgRulesOut')[copyIndex()][3]]",
-                "destinationAddressPrefixes": "[variables('nsgRulesOut')[copyIndex()][4]]",
-                "destinationPortRange": "[variables('nsgRulesOut')[copyIndex()][5]]",
-                "destinationPortRanges": "[variables('nsgRulesOut')[copyIndex()][6]]",
+                "access": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][2]]",
+                "destinationAddressPrefix": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][3]]",
+                "destinationAddressPrefixes": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][4]]",
+                "destinationPortRange": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][5]]",
+                "destinationPortRanges": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][6]]",
                 "direction": "Outbound",
-                "priority": "[add(int(variables('nsgRulesOut')[copyIndex()][7]), copyIndex())]",
-                "protocol": "[variables('nsgRulesOut')[copyIndex()][8]]",
-                "sourceAddressPrefix": "[variables('nsgRulesOut')[copyIndex()][9]]",
-                "sourceAddressPrefixes": "[variables('nsgRulesOut')[copyIndex()][10]]",
-                "sourcePortRange": "[variables('nsgRulesOut')[copyIndex()][11]]",
-                "sourcePortRanges": "[variables('nsgRulesOut')[copyIndex()][12]]"
+                "priority": "[add(int(variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][7]), copyIndex('nsgRuleOutCopyIt'))]",
+                "protocol": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][8]]",
+                "sourceAddressPrefix": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][9]]",
+                "sourceAddressPrefixes": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][10]]",
+                "sourcePortRange": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][11]]",
+                "sourcePortRanges": "[variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][12]]"
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "cmdDeleteAll": {
+            "type": "String",
+            "value": "[concat(variables('cmdDeleteAll'), reference('CmdDeleteNSGRules').outputs.outputString.value)]"
+        }
+    }
 }
