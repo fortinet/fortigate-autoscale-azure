@@ -20,6 +20,9 @@
         "Subnet1Name": {
             "type": "String"
         },
+        "Subnet1NetworkSecurityGroupName": {
+            "type": "String"
+        },
         "VNetName": {
             "type": "String"
         }
@@ -100,6 +103,9 @@
             "name": "[concat(parameters('VNetName'), '/', parameters('Subnet1Name'))]",
             "properties": {
                 "addressPrefix": "[parameters('Subnet1AddressRange')]",
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('Subnet1NetworkSecurityGroupName'))]"
+                },
                 "serviceEndpoints": [
                     {
                         "service": "Microsoft.AzureCosmosDB",

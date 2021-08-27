@@ -622,6 +622,9 @@
                     "Subnet1Name": {
                         "value": "[variables('subnet1Name')]"
                     },
+                    "Subnet1NetworkSecurityGroupName": {
+                        "value": "[if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName'))]"
+                    },
                     "VNetName": {
                         "value": "[variables('vNetName')]"
                     }

@@ -32,28 +32,8 @@
         "networkSecurityGroupIdExternal": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupNameExternal'))]",
         "networkSecurityGroupName": "[concat(parameters('UniqueResourceNamePrefix'), '-nsg')]",
         "networkSecurityGroupNameExternal": "[concat(variables('networkSecurityGroupName'), '-ext-lb')]",
-        "serviceEndpoints": [
-            {
-                "service": "Microsoft.AzureCosmosDB",
-                "locations": ["*"]
-            },
-            {
-                "service": "Microsoft.Web",
-                "locations": ["*"]
-            }
-        ],
         "subnet1Id": "[parameters('Subnets')[0].id]",
         "subnet1Name": "[parameters('Subnets')[0].name]",
-        "subnet1": {
-            "name": "[parameters('Subnets')[0].name]",
-            "properties": {
-                "addressPrefix": "[parameters('Subnets')[0].addressRange]",
-                "networkSecurityGroup": {
-                    "id": "[variables('networkSecurityGroupIdExternal')]"
-                },
-                "serviceEndpoints": "[variables('serviceEndpoints')]"
-            }
-        },
         "subnets": {
             "copy": [
                 {
@@ -62,8 +42,7 @@
                     "input": {
                         "name": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].name]",
                         "properties": {
-                            "addressPrefix": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].addressRange]",
-                            "serviceEndpoints": "[createArray()]"
+                            "addressPrefix": "[parameters('Subnets')[copyIndex('subnetsCopyIt')].addressRange]"
                         }
                     }
                 }
@@ -90,7 +69,7 @@
                 "addressSpace": {
                     "addressPrefixes": ["[parameters('VnetAddressSpace')]"]
                 },
-                "Subnets": "[concat(createArray(variables('subnet1')), skip(variables('subnets').subnetsCopyIt, 1))]"
+                "Subnets": "[variables('subnets').subnetsCopyIt]"
             },
             "type": "Microsoft.Network/virtualNetworks"
         },
@@ -123,6 +102,10 @@
         "cmdDeleteAll": {
             "type": "String",
             "value": "[concat(variables('cmdDeleteAll'), reference('CmdDeassociateNSG').outputs.outputString.value, variables('cmdDeleteNSG'), variables('cmdDeleteVNet'))]"
+        },
+        "networkSecurityGroupIdExternal": {
+            "type": "String",
+            "value": "[variables('networkSecurityGroupIdExternal')]"
         },
         "networkSecurityGroupNameExternal": {
             "type": "String",
