@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.2.0",
+    "contentVersion": "2.0.9.0",
     "parameters": {
         "AccessRestrictionIPRange": {
             "defaultValue": "",
@@ -919,7 +919,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.faz_integration.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/2.0.9-upgrade.2/templates/linked_template.faz_integration.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -962,7 +962,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.function_app.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/2.0.9-upgrade.2/templates/linked_template.function_app.json"
                 },
                 "parameters": {
                     "FunctionAppName": {
@@ -1002,7 +1002,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.function_app.setup.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/2.0.9-upgrade.2/templates/linked_template.function_app.setup.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
@@ -1120,7 +1120,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.vmss.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/2.0.9-upgrade.2/templates/linked_template.vmss.json"
                 },
                 "parameters": {
                     "AdminPassword": {
@@ -1275,7 +1275,7 @@
         },
         "deploymentPackageVersion": {
             "type": "string",
-            "value": "3.3.0"
+            "value": "2.0.9-upgrade.2"
         },
         "fazPublicIp": {
             "type": "String",
