@@ -122,9 +122,6 @@
         "VMSSPlacementGroups": {
             "value": "single"
         },
-        "VMSSZoneBalance": {
-            "value": false
-        },
         "VnetAddressSpace": {
             "value": "10.0.0.0/16"
         },

@@ -318,7 +318,7 @@
             "defaultValue": [],
             "type": "Array",
             "metadata": {
-                "description": "An array of the availability zones the VMSS will be created with. Input format: [1, 2, 3]. Leave it empty to deploy without specifying any availability zone. The template does not validate the input availability zone against the region. Please find the right number of availability zones of regions from: https://docs.microsoft.com/en-us/azure/availability-zones/az-region"
+                "description": "The array of the availability zones to use 'strict zone balancing'. Input format: [1, 2, 3]. Leave it empty to use 'best-effort' zone balance. The template does not validate the input availability zone against the region. Please find the right number of availability zones of regions from: https://docs.microsoft.com/en-us/azure/availability-zones/az-region. For zone balancing, please refer to: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#zone-balancing."
             }
         },
         "VMSSPlacementGroups": {
@@ -327,14 +327,6 @@
             "type": "String",
             "metadata": {
                 "description": "The VMSS placement group options. For more information, please see: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#placement-groups"
-            }
-        },
-        "VMSSZoneBalance": {
-            "allowedValues": [true, false],
-            "defaultValue": false,
-            "type": "Bool",
-            "metadata": {
-                "description": "The VMSS zone balance options if 'VMSSAvailabilityZones' is provided. For more information, please see: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#zone-balancing"
             }
         },
         "VnetAddressSpace": {
@@ -870,7 +862,7 @@
                         "value": "[variables('vmssNamePAYG')]"
                     },
                     "ZoneBalance": {
-                        "value": "[parameters('VMSSZoneBalance')]"
+                        "value": "[if(empty(parameters('VMSSAvailabilityZones')), false(), true())]"
                     }
                 }
             },
