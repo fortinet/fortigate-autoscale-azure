@@ -133,13 +133,15 @@ function syncVersionOnReadMe(newVersion: semver.SemVer): void {
     if (!currentVersion) {
         [place, currentVersion] = readmeContent.match(regexEncodedUrl) || [];
     }
-    console.log(`current version found on README is ${chalk.yellow(currentVersion)}.`);
-    console.log(`new version is set to: ${chalk.green(newVersion.version)}.`);
-    const rep = place.replace(currentVersion, newVersion.version);
-    const newContent = readmeContent.replace(place, rep);
-    console.log(`${chalk.yellow(place)} is replaced with ${chalk.green(rep)}`);
-    fs.writeFileSync(filePath, newContent);
-    console.log(`${filePath} has been updated.`);
+    if (currentVersion) {
+        console.log(`current version found on README is ${chalk.yellow(currentVersion)}.`);
+        console.log(`new version is set to: ${chalk.green(newVersion.version)}.`);
+        const rep = place.replace(currentVersion, newVersion.version);
+        const newContent = readmeContent.replace(place, rep);
+        console.log(`${chalk.yellow(place)} is replaced with ${chalk.green(rep)}`);
+        fs.writeFileSync(filePath, newContent);
+        console.log(`${filePath} has been updated.`);
+    }
 }
 
 // sync version on azure templates
