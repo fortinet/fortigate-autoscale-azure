@@ -318,7 +318,7 @@
             "defaultValue": [],
             "type": "Array",
             "metadata": {
-                "description": "The array of the availability zones to use 'strict zone balancing'. Input format: [1, 2, 3]. Leave it empty to use 'best-effort' zone balance. The template does not validate the input availability zone against the region. Please find the right number of availability zones of regions from: https://docs.microsoft.com/en-us/azure/availability-zones/az-region. For zone balancing, please refer to: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#zone-balancing."
+                "description": "The array of the availability zones to use 'strict zone balancing'. Input format: [1, 2, 3]. Leave it empty or an empty array [] to use 'best-effort' zone balance. Single zone selection such as [2] will imply 'zone balancing is not applicable'. The template does not validate the input availability zone against the region. Please find the right number of availability zones of regions from: https://docs.microsoft.com/en-us/azure/availability-zones/az-region. For zone balancing, please refer to: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#zone-balancing."
             }
         },
         "VMSSPlacementGroups": {
