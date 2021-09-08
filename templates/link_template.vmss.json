@@ -309,7 +309,7 @@
         },
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
-        "ifZonal": "[or(greater(length(parameters('AvailabilityZones')), 1), empty(parameters('AvailabilityZones')))]",
+        "ifZonal": "[not(equals(length(parameters('AvailabilityZones')), 1))]",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'PAYG-Only', if(variables('ifBYOLOnly'), 'BYOL-Only', 'Hybrid'))]",
         "networkInterfaceConfigurationNonLoadBalancingSubnets": {
             "copy": [
