@@ -649,15 +649,7 @@
                         "value": "[variables('adminPortNumberSSH')]"
                     },
                     "ExternalLBRules": {
-                        "value": [
-                            [
-                                "0",
-                                "Tcp",
-                                "[string(variables('trafficPortNumber'))]",
-                                "[string(variables('trafficPortNumber'))]",
-                                "0"
-                            ]
-                        ]
+                        "value": []
                     },
                     "InternalLBFrontendIPAddress": {
                         "value": ""
