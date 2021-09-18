@@ -418,7 +418,7 @@
         "trafficPortNumber": 443,
         "uniqueId": "[take(uniquestring(resourceGroup().id), 8)]",
         "uniqueResourceNamePrefix": "[concat(parameters('ResourceNamePrefix'), variables('uniqueId'))]",
-        "vNetName": "[if(empty(parameters('VnetName')), concat(variables('uniqueResourceNamePrefix'), '-virtual-network'), parameters('VnetName'))]",
+        "vNetName": "[if(empty(parameters('VnetName')), concat(variables('uniqueResourceNamePrefix'), '-virtual-network001'), parameters('VnetName'))]",
         "vNetResourceGroupName": "[if(variables('ifCreateVNetInSameRSG'), resourceGroup().name, parameters('VnetResourceGroupName'))]",
         "vmImgReferenceFazBYOL": {
             "publisher": "fortinet",

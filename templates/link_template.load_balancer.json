@@ -77,7 +77,7 @@
             ]
         },
         "externalLBFrontendIPId": "[if(variables('ifCreateExternalLBPublicFrontendIP'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('externalLBFrontendIPName')), parameters('ExternalLBFrontendIPId'))]",
-        "externalLBFrontendIPName": "[concat(parameters('UniqueResourceNamePrefix'), '-external-load-balancer-public-ip')]",
+        "externalLBFrontendIPName": "[concat(variables('externalLoadBalancerName'), '-ip')]",
         "externalLBInboundNatPoolIdsBYOL": "[createArray(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPS')), resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSBYOLSSH')))]",
         "externalLBInboundNatPoolIdsPAYG": "[createArray(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPS')), resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSPAYGSSH')))]",
         "externalLBRulesExample": [
@@ -131,7 +131,7 @@
         ],
         "loadBalancerFrontendIPConfigNames": ["frontend-ip-config-001"],
         "externalLoadBalancerId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('externalLoadBalancerName'))]",
-        "externalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-external-load-balancer')]",
+        "externalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-external-load-balancer001')]",
         "ifCreateExternalLBPublicFrontendIP": "[empty(parameters('ExternalLBFrontendIPId'))]",
         "ifCreateInternalLB": "[and(not(empty(parameters('InternalLBFrontendIPAddress'))), not(empty(parameters('InternalLBFrontendSubnetId'))))]",
         "internalLoadBalancerBackendIPPoolId1": "[concat(variables('internalLoadBalancerId'), '/backendAddressPools/',variables('internalLoadBalancerBackendIPPoolName1'))]",
