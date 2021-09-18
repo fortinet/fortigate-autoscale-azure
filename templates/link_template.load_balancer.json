@@ -89,7 +89,7 @@
                 "0, numeric string, backend pool index, now support 0 - 3, matching the length of parameter ExternalLBBackendPoolNames"
             ]
         ],
-        "nonEmptyExternalLBRules": "[if(empty(parameters('ExternalLBRules')), createArray('0', 'TCP', '80', '80', '0'), parameters('ExternalLBRules'))]",
+        "nonEmptyExternalLBRules": "[if(empty(parameters('ExternalLBRules')), createArray(createArray('0', 'TCP', '80', '80', '0')), parameters('ExternalLBRules'))]",
         "externalLBRules": {
             "copy": [
                 {
