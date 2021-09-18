@@ -77,7 +77,7 @@
             ]
         },
         "externalLBFrontendIPId": "[if(variables('ifCreateExternalLBPublicFrontendIP'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/publicIPAddresses/', variables('externalLBFrontendIPName')), parameters('ExternalLBFrontendIPId'))]",
-        "externalLBFrontendIPName": "[concat(parameters('UniqueResourceNamePrefix'), '-external-load-balancer-public-ip')]",
+        "externalLBFrontendIPName": "[concat(variables('externalLoadBalancerName'), '-ip')]",
         "externalLBInboundNatPoolIdsBYOL": "[createArray(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSBYOLHTTPS')), resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSBYOLSSH')))]",
         "externalLBInboundNatPoolIdsPAYG": "[createArray(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSPAYGHTTPS')), resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', variables('externalLoadBalancerName'), variables('loadBalancerInboundNatPoolNameVMSSPAYGSSH')))]",
         "externalLBRulesExample": [
@@ -89,19 +89,20 @@
                 "0, numeric string, backend pool index, now support 0 - 3, matching the length of parameter ExternalLBBackendPoolNames"
             ]
         ],
+        "nonEmptyExternalLBRules": "[if(empty(parameters('ExternalLBRules')), createArray(createArray('0', 'TCP', '80', '80', '0')), parameters('ExternalLBRules'))]",
         "externalLBRules": {
             "copy": [
                 {
                     "name": "externalLBRulesCopyIt",
-                    "count": "[length(parameters('ExternalLBRules'))]",
+                    "count": "[length(variables('nonEmptyExternalLBRules'))]",
                     "input": {
-                        "name": "[concat(variables('loadBalancerFrontendIPConfigNames')[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][0])], '-', parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][1], '-', parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][2], '-', parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][3])]",
+                        "name": "[concat(variables('loadBalancerFrontendIPConfigNames')[int(variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][0])], '-', variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][1], '-', variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][2], '-', variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][3])]",
                         "properties": {
-                            "frontendIPConfiguration": "[variables('externalLoadBalancerFrontendIPConfigurationsOfId')[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][0])]]",
-                            "backendAddressPool": "[variables('externalLBBackendAddressPoolsOfId').externalLBBackendAddressPoolsOfIdCopyIt[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][4])]]",
-                            "protocol": "[parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][1]]",
-                            "frontendPort": "[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][2])]",
-                            "backendPort": "[int(parameters('ExternalLBRules')[copyIndex('externalLBRulesCopyIt')][3])]",
+                            "frontendIPConfiguration": "[variables('externalLoadBalancerFrontendIPConfigurationsOfId')[int(variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][0])]]",
+                            "backendAddressPool": "[variables('externalLBBackendAddressPoolsOfId').externalLBBackendAddressPoolsOfIdCopyIt[int(variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][4])]]",
+                            "protocol": "[variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][1]]",
+                            "frontendPort": "[int(variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][2])]",
+                            "backendPort": "[int(variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][3])]",
                             "loadDistribution": "SourceIP",
                             "enableFloatingIP": true,
                             "probe": {
@@ -130,7 +131,7 @@
         ],
         "loadBalancerFrontendIPConfigNames": ["frontend-ip-config-001"],
         "externalLoadBalancerId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('externalLoadBalancerName'))]",
-        "externalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-external-load-balancer')]",
+        "externalLoadBalancerName": "[concat(parameters('UniqueResourceNamePrefix'), '-external-load-balancer001')]",
         "ifCreateExternalLBPublicFrontendIP": "[empty(parameters('ExternalLBFrontendIPId'))]",
         "ifCreateInternalLB": "[and(not(empty(parameters('InternalLBFrontendIPAddress'))), not(empty(parameters('InternalLBFrontendSubnetId'))))]",
         "internalLoadBalancerBackendIPPoolId1": "[concat(variables('internalLoadBalancerId'), '/backendAddressPools/',variables('internalLoadBalancerBackendIPPoolName1'))]",
@@ -223,7 +224,7 @@
                         }
                     }
                 ],
-                "loadBalancingRules": "[variables('externalLBRules').externalLBRulesCopyIt]",
+                "loadBalancingRules": "[if(empty(parameters('ExternalLBRules')), null(), variables('externalLBRules').externalLBRulesCopyIt)]",
                 "probes": [
                     {
                         "name": "probe-tcp-22-5-3",
