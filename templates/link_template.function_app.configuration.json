@@ -267,11 +267,11 @@
                         },
                         {
                             "name": "custom-asset-container",
-                            "value": "n/a"
+                            "value": "fortigate-autoscale"
                         },
                         {
                             "name": "custom-asset-directory",
-                            "value": "n/a"
+                            "value": "custom-assets"
                         },
                         {
                             "name": "egress-traffic-route-table",
