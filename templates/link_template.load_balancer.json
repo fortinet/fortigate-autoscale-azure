@@ -225,6 +225,19 @@
                     }
                 ],
                 "loadBalancingRules": "[if(empty(parameters('ExternalLBRules')), null(), variables('externalLBRules').externalLBRulesCopyIt)]",
+                "outboundRules": [
+                    {
+                        "name": "[concat(variables('loadBalancerFrontendIPConfigNames')[0], '-all')]",
+                        "properties": {
+                            "allocatedOutboundPorts": 0,
+                            "protocol": "All",
+                            "enableTcpReset": true,
+                            "idleTimeoutInMinutes": 4,
+                            "backendAddressPool": "[variables('externalLBBackendAddressPoolsOfId').externalLBBackendAddressPoolsOfIdCopyIt[0]]",
+                            "frontendIPConfigurations": "[createArray(variables('externalLoadBalancerFrontendIPConfigurationsOfId')[0])]"
+                        }
+                    }
+                ],
                 "probes": [
                     {
                         "name": "probe-tcp-22-5-3",
