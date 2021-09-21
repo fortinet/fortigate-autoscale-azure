@@ -105,6 +105,7 @@
                             "backendPort": "[int(variables('nonEmptyExternalLBRules')[copyIndex('externalLBRulesCopyIt')][3])]",
                             "loadDistribution": "SourceIP",
                             "enableFloatingIP": true,
+                            "disableOutboundSnat": true,
                             "probe": {
                                 "id": "[concat(variables('externalLoadBalancerId'), '/probes/', variables('externalLBProbes')[0].name)]"
                             }
