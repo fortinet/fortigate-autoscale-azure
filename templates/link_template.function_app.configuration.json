@@ -102,6 +102,10 @@
         "SyncRecoveryCount": {
             "type": "Int"
         },
+        "TerminateUnhealthyVM": {
+            "type": "String",
+            "allowedValues": ["no", "yes"]
+        },
 
         "TrafficPortNumber": {
             "type": "Int"
@@ -121,7 +125,8 @@
     },
     "variables": {
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
-        "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]"
+        "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]",
+        "terminateUnhealthyVM": "[equals(parameters('TerminateUnhealthyVM'), 'yes')]"
     },
     "resources": [
         {
@@ -411,7 +416,7 @@
                         },
                         {
                             "name": "terminate-unhealthy-vm",
-                            "value": "false"
+                            "value": "[variables('terminateUnhealthyVM')]"
                         },
                         {
                             "name": "vm-info-cache-time",

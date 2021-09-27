@@ -116,6 +116,12 @@
         "Subnet4Name": {
             "value": ""
         },
+        "SyncRecoveryCount": {
+            "value": 3
+        },
+        "TerminateUnhealthyVM": {
+            "value": "no"
+        },
         "VMSSAvailabilityZones": {
             "value": []
         },

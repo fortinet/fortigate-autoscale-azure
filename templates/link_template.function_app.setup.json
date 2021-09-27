@@ -96,6 +96,13 @@
         "StorageAccountName": {
             "type": "String"
         },
+        "SyncRecoveryCount": {
+            "type": "Int"
+        },
+        "TerminateUnhealthyVM": {
+            "type": "String",
+            "allowedValues": ["no", "yes"]
+        },
         "TrafficPortNumber": {
             "type": "Int"
         },
@@ -113,7 +120,8 @@
         }
     },
     "variables": {
-        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]"
+        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
+        "terminateUnhealthyVM": "[equals(parameters('TerminateUnhealthyVM'), 'yes')]"
     },
     "resources": [
         {
@@ -221,6 +229,12 @@
                     },
                     "StorageAccountName": {
                         "value": "[parameters('StorageAccountName')]"
+                    },
+                    "SyncRecoveryCount": {
+                        "value": "[parameters('SyncRecoveryCount')]"
+                    },
+                    "TerminateUnhealthyVM": {
+                        "value": "[variables('terminateUnhealthyVM')]"
                     },
                     "TrafficPortNumber": {
                         "value": "[parameters('TrafficPortNumber')]"
