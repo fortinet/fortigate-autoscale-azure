@@ -309,7 +309,7 @@
         },
         "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
         "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
-        "ifZonal": "[not(equals(length(parameters('AvailabilityZones')), 1))]",
+        "ifZoneBalanceable": "[greater(length(parameters('AvailabilityZones')), 1)]",
         "licensingModel": "[if(variables('ifPAYGOnly'), 'PAYG-Only', if(variables('ifBYOLOnly'), 'BYOL-Only', 'Hybrid'))]",
         "networkInterfaceConfigurationNonLoadBalancingSubnets": {
             "copy": [
@@ -425,7 +425,7 @@
                         "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurationsBYOL')]"
                     }
                 },
-                "zoneBalance": "[if(variables('ifZonal'), parameters('ZoneBalance'), null())]"
+                "zoneBalance": "[if(variables('ifZoneBalanceable'), parameters('ZoneBalance'), null())]"
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
@@ -483,7 +483,7 @@
                         "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurationsPAYG')]"
                     }
                 },
-                "zoneBalance": "[if(variables('ifZonal'), parameters('ZoneBalance'), null())]"
+                "zoneBalance": "[if(variables('ifZoneBalanceable'), parameters('ZoneBalance'), null())]"
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",

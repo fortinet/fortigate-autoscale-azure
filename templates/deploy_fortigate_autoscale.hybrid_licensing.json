@@ -88,8 +88,8 @@
             }
         },
         "FOSVersion": {
-            "defaultValue": "6.4.5",
-            "allowedValues": ["6.4.5"],
+            "defaultValue": "7.0.1",
+            "allowedValues": ["7.0.1", "7.0.0", "6.4.7", "6.4.5"],
             "type": "String",
             "metadata": {
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
@@ -418,7 +418,7 @@
         "trafficPortNumber": 443,
         "uniqueId": "[take(uniquestring(resourceGroup().id), 8)]",
         "uniqueResourceNamePrefix": "[concat(parameters('ResourceNamePrefix'), variables('uniqueId'))]",
-        "vNetName": "[if(empty(parameters('VnetName')), concat(variables('uniqueResourceNamePrefix'), '-virtual-network'), parameters('VnetName'))]",
+        "vNetName": "[if(empty(parameters('VnetName')), concat(variables('uniqueResourceNamePrefix'), '-virtual-network001'), parameters('VnetName'))]",
         "vNetResourceGroupName": "[if(variables('ifCreateVNetInSameRSG'), resourceGroup().name, parameters('VnetResourceGroupName'))]",
         "vmImgReferenceFazBYOL": {
             "publisher": "fortinet",
@@ -637,7 +637,7 @@
                 },
                 "parameters": {
                     "ExternalLBBackendPoolNames": {
-                        "value": ["subnet1", "subnet2", "subne3", "subnet4"]
+                        "value": ["fortigate-vmss-port1"]
                     },
                     "ExternalLBFrontendIPId": {
                         "value": "[parameters('FrontendIPAddressID')]"
@@ -649,15 +649,7 @@
                         "value": "[variables('adminPortNumberSSH')]"
                     },
                     "ExternalLBRules": {
-                        "value": [
-                            [
-                                "0",
-                                "Tcp",
-                                "[string(variables('trafficPortNumber'))]",
-                                "[string(variables('trafficPortNumber'))]",
-                                "0"
-                            ]
-                        ]
+                        "value": []
                     },
                     "InternalLBFrontendIPAddress": {
                         "value": ""
