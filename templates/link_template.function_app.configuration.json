@@ -99,6 +99,10 @@
         "StorageAccountName": {
             "type": "String"
         },
+        "SyncRecoveryCount": {
+            "type": "Int"
+        },
+
         "TrafficPortNumber": {
             "type": "Int"
         },
@@ -400,6 +404,14 @@
                         {
                             "name": "scaling-group-min-size",
                             "value": "[parameters('PAYGInstanceCount')]"
+                        },
+                        {
+                            "name": "sync-recovery-count",
+                            "value": "[parameters('SyncRecoveryCount')]"
+                        },
+                        {
+                            "name": "terminate-unhealthy-vm",
+                            "value": "false"
                         },
                         {
                             "name": "vm-info-cache-time",
