@@ -1021,7 +1021,7 @@
                         "value": "[parameters('SyncRecoveryCount')]"
                     },
                     "TerminateUnhealthyVM": {
-                        "value": "[variables('terminateUnhealthyVM')]"
+                        "value": "[parameters('TerminateUnhealthyVM')]"
                     },
 
                     "TrafficPortNumber": {

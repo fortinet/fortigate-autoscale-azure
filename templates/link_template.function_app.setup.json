@@ -121,7 +121,6 @@
     },
     "variables": {
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
-        "terminateUnhealthyVM": "[equals(parameters('TerminateUnhealthyVM'), 'yes')]"
     },
     "resources": [
         {
@@ -234,7 +233,7 @@
                         "value": "[parameters('SyncRecoveryCount')]"
                     },
                     "TerminateUnhealthyVM": {
-                        "value": "[variables('terminateUnhealthyVM')]"
+                        "value": "[parameters('TerminateUnhealthyVM')]"
                     },
                     "TrafficPortNumber": {
                         "value": "[parameters('TrafficPortNumber')]"
