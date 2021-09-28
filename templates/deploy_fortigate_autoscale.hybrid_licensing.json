@@ -431,7 +431,6 @@
             ]
         },
         "subnets": "[union(createArray(variables('subnet1')), if(empty(variables('subnet2').addressRange), createArray(), createArray(variables('subnet2'))), if(empty(variables('subnet3').addressRange), createArray(), createArray(variables('subnet3'))), if(empty(variables('subnet4').addressRange), createArray(), createArray(variables('subnet4'))))]",
-        "terminateUnhealthyVM": "[equals(parameters('TerminateUnhealthyVM'), 'yes')]",
         "trafficPortNumber": 443,
         "uniqueId": "[take(uniquestring(resourceGroup().id), 8)]",
         "uniqueResourceNamePrefix": "[concat(parameters('ResourceNamePrefix'), variables('uniqueId'))]",
