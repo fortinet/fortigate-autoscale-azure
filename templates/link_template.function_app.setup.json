@@ -120,7 +120,7 @@
         }
     },
     "variables": {
-        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
+        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]"
     },
     "resources": [
         {
