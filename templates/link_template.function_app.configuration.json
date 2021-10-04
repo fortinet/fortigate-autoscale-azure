@@ -125,7 +125,7 @@
     },
     "variables": {
         "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
-        "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]",
+        "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]"
     },
     "resources": [
         {
@@ -415,7 +415,7 @@
                         },
                         {
                             "name": "terminate-unhealthy-vm",
-                            "value": "[if(equals(parameters('TerminateUnhealthyVM'), 'yes', 'true', 'false')]"
+                            "value": "[if(equals(parameters('TerminateUnhealthyVM'), 'yes'), 'true', 'false')]"
                         },
                         {
                             "name": "vm-info-cache-time",
