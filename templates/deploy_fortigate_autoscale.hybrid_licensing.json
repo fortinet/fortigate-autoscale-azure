@@ -319,7 +319,7 @@
             "allowedValues": ["no", "yes"],
             "type": "String",
             "metadata": {
-                "description": "Default 'no'. When Set to 'no' VM termination and health will be determined by the Azure health probe and AutoHealing. This is the recommended value. When set to true, the Azure Function code will attempt to determine the health of the VM and will delete unhealthy VMs. "
+                "description": "Set to 'yes' to have the Azure Function code (FortiGate Autoscale) determine the health of the VM and delete unhealthy VMs. The default value is 'no' and is the recommended value."
             }
         },
         "SyncRecoveryCount": {
@@ -327,7 +327,7 @@
             "minValue": 3,
             "type": "Int",
             "metadata": {
-                "description": "When 'Terminate Unhealthy VM' is set to false, the  'Sync Recovery Count' determines the amount of in-sync heartbeats needed to return a VM to a healthy state from an out-of-sync state. "
+                "description": "Number of consecutive on-time heartbeats required for the VM to recover from an unhealthy state. This parameters is only used when 'Terminate Unhealthy VM' is set to ‘no’."
             }
         },
         "VMSSAvailabilityZones": {
