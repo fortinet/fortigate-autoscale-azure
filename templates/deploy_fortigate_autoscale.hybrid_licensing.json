@@ -178,7 +178,7 @@
             "type": "String",
             "defaultValue": "",
             "metadata": {
-                "description": "Public URL of the deployment package fortigate-autoscale-azure-funcapp.zip. This file is within the deployment package fortigate-autoscale-azure-template-deployment.zip and contains the resource used to deploy the Function App. This URL must be accessible by Azure."
+                "description": "Public URL of the Autoscale Function App source file fortigate-autoscale-azure-funcapp.zip. This URL must be accessible by Azure. The default value points to the source file available in the release assets of the GitHub repo fortinet/fortigate-autoscale-azure."
             }
         },
         "PrimaryElectionTimeout": {
