@@ -1,8 +1,10 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
 import { JSONable, log } from './lib-concourse';
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function readJSONTemplate(filePath: string): JSONable {
