@@ -44,7 +44,7 @@
   "homepage": "https://github.com/fortinet/fortigate-autoscale-azure#readme",
   "dependencies": {
     "@azure/functions": "^1.2.3",
-    "@fortinet/fortigate-autoscale": "https://github.com/fortinet/autoscale-core/releases/download/3.3.2-dev.1/fortinet-fortigate-autoscale-3.3.2-dev.1.tgz",
+    "@fortinet/fortigate-autoscale": "https://github.com/fortinet/autoscale-core/releases/download/3.3.2/fortinet-fortigate-autoscale-3.3.2.tgz",
     "@types/node": "^13.13.50",
     "http-status-codes": "^1.4.0"
   },
