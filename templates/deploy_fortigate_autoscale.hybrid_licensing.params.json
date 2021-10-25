@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "3.3.2.0",
+    "contentVersion": "3.3.0.0",
     "parameters": {
         "AccessRestrictionIPRange": {
             "value": ""
@@ -35,12 +35,6 @@
         "FOSVersion": {
             "value": "6.4.5"
         },
-        "FrontendIPDeploymentMethod": {
-            "value": "create new public IP address"
-        },
-        "FrontendIPName": {
-            "value": ""
-        },
         "HeartBeatDelayAllowance": {
             "value": 30
         },
@@ -52,9 +46,6 @@
         },
         "InstanceType": {
             "value": "Standard_F4"
-        },
-        "LoadBalancerIP": {
-            "value": "10"
         },
         "MaxBYOLInstanceCount": {
             "value": 2
@@ -68,17 +59,11 @@
         "MinPAYGInstanceCount": {
             "value": 0
         },
-        "NetworkSecurityGroupName": {
-            "value": ""
-        },
         "PAYGInstanceCount": {
             "value": 0
         },
-        "PackageResURL": {
-            "value": ""
-        },
         "PrimaryElectionTimeout": {
-            "value": 90
+            "value": 600
         },
         "ResourceNamePrefix": {
             "value": ""
@@ -110,6 +95,9 @@
         "Subnet1Name": {
             "value": ""
         },
+        "Subnet1NetworkSecurityGroupName": {
+            "value": ""
+        },
         "Subnet2AddressRange": {
             "value": "10.0.1.0/24"
         },
@@ -117,16 +105,28 @@
             "value": ""
         },
         "Subnet3AddressRange": {
-            "value": "10.0.2.0/24"
+            "value": ""
         },
         "Subnet3Name": {
             "value": ""
         },
         "Subnet4AddressRange": {
-            "value": "10.0.3.0/24"
+            "value": ""
         },
         "Subnet4Name": {
             "value": ""
+        },
+        "SyncRecoveryCount": {
+            "value": 3
+        },
+        "TerminateUnhealthyVM": {
+            "value": "no"
+        },
+        "VMSSAvailabilityZones": {
+            "value": []
+        },
+        "VMSSPlacementGroups": {
+            "value": "single"
         },
         "VnetAddressSpace": {
             "value": "10.0.0.0/16"

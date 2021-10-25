@@ -2,6 +2,7 @@
 // the schema is pulled from the latest Azure docs: https://docs.microsoft.com/en-us/azure/templates/microsoft.resources/deployments?tabs=json
 // the schema is up-to-date per the last modified date of this file.
 // the schema type exported here is partial. More can be added when needed.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Resource } from './resource';
 
 export interface ResourceDeployment extends Resource {

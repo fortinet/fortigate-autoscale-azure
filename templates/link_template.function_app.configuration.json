@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.2.0",
+    "contentVersion": "3.3.0.0",
     "parameters": {
         "AdminPortNumber": {
             "type": "Int"
@@ -99,6 +99,14 @@
         "StorageAccountName": {
             "type": "String"
         },
+        "SyncRecoveryCount": {
+            "type": "Int"
+        },
+        "TerminateUnhealthyVM": {
+            "type": "String",
+            "allowedValues": ["no", "yes"]
+        },
+
         "TrafficPortNumber": {
             "type": "Int"
         },
@@ -111,13 +119,13 @@
         "VnetName": {
             "type": "String"
         },
-        "VnetResourceGroupName": {
+        "VmssResourceGroupName": {
             "type": "String"
         }
     },
     "variables": {
-        "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]",
-        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]"
+        "enableFortiAnalyzer": "[equals(parameters('FortiAnalyzerIntegrationOptions'), 'yes')]",
+        "funcappURL": "[concat('https://', parameters('FunctionAppName'), '.azurewebsites.net')]"
     },
     "resources": [
         {
@@ -203,7 +211,7 @@
                         },
                         {
                             "name": "RESOURCE_GROUP",
-                            "value": "[parameters('VnetResourceGroupName')]"
+                            "value": "[parameters('VmssResourceGroupName')]"
                         },
                         {
                             "name": "SUBSCRIPTION_ID",
@@ -400,6 +408,14 @@
                         {
                             "name": "scaling-group-min-size",
                             "value": "[parameters('PAYGInstanceCount')]"
+                        },
+                        {
+                            "name": "sync-recovery-count",
+                            "value": "[parameters('SyncRecoveryCount')]"
+                        },
+                        {
+                            "name": "terminate-unhealthy-vm",
+                            "value": "[if(equals(parameters('TerminateUnhealthyVM'), 'yes'), 'true', 'false')]"
                         },
                         {
                             "name": "vm-info-cache-time",

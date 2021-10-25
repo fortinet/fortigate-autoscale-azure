@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Context, HttpRequest } from '@azure/functions';
 import { FortiGateAutoscaleServiceRequestSource, JSONable } from '@fortinet/fortigate-autoscale';
 import {
@@ -12,8 +13,8 @@ import {
     AzurePlatformAdaptee,
     AzurePlatformAdapter,
     FortiGateAutoscaleServiceType
-} from '@fortinet/fortigate-autoscale/azure';
-
+} from '@fortinet/fortigate-autoscale/dist/azure';
+/* eslint-enable @typescript-eslint/no-unused-vars */
 export interface TimerInfo {
     schedule: unknown;
     scheduleStatus: unknown;

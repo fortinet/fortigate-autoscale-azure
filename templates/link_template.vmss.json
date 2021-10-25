@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.2.0",
+    "contentVersion": "3.3.0.0",
     "parameters": {
         "AdminPassword": {
             "type": "SecureString"
@@ -9,25 +9,22 @@
             "defaultValue": "azureadmin",
             "type": "String"
         },
+        "AvailabilityZones": {
+            "type": "Array"
+        },
         "BYOLInstanceCount": {
             "defaultValue": 2,
             "minValue": 0,
             "type": "Int"
         },
-        "ExtLBInboundNatPoolHTTPSBYOL": {
-            "type": "String"
+        "ExternalLBBackendAddressPoolIds": {
+            "type": "Array"
         },
-        "ExtLBInboundNatPoolHTTPSPAYG": {
-            "type": "String"
+        "ExternalLBInboundNatPoolIdsBYOL": {
+            "type": "Array"
         },
-        "ExtLBInboundNatPoolSSHBYOL": {
-            "type": "String"
-        },
-        "ExtLBInboundNatPoolSSHPAYG": {
-            "type": "String"
-        },
-        "ExternalLoadBalancerName": {
-            "type": "String"
+        "ExternalLBInboundNatPoolIdsPAYG": {
+            "type": "Array"
         },
         "FunctionAppName": {
             "type": "String"
@@ -44,23 +41,8 @@
         "InstanceType": {
             "type": "String"
         },
-        "InternalLoadBalancerName": {
-            "type": "String"
-        },
         "LicensingModel": {
             "allowedValues": ["byolonly", "hybrid", "paygonly"],
-            "type": "String"
-        },
-        "LoadBalancerBackendIPPoolNameSubnet1": {
-            "type": "String"
-        },
-        "LoadBalancerBackendIPPoolNameSubnet2": {
-            "type": "String"
-        },
-        "LoadBalancerBackendIPPoolNameSubnet3": {
-            "type": "String"
-        },
-        "LoadBalancerBackendIPPoolNameSubnet4": {
             "type": "String"
         },
         "MaxBYOLInstanceCount": {
@@ -88,20 +70,14 @@
         "ScaleOutThreshold": {
             "type": "Int"
         },
+        "SinglePlacementGroup": {
+            "type": "Bool"
+        },
         "StorageAccountName": {
             "type": "String"
         },
-        "Subnet1Name": {
-            "type": "String"
-        },
-        "Subnet2Name": {
-            "type": "String"
-        },
-        "Subnet3Name": {
-            "type": "String"
-        },
-        "Subnet4Name": {
-            "type": "String"
+        "SubnetIds": {
+            "type": "Array"
         },
         "UniqueResourceNamePrefix": {
             "type": "String"
@@ -118,13 +94,14 @@
         "VmssNamePAYG": {
             "type": "String"
         },
-        "VnetName": {
-            "type": "String"
+        "ZoneBalance": {
+            "type": "Bool",
+            "allowedValues": [true, false]
         }
     },
     "variables": {
-        "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-byol')]",
-        "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-payg')]",
+        "autoscaleSettingsNameBYOL": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-', parameters('VmssNameBYOL'))]",
+        "autoscaleSettingsNamePAYG": "[concat(parameters('ResourceNamePrefix'), '-autoscalesettings-', parameters('VmssNamePAYG'))]",
         "autoscaleSettingsPresets": {
             "byolonly": {
                 "byol": [
@@ -296,13 +273,116 @@
         },
         "cmdDeleteAll": "[concat('az account set -s ', subscription().subscriptionId, ';', variables('cmdDeleteAutoscaleSettings'), variables('cmdDeleteVMSS'))]",
         "cmdDeleteAutoscaleSettings": "[concat('az monitor autoscale delete', ' -g ', resourceGroup().name, ' -n ', variables('autoscaleSettingsNameBYOL'), ';', 'az monitor autoscale delete -g ', resourceGroup().name, ' -n ', variables('autoscaleSettingsNamePAYG'), ';')]",
-        "cmdDeleteVMSS": "[concat('az vmss delete', ' -g ', resourceGroup().name,' -n ', parameters('VmssNameBYOL'), ';', 'az vmss delete -g ', resourceGroup().name,' -n ', parameters('VmssNamePAYG'), ';')]"
+        "cmdDeleteVMSS": "[concat('az vmss delete', ' -g ', resourceGroup().name,' -n ', parameters('VmssNameBYOL'), ';', 'az vmss delete -g ', resourceGroup().name,' -n ', parameters('VmssNamePAYG'), ';')]",
+        "externalLBBackendAddressPools": {
+            "copy": [
+                {
+                    "name": "externalLBBackendAddressPoolsCopyIt",
+                    "count": "[length(parameters('ExternalLBBackendAddressPoolIds'))]",
+                    "input": {
+                        "id": "[parameters('ExternalLBBackendAddressPoolIds')[copyIndex('externalLBBackendAddressPoolsCopyIt')]]"
+                    }
+                }
+            ]
+        },
+        "externlLBInboundNatPoolsBYOL": {
+            "copy": [
+                {
+                    "name": "externlLBInboundNatPoolsBYOLCopyIt",
+                    "count": "[length(parameters('ExternalLBInboundNatPoolIdsBYOL'))]",
+                    "input": {
+                        "id": "[parameters('ExternalLBInboundNatPoolIdsBYOL')[copyIndex('externlLBInboundNatPoolsBYOLCopyIt')]]"
+                    }
+                }
+            ]
+        },
+        "externlLBInboundNatPoolsPAYG": {
+            "copy": [
+                {
+                    "name": "externlLBInboundNatPoolsPAYGCopyIt",
+                    "count": "[length(parameters('ExternalLBInboundNatPoolIdsPAYG'))]",
+                    "input": {
+                        "id": "[parameters('ExternalLBInboundNatPoolIdsPAYG')[copyIndex('externlLBInboundNatPoolsPAYGCopyIt')]]"
+                    }
+                }
+            ]
+        },
+        "ifBYOLOnly": "[and(not(equals(parameters('MaxBYOLInstanceCount'), 0)), not(equals(parameters('MaxBYOLInstanceCount'), 0)), equals(parameters('MinPAYGInstanceCount'), 0), equals(parameters('MaxPAYGInstanceCount'), 0))]",
+        "ifPAYGOnly": "[equals(parameters('BYOLInstanceCount'), 0)]",
+        "ifZoneBalanceable": "[greater(length(parameters('AvailabilityZones')), 1)]",
+        "licensingModel": "[if(variables('ifPAYGOnly'), 'PAYG-Only', if(variables('ifBYOLOnly'), 'BYOL-Only', 'Hybrid'))]",
+        "networkInterfaceConfigurationNonLoadBalancingSubnets": {
+            "copy": [
+                {
+                    "name": "networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt",
+                    "count": "[length(parameters('SubnetIds'))]",
+                    "input": {
+                        "name": "[concat('nic-config-subnet', add(copyIndex('networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt'), 1))]",
+                        "properties": {
+                            "primary": false,
+                            "enableIPForwarding": false,
+                            "ipConfigurations": [
+                                {
+                                    "name": "[concat('ip-config-subnet', add(copyIndex('networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt'), 1))]",
+                                    "properties": {
+                                        "Subnet": {
+                                            "id": "[parameters('SubnetIds')[copyIndex('networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt')]]"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "networkInterfaceConfigurationSubnet1BYOL": {
+            "name": "nic-config-subnet1",
+            "properties": {
+                "primary": true,
+                "enableIPForwarding": true,
+                "ipConfigurations": [
+                    {
+                        "name": "ip-config-subnet1",
+                        "properties": {
+                            "Subnet": {
+                                "id": "[parameters('SubnetIds')[0]]"
+                            },
+                            "loadBalancerBackendAddressPools": "[createArray(variables('externalLBBackendAddressPools').externalLBBackendAddressPoolsCopyIt[0])]",
+                            "loadBalancerInboundNatPools": "[if(empty(variables('externlLBInboundNatPoolsBYOL').externlLBInboundNatPoolsBYOLCopyIt), null(), variables('externlLBInboundNatPoolsBYOL').externlLBInboundNatPoolsBYOLCopyIt)]"
+                        }
+                    }
+                ]
+            }
+        },
+        "networkInterfaceConfigurationSubnet1PAYG": {
+            "name": "nic-config-subnet1",
+            "properties": {
+                "primary": true,
+                "enableIPForwarding": true,
+                "ipConfigurations": [
+                    {
+                        "name": "ip-config-subnet1",
+                        "properties": {
+                            "Subnet": {
+                                "id": "[parameters('SubnetIds')[0]]"
+                            },
+                            "loadBalancerBackendAddressPools": "[createArray(variables('externalLBBackendAddressPools').externalLBBackendAddressPoolsCopyIt[0])]",
+                            "loadBalancerInboundNatPools": "[if(empty(variables('externlLBInboundNatPoolsPAYG').externlLBInboundNatPoolsPAYGCopyIt), null(), variables('externlLBInboundNatPoolsPAYG').externlLBInboundNatPoolsPAYGCopyIt)]"
+                        }
+                    }
+                ]
+            }
+        },
+        "networkInterfaceConfigurationsBYOL": "[concat(createArray(variables('networkInterfaceConfigurationSubnet1BYOL')), skip(variables('networkInterfaceConfigurationNonLoadBalancingSubnets').networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt, 1))]",
+        "networkInterfaceConfigurationsPAYG": "[concat(createArray(variables('networkInterfaceConfigurationSubnet1PAYG')), skip(variables('networkInterfaceConfigurationNonLoadBalancingSubnets').networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt, 1))]"
     },
     "resources": [
         {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-07-01",
-            "location": "[resourceGroup().location]",
             "name": "[parameters('VmssNameBYOL')]",
+            "location": "[resourceGroup().location]",
             "plan": {
                 "name": "[parameters('VmImageReferenceFgtBYOL').sku]",
                 "publisher": "[parameters('VmImageReferenceFgtBYOL').publisher]",
@@ -310,6 +390,7 @@
             },
             "properties": {
                 "overprovision": false,
+                "singlePlacementGroup": "[parameters('SinglePlacementGroup')]",
                 "upgradePolicy": {
                     "mode": "Manual"
                 },
@@ -341,118 +422,23 @@
                         "adminPassword": "[parameters('adminPassword')]"
                     },
                     "networkProfile": {
-                        "networkInterfaceConfigurations": [
-                            {
-                                "name": "[concat(parameters('VmssNameBYOL'),'-nic-config', '-subnet', '1')]",
-                                "properties": {
-                                    "primary": true,
-                                    "enableIPForwarding": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '1')]",
-                                            "properties": {
-                                                "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet1Name'))]"
-                                                },
-                                                "loadBalancerBackendAddressPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('ExternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet1'))]"
-                                                    }
-                                                ],
-                                                "loadBalancerInboundNatPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolSSHBYOL'))]"
-                                                    },
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolHTTPSBYOL'))]"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "[concat(parameters('VmssNameBYOL'),'-nic-config', '-subnet', '2')]",
-                                "properties": {
-                                    "primary": false,
-                                    "enableIPForwarding": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '2')]",
-                                            "properties": {
-                                                "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet2Name'))]"
-                                                },
-                                                "loadBalancerBackendAddressPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet2'))]"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "[concat(parameters('VmssNameBYOL'),'-nic-config', '-subnet', '3')]",
-                                "properties": {
-                                    "primary": false,
-                                    "enableIPForwarding": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '3')]",
-                                            "properties": {
-                                                "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet3Name'))]"
-                                                },
-                                                "loadBalancerBackendAddressPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet3'))]"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "[concat(parameters('VmssNameBYOL'),'-nic-config', '-subnet', '4')]",
-                                "properties": {
-                                    "primary": false,
-                                    "enableIPForwarding": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('VmssNameBYOL'), '-ip-config','-subnet', '4')]",
-                                            "properties": {
-                                                "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet4Name'))]"
-                                                },
-                                                "loadBalancerBackendAddressPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet4'))]"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
+                        "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurationsBYOL')]"
                     }
-                }
+                },
+                "zoneBalance": "[if(variables('ifZoneBalanceable'), parameters('ZoneBalance'), null())]"
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
                 "tier": "Standard",
                 "capacity": 0
             },
-            "type": "Microsoft.Compute/virtualMachineScaleSets"
+            "zones": "[parameters('AvailabilityZones')]"
         },
         {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-07-01",
-            "location": "[resourceGroup().location]",
             "name": "[parameters('VmssNamePAYG')]",
+            "location": "[resourceGroup().location]",
             "plan": {
                 "name": "[parameters('VmImageReferenceFgtPAYG').sku]",
                 "publisher": "[parameters('VmImageReferenceFgtPAYG').publisher]",
@@ -460,6 +446,7 @@
             },
             "properties": {
                 "overprovision": false,
+                "singlePlacementGroup": "[parameters('SinglePlacementGroup')]",
                 "upgradePolicy": {
                     "mode": "Manual"
                 },
@@ -493,119 +480,24 @@
                         "adminPassword": "[parameters('adminPassword')]"
                     },
                     "networkProfile": {
-                        "networkInterfaceConfigurations": [
-                            {
-                                "name": "[concat(parameters('VmssNamePAYG'),'-nic-config', '-subnet', '1')]",
-                                "properties": {
-                                    "primary": true,
-                                    "enableIPForwarding": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '1')]",
-                                            "properties": {
-                                                "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet1Name'))]"
-                                                },
-                                                "loadBalancerBackendAddressPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('ExternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet1'))]"
-                                                    }
-                                                ],
-                                                "loadBalancerInboundNatPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolSSHPAYG'))]"
-                                                    },
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/inboundNatPools', parameters('ExternalLoadBalancerName'), parameters('ExtLBInboundNatPoolHTTPSPAYG'))]"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "[concat(parameters('VmssNamePAYG'),'-nic-config', '-subnet', '2')]",
-                                "properties": {
-                                    "primary": false,
-                                    "enableIPForwarding": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '2')]",
-                                            "properties": {
-                                                "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet2Name'))]"
-                                                },
-                                                "loadBalancerBackendAddressPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet2'))]"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "[concat(parameters('VmssNamePAYG'),'-nic-config', '-subnet', '3')]",
-                                "properties": {
-                                    "primary": false,
-                                    "enableIPForwarding": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '3')]",
-                                            "properties": {
-                                                "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet3Name'))]"
-                                                },
-                                                "loadBalancerBackendAddressPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet3'))]"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "[concat(parameters('VmssNamePAYG'),'-nic-config', '-subnet', '4')]",
-                                "properties": {
-                                    "primary": false,
-                                    "enableIPForwarding": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('VmssNamePAYG'), '-ip-config','-subnet', '4')]",
-                                            "properties": {
-                                                "Subnet": {
-                                                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('VnetName'), parameters('Subnet4Name'))]"
-                                                },
-                                                "loadBalancerBackendAddressPools": [
-                                                    {
-                                                        "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Network/loadBalancers/backendAddressPools', parameters('InternalLoadBalancerName'), parameters('LoadBalancerBackendIPPoolNameSubnet4'))]"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
+                        "networkInterfaceConfigurations": "[variables('networkInterfaceConfigurationsPAYG')]"
                     }
-                }
+                },
+                "zoneBalance": "[if(variables('ifZoneBalanceable'), parameters('ZoneBalance'), null())]"
             },
             "sku": {
                 "name": "[parameters('InstanceType')]",
                 "tier": "Standard",
                 "capacity": 0
             },
-            "type": "Microsoft.Compute/virtualMachineScaleSets"
+            "zones": "[parameters('AvailabilityZones')]"
         },
         {
+            "type": "Microsoft.Insights/autoscaleSettings",
             "apiVersion": "2014-04-01",
-            "dependsOn": ["[parameters('VmssNameBYOL')]"],
-            "location": "[resourceGroup().location]",
             "name": "[variables('autoscaleSettingsNameBYOL')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": ["[parameters('VmssNameBYOL')]"],
             "properties": {
                 "name": "[variables('autoscaleSettingsNameBYOL')]",
                 "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNameBYOL'))]",
@@ -621,17 +513,17 @@
                         "rules": "[variables('autoscaleSettingsPresets')[parameters('LicensingModel')].byol]"
                     }
                 ]
-            },
-            "type": "Microsoft.Insights/autoscaleSettings"
+            }
         },
         {
+            "type": "Microsoft.Insights/autoscaleSettings",
             "apiVersion": "2014-04-01",
+            "name": "[variables('autoscaleSettingsNamePAYG')]",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[parameters('VmssNamePAYG')]",
                 "[variables('autoscaleSettingsNameBYOL')]"
             ],
-            "location": "[resourceGroup().location]",
-            "name": "[variables('autoscaleSettingsNamePAYG')]",
             "properties": {
                 "name": "[variables('autoscaleSettingsNamePAYG')]",
                 "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('VmssNamePAYG'))]",
@@ -647,14 +539,17 @@
                         "rules": "[variables('autoscaleSettingsPresets')[parameters('LicensingModel')].payg]"
                     }
                 ]
-            },
-            "type": "Microsoft.Insights/autoscaleSettings"
+            }
         }
     ],
     "outputs": {
-        "byolAutoscaleSettingsName": {
+        "autoscaleSettingsNameBYOL": {
             "type": "String",
             "value": "[variables('autoscaleSettingsNameBYOL')]"
+        },
+        "autoscaleSettingsNamePAYG": {
+            "type": "String",
+            "value": "[variables('autoscaleSettingsNamePAYG')]"
         },
         "byolScaleSetDefaultSize": {
             "type": "Int",
@@ -676,9 +571,9 @@
             "type": "String",
             "value": "[variables('cmdDeleteAll')]"
         },
-        "paygAutoscaleSettingsName": {
+        "licensingModel": {
             "type": "String",
-            "value": "[variables('autoscaleSettingsNamePAYG')]"
+            "value": "[variables('licensingModel')]"
         },
         "paygScaleSetDefaultSize": {
             "type": "Int",

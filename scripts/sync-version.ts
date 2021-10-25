@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import chalk from 'chalk';
 import fs from 'fs';
@@ -6,6 +7,7 @@ import path from 'path';
 import semver from 'semver';
 import { ResourceDeployment } from '../arm-template-schemas/deployment';
 import { Template } from '../arm-template-schemas/resource';
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 const rootDir = path.resolve(path.basename(__filename), '../');
 const packageInfo = JSON.parse(String(fs.readFileSync(path.resolve(rootDir, 'package.json'))));
