@@ -12,7 +12,7 @@
         "AdminPassword": {
             "type": "SecureString",
             "metadata": {
-                "description": "FortiGate administrator password on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration is enabled. Must be between 11 and 26 characters and must include at least one uppercase letter, one lowercase letter, one digit, and one special character such as (! @ # $ %)."
+                "description": "FortiGate administrator password on all VMs as well as the FortiAnalyzer if FortiAnalyzer integration is enabled. FortiGate and Azure VM password policy must be followed and the password must be11 - 26 characters in length with at least one uppercase letter, one lowercase letter, one digit, and one special character such as @ # $ % ^ & * - _ ! + =."
             }
         },
         "AdminUsername": {
@@ -99,7 +99,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "ID of the Frontend Public IP address. When provided, it will be used as the frontend IP address associated with the external load balancer. If left empty, a new public IP address will be allocated in the resource group that contains the virtual network components."
+                "description": "When the ID of a Public IP Address is provided, the Public IP Address will be used as the Frontend IP address associated with the external load balancer. If left empty, a new Public IP Address will be allocated in the resource group that contains the virtual network components."
             }
         },
         "HeartBeatDelayAllowance": {
@@ -318,7 +318,7 @@
             "defaultValue": [],
             "type": "Array",
             "metadata": {
-                "description": "Availability zones to use 'strict zone balancing'. Input format: [1, 2, 3]. To use 'best-effort' zone balancing, leave empty. If zone balancing is not applicable, set to a single zone - for example, [2]. The template does not validate the input availability zone(s) against the region. Please find the correct number of availability zones for your region from https://docs.microsoft.com/en-us/azure/availability-zones/az-region. For zone balancing, please refer to https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#zone-balancing."
+                "description": "Availability zones to use 'strict zone balancing', in array format. For example: [1], [1, 3], [1, 2, 3]. To use 'best-effort' zone balancing, leave empty. If zone balancing is not applicable, set to a single zone - for example, [2]. The template does not validate the input availability zone(s) against the region. Please find the correct number of availability zones for your region from https://docs.microsoft.com/en-us/azure/availability-zones/az-region. For zone balancing, please refer to https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones#zone-balancing."
             }
         },
         "VMSSPlacementGroups": {
