@@ -96,6 +96,13 @@
         "StorageAccountName": {
             "type": "String"
         },
+        "SyncRecoveryCount": {
+            "type": "Int"
+        },
+        "TerminateUnhealthyVM": {
+            "type": "String",
+            "allowedValues": ["no", "yes"]
+        },
         "TrafficPortNumber": {
             "type": "Int"
         },
@@ -221,6 +228,12 @@
                     },
                     "StorageAccountName": {
                         "value": "[parameters('StorageAccountName')]"
+                    },
+                    "SyncRecoveryCount": {
+                        "value": "[parameters('SyncRecoveryCount')]"
+                    },
+                    "TerminateUnhealthyVM": {
+                        "value": "[parameters('TerminateUnhealthyVM')]"
                     },
                     "TrafficPortNumber": {
                         "value": "[parameters('TrafficPortNumber')]"

@@ -314,6 +314,22 @@
                 "description": "Name of subnet 4. If created, the FortiGate will have a network interface in this subnet. When creating a new VNet that contains 'Subnet 4', the input value is used as the Subnet 4 name. If left empty, a default name will be used. When using an existing VNet, a valid non-empty input will assume the association of the target subnet with the Autoscale, and the target subnet will be associated as 'Subnet 4'; an empty value will assume Autoscale will deploy without using 'Subnet 4'."
             }
         },
+        "TerminateUnhealthyVM": {
+            "defaultValue": "no",
+            "allowedValues": ["no", "yes"],
+            "type": "String",
+            "metadata": {
+                "description": "Set to 'yes' to have the Azure Function code (FortiGate Autoscale) determine the health of the VM and delete unhealthy VMs. The default value is 'no' and is the recommended value."
+            }
+        },
+        "SyncRecoveryCount": {
+            "defaultValue": 3,
+            "minValue": 3,
+            "type": "Int",
+            "metadata": {
+                "description": "Number of consecutive on-time heartbeats required for the VM to recover from an unhealthy state. This parameters is only used when 'Terminate Unhealthy VM' is set to ‘no’."
+            }
+        },
         "VMSSAvailabilityZones": {
             "defaultValue": [],
             "type": "Array",
@@ -1001,6 +1017,13 @@
                     "StorageAccountName": {
                         "value": "[variables('storageAccountName')]"
                     },
+                    "SyncRecoveryCount": {
+                        "value": "[parameters('SyncRecoveryCount')]"
+                    },
+                    "TerminateUnhealthyVM": {
+                        "value": "[parameters('TerminateUnhealthyVM')]"
+                    },
+
                     "TrafficPortNumber": {
                         "value": "[variables('trafficPortNumber')]"
                     },
