@@ -50,8 +50,11 @@ jobs:
       - get: git-repo-fortigate-autoscale-azure
       - get: git-repo-fortigate-autoscale-azure-updated
       - get: resource-azure-list-fortigate-images-byol
+        trigger: true
       - get: resource-azure-list-fortigate-images-payg
+        trigger: true
       - get: resource-azure-list-fortianalyzer-images-byol
+        trigger: true
       - task: git-checkout-head-branch
         config:
           platform: linux
