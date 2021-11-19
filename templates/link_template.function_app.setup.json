@@ -1,9 +1,15 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.3.2.0",
+    "contentVersion": "3.3.0.0",
     "parameters": {
         "AdminPortNumber": {
             "type": "Int"
+        },
+        "AllowAccessFromIPAddresses": {
+            "type": "Array"
+        },
+        "AllowAccessFromSubnetIds": {
+            "type": "Array"
         },
         "BYOLInstanceCount": {
             "type": "Int"
@@ -102,7 +108,7 @@
         "VnetName": {
             "type": "String"
         },
-        "VnetResourceGroupName": {
+        "VmssResourceGroupName": {
             "type": "String"
         }
     },
@@ -113,11 +119,11 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "name": "UpdateFunctionApp",
+            "name": "UpdateFunctionAppConfigurations",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.3.2/templates/linked_template.function_app.update.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.function_app.configuration.json"
                 },
                 "parameters": {
                     "AdminPortNumber": {
@@ -228,8 +234,33 @@
                     "VnetName": {
                         "value": "[parameters('VnetName')]"
                     },
-                    "VnetResourceGroupName": {
-                        "value": "[parameters('VnetResourceGroupName')]"
+                    "VmssResourceGroupName": {
+                        "value": "[parameters('VmssResourceGroupName')]"
+                    }
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "UpdateFunctionAppAccessRestrictions",
+            "dependsOn": ["UpdateFunctionAppConfigurations"],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/main/templates/link_template.function_app.access_restriction.json"
+                },
+                "parameters": {
+                    "AllowAccessFromIPAddresses": {
+                        "value": "[parameters('AllowAccessFromIPAddresses')]"
+                    },
+                    "AllowAccessFromSubnetIds": {
+                        "value": "[parameters('AllowAccessFromSubnetIds')]"
+                    },
+                    "FunctionAppName": {
+                        "value": "[parameters('FunctionAppName')]"
                     }
                 }
             },

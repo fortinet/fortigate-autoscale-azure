@@ -28,7 +28,8 @@ To obtain the package, go to the FortiGate Autoscale for Azure [GitHub project r
 
 A deployment guide is available from the Fortinet Document Library:
 
-  + [ FortiGate / FortiOS 6.4 / Deploying auto scaling on Azure](https://docs.fortinet.com/document/fortigate-public-cloud/6.4.0/azure-administration-guide/161167/deploying-auto-scaling-on-azure)
+  + [ FortiGate / FortiOS 6.4 / Deploying auto scaling on Azure](https://docs.fortinet.com/document/fortigate-public-cloud/6.4.0/azure-administration-guide/161167/deploying-autoscaling-on-azure)
+  + [ FortiGate / FortiOS 7.0 / Deploying auto scaling on Azure](https://docs.fortinet.com/document/fortigate-public-cloud/7.0.0/azure-administration-guide/161167/deploying-autoscaling-on-azure)
 
 ## Launch a demo
 
