@@ -13,7 +13,7 @@
         }
     },
     "variables": {
-        "funcAppAccessRestrictions": "[concat(variables('funcAppVNetSubnetRestrictions').iterations, variables('funcAppIPAddressRestrictions').iterations)]",
+        "funcAppAccessRestrictions": "[concat(variables('funcAppVNetSubnetRestrictions').iterations, variables('funcAppIPAddressRestrictions').iterations, variables('funcAppServiceTagRestrictions'))]",
         "funcAppIPAddressRestrictions": {
             "copy": [
                 {
@@ -43,7 +43,15 @@
                     }
                 }
             ]
-        }
+        },
+        "funcAppServiceTagRestrictions": [
+            {
+                "ipAddress": "AzureCloud",
+                "action": "Allow",
+                "tag": "ServiceTag",
+                "priority": 301
+            }
+        ]
     },
     "resources": [
         {
