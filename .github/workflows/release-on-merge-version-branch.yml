@@ -18,6 +18,10 @@ jobs:
     # conditionally run only when the pull request is merged.
     if: github.event.pull_request.merged == true || github.event.inputs.pr-number != ''
     steps:
+      - name: Use NodeJS version 14
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14'
       # check if this pull request coming from a version-branch
       # if yes then proceed to create a release
       # if no then skip the following steps
