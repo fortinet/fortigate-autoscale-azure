@@ -109,7 +109,7 @@
                     "appSettings": [
                         {
                             "name": "AzureWebJobsSecretStorageType",
-                            "value": "Files"
+                            "value": "Blob"
                         },
                         {
                             "name": "AzureWebJobsStorage",
