@@ -120,6 +120,7 @@ local
 dist
 out
 build
+webpack.config.js
 
 # npm package.json and package-lock.json
 package.json

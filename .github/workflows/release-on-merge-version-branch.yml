@@ -25,6 +25,10 @@ jobs:
       # check if this pull request coming from a version-branch
       # if yes then proceed to create a release
       # if no then skip the following steps
+      - name: Use NodeJS version 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.17.0'
       - id: fetch-versioning-info
         name: fetch versioning info
         uses: fortinet/github-action-version-branch@1.1.2
