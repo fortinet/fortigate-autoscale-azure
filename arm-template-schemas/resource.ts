@@ -5,6 +5,33 @@
 // reference: https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-syntax
 // Wish that Microsoft Azure team will export their template schemas for developers to use in Typescript.
 
+export interface Parameter {
+    type: string;
+    defaultValue?: unknown;
+    allowedValues?: unknown[];
+    metadata: {
+        description: string;
+    };
+}
+
+export type Variable = unknown;
+export interface Resource {
+    condition?: string;
+    type: string;
+    apiVersion: string;
+    name: string;
+    location: string;
+    dependsOn?: string[];
+    properties: unknown;
+    resources?: Resource[];
+}
+
+export interface Output {
+    condition?: string;
+    type: string;
+    value: unknown;
+}
+
 export interface Template {
     $schema: string;
     contentVersion: string;
@@ -19,29 +46,4 @@ export interface Template {
     outputs?: {
         [key: string]: Output;
     };
-}
-
-export interface Parameter {
-    type: string;
-    defaultValue?: unknown;
-    allowedValues?: unknown[];
-    metadata: {
-        description: string;
-    };
-}
-export type Variable = unknown;
-export interface Resource {
-    condition?: string;
-    type: string;
-    apiVersion: string;
-    name: string;
-    location: string;
-    dependsOn?: string[];
-    properties: unknown;
-    resources?: Resource[];
-}
-export interface Output {
-    condition?: string;
-    type: string;
-    value: unknown;
 }
