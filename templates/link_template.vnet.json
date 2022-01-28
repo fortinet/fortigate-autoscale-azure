@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.4.0.0",
+    "contentVersion": "3.5.0.0",
     "parameters": {
         "Subnets": {
             "type": "array",
@@ -79,7 +79,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.4.0/templates/template_function.join_string_array.json"
+                    "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.5.0-dev.6/templates/template_function.join_string_array.json"
                 },
                 "parameters": {
                     "InputString": {
