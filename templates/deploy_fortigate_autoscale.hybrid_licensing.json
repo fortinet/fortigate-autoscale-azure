@@ -88,8 +88,17 @@
             }
         },
         "FOSVersion": {
-            "defaultValue": "7.0.1",
-            "allowedValues": ["7.0.1", "7.0.0", "6.4.7", "6.4.5"],
+            "defaultValue": "7.0.3",
+            "allowedValues": [
+                "7.0.3",
+                "7.0.2",
+                "7.0.1",
+                "7.0.0",
+                "6.4.8",
+                "6.4.7",
+                "6.4.6",
+                "6.4.5"
+            ],
             "type": "String",
             "metadata": {
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
@@ -613,7 +622,7 @@
                 },
                 "parameters": {
                     "NetworkSecurityGroupRulesSubnet1Inbound": {
-                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-inbound-nat-pool'), 'Allow', '*', createArray(), null(), createArray(variables('adminPortNumberHTTPS'), variables('adminPortNumberSSH')), string(parameters('Subnet1NetworkSecurityGroupRulePriority')), '*', '*', createArray(), '*', createArray()))]"
+                        "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-inbound-nat-pool'), 'Allow', '*', createArray(), null(), createArray(variables('adminPortNumberHTTPS'), variables('adminPortNumberSSH')), string(parameters('Subnet1NetworkSecurityGroupRulePriority')), '*', '*', createArray(), '*', createArray()), createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), 'allow-https-inbound', 'Allow', '*', createArray(), null(), createArray(443), string(add(parameters('Subnet1NetworkSecurityGroupRulePriority'), 1)), '*', '*', createArray(), '*', createArray()))]"
                     },
                     "NetworkSecurityGroupRulesSubnet1Outbound": {
                         "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-outbound-all'), 'Allow', '*', createArray(), '*', createArray(), string(parameters('Subnet1NetworkSecurityGroupRulePriority')), '*', '*', createArray(), '*', createArray()))]"
