@@ -88,17 +88,8 @@
             }
         },
         "FOSVersion": {
-            "defaultValue": "7.0.3",
-            "allowedValues": [
-                "7.0.3",
-                "7.0.2",
-                "7.0.1",
-                "7.0.0",
-                "6.4.8",
-                "6.4.7",
-                "6.4.6",
-                "6.4.5"
-            ],
+            "defaultValue": "7.2.1",
+            "allowedValues": ["6.4.8", "6.4.9", "7.0.5", "7.0.6", "7.2.0", "7.2.1"],
             "type": "String",
             "metadata": {
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
@@ -248,9 +239,7 @@
             "defaultValue": "Standard_LRS",
             "allowedValues": ["Standard_LRS", "Standard_GRS", "Standard_RAGRS"],
             "type": "String",
-            "metadata": {
-                "description": "Storage account type."
-            }
+            "metadata": { "description": "Storage account type." }
         },
         "Subnet1AddressRange": {
             "type": "String",
@@ -460,7 +449,7 @@
         "vmImgReferenceFgtPAYG": {
             "publisher": "fortinet",
             "offer": "fortinet_fortigate-vm_v5",
-            "sku": "fortinet_fg-vm_payg_20190624",
+            "sku": "fortinet_fg-vm_payg_2022",
             "version": "[parameters('FOSVersion')]"
         },
         "vmssNameBYOL": "[concat(variables('uniqueResourceNamePrefix'), '-vmss-byol001')]",
@@ -474,10 +463,7 @@
             "apiVersion": "2019-06-01",
             "name": "[variables('storageAccountName')]",
             "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "[parameters('StorageAccountType')]",
-                "tier": "Standard"
-            },
+            "sku": { "name": "[parameters('StorageAccountType')]", "tier": "Standard" },
             "kind": "Storage"
         },
         {
@@ -494,20 +480,11 @@
                     {
                         "objectId": "[parameters('ServicePrincipalObjectID')]",
                         "tenantId": "[subscription().tenantId]",
-                        "permissions": {
-                            "keys": ["List", "Get"],
-                            "secrets": ["List", "Get"]
-                        }
+                        "permissions": { "keys": ["List", "Get"], "secrets": ["List", "Get"] }
                     }
                 ],
-                "sku": {
-                    "name": "Standard",
-                    "family": "A"
-                },
-                "networkAcls": {
-                    "defaultAction": "Allow",
-                    "bypass": "AzureServices"
-                }
+                "sku": { "name": "Standard", "family": "A" },
+                "networkAcls": { "defaultAction": "Allow", "bypass": "AzureServices" }
             }
         },
         {
@@ -516,9 +493,7 @@
             "name": "[concat(variables('keyVaultName'), '/', 'faz-autoscale-admin-username')]",
             "location": "[resourceGroup().location]",
             "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
-            "properties": {
-                "value": "[parameters('FortiAnalyzerAutoscaleAdminUsername')]"
-            }
+            "properties": { "value": "[parameters('FortiAnalyzerAutoscaleAdminUsername')]" }
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
@@ -526,9 +501,7 @@
             "name": "[concat(variables('keyVaultName'), '/', 'faz-autoscale-admin-password')]",
             "location": "[resourceGroup().location]",
             "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
-            "properties": {
-                "value": "[parameters('FortiAnalyzerAutoscaleAdminPassword')]"
-            }
+            "properties": { "value": "[parameters('FortiAnalyzerAutoscaleAdminPassword')]" }
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
@@ -544,11 +517,7 @@
             "properties": {
                 "name": "[variables('databaseAccountName')]",
                 "databaseAccountOfferType": "Standard",
-                "locations": [
-                    {
-                        "locationName": "[variables('location')]"
-                    }
-                ]
+                "locations": [{ "locationName": "[variables('location')]" }]
             }
         },
         {
@@ -562,15 +531,9 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.5.0/templates/link_template.database.json"
                 },
                 "parameters": {
-                    "DatabaseAccountName": {
-                        "value": "[variables('databaseAccountName')]"
-                    },
-                    "DatabaseName": {
-                        "value": "[variables('databaseName')]"
-                    },
-                    "SharedThroughput": {
-                        "value": "[variables('databaseSharedThroughput')]"
-                    },
+                    "DatabaseAccountName": { "value": "[variables('databaseAccountName')]" },
+                    "DatabaseName": { "value": "[variables('databaseName')]" },
+                    "SharedThroughput": { "value": "[variables('databaseSharedThroughput')]" },
                     "EnableFortiAnalyzer": {
                         "value": "[if(variables('enableFortiAnalyzer'), 'yes', 'no')]"
                     },
@@ -593,18 +556,12 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.5.0/templates/link_template.vnet.json"
                 },
                 "parameters": {
-                    "Subnets": {
-                        "value": "[variables('subnets')]"
-                    },
+                    "Subnets": { "value": "[variables('subnets')]" },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
                     },
-                    "VnetAddressSpace": {
-                        "value": "[parameters('VnetAddressSpace')]"
-                    },
-                    "VNetName": {
-                        "value": "[variables('vNetName')]"
-                    }
+                    "VnetAddressSpace": { "value": "[parameters('VnetAddressSpace')]" },
+                    "VNetName": { "value": "[variables('vNetName')]" }
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
@@ -627,24 +584,14 @@
                     "NetworkSecurityGroupRulesSubnet1Outbound": {
                         "value": "[createArray(createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName')), concat(reference('CreateLoadBalancers').outputs.externalLBName.value, '-outbound-all'), 'Allow', '*', createArray(), '*', createArray(), string(parameters('Subnet1NetworkSecurityGroupRulePriority')), '*', '*', createArray(), '*', createArray()))]"
                     },
-                    "NetworkSecurityGroupRulesExtraSubnetsInbound": {
-                        "value": "[createArray()]"
-                    },
-                    "NetworkSecurityGroupRulesExtraSubnetsOutbound": {
-                        "value": "[createArray()]"
-                    },
-                    "Subnet1AddressRange": {
-                        "value": "[parameters('Subnet1AddressRange')]"
-                    },
-                    "Subnet1Name": {
-                        "value": "[variables('subnet1Name')]"
-                    },
+                    "NetworkSecurityGroupRulesExtraSubnetsInbound": { "value": "[createArray()]" },
+                    "NetworkSecurityGroupRulesExtraSubnetsOutbound": { "value": "[createArray()]" },
+                    "Subnet1AddressRange": { "value": "[parameters('Subnet1AddressRange')]" },
+                    "Subnet1Name": { "value": "[variables('subnet1Name')]" },
                     "Subnet1NetworkSecurityGroupName": {
                         "value": "[if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.networkSecurityGroupNameExternal.value, parameters('Subnet1NetworkSecurityGroupName'))]"
                     },
-                    "VNetName": {
-                        "value": "[variables('vNetName')]"
-                    }
+                    "VNetName": { "value": "[variables('vNetName')]" }
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
@@ -661,36 +608,20 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.5.0/templates/link_template.load_balancer.json"
                 },
                 "parameters": {
-                    "ExternalLBBackendPoolNames": {
-                        "value": ["fortigate-vmss-port1"]
-                    },
-                    "ExternalLBFrontendIPId": {
-                        "value": "[parameters('FrontendIPAddressID')]"
-                    },
+                    "ExternalLBBackendPoolNames": { "value": ["fortigate-vmss-port1"] },
+                    "ExternalLBFrontendIPId": { "value": "[parameters('FrontendIPAddressID')]" },
                     "ExternalLBNATBackendPortHTTPS": {
                         "value": "[variables('adminPortNumberHTTPS')]"
                     },
-                    "ExternalLBNATBackendPortSSH": {
-                        "value": "[variables('adminPortNumberSSH')]"
-                    },
-                    "ExternalLBRules": {
-                        "value": []
-                    },
-                    "InternalLBFrontendIPAddress": {
-                        "value": ""
-                    },
-                    "InternalLBFrontendSubnetId": {
-                        "value": ""
-                    },
+                    "ExternalLBNATBackendPortSSH": { "value": "[variables('adminPortNumberSSH')]" },
+                    "ExternalLBRules": { "value": [] },
+                    "InternalLBFrontendIPAddress": { "value": "" },
+                    "InternalLBFrontendSubnetId": { "value": "" },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
                     },
-                    "VMSSNameBYOL": {
-                        "value": "[variables('vmssNameBYOL')]"
-                    },
-                    "VMSSNamePAYG": {
-                        "value": "[variables('vmssNamePAYG')]"
-                    }
+                    "VMSSNameBYOL": { "value": "[variables('vmssNameBYOL')]" },
+                    "VMSSNamePAYG": { "value": "[variables('vmssNamePAYG')]" }
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
@@ -708,12 +639,8 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.5.0/templates/link_template.faz_integration.json"
                 },
                 "parameters": {
-                    "AdminPassword": {
-                        "value": "[parameters('AdminPassword')]"
-                    },
-                    "AdminUsername": {
-                        "value": "[parameters('AdminUsername')]"
-                    },
+                    "AdminPassword": { "value": "[parameters('AdminPassword')]" },
+                    "AdminUsername": { "value": "[parameters('AdminUsername')]" },
                     "FortiAnalyzerAutoscaleAdminPassword": {
                         "value": "[parameters('FortiAnalyzerAutoscaleAdminPassword')]"
                     },
@@ -729,15 +656,11 @@
                     "FortiAnalyzerInstanceType": {
                         "value": "[parameters('FortiAnalyzerInstanceType')]"
                     },
-                    "SubnetId": {
-                        "value": "[variables('subnet1').id]"
-                    },
+                    "SubnetId": { "value": "[variables('subnet1').id]" },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
                     },
-                    "VmImgReferenceFaz": {
-                        "value": "[variables('vmImgReferenceFazBYOL')]"
-                    }
+                    "VmImgReferenceFaz": { "value": "[variables('vmImgReferenceFazBYOL')]" }
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
@@ -754,24 +677,12 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.5.0/templates/link_template.function_app.json"
                 },
                 "parameters": {
-                    "FunctionAppName": {
-                        "value": "[variables('functionAppName')]"
-                    },
-                    "FunctionExtensionVersion": {
-                        "value": "~3"
-                    },
-                    "NodeJSRuntimeVersion": {
-                        "value": "~12"
-                    },
-                    "PackageResURL": {
-                        "value": "[parameters('PackageResURL')]"
-                    },
-                    "ServicePlanTier": {
-                        "value": "[parameters('ServicePlanTier')]"
-                    },
-                    "StorageAccountName": {
-                        "value": "[variables('storageAccountName')]"
-                    },
+                    "FunctionAppName": { "value": "[variables('functionAppName')]" },
+                    "FunctionExtensionVersion": { "value": "~3" },
+                    "NodeJSRuntimeVersion": { "value": "~12" },
+                    "PackageResURL": { "value": "[parameters('PackageResURL')]" },
+                    "ServicePlanTier": { "value": "[parameters('ServicePlanTier')]" },
+                    "StorageAccountName": { "value": "[variables('storageAccountName')]" },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
                     }
@@ -791,18 +702,12 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.5.0/templates/link_template.vmss.json"
                 },
                 "parameters": {
-                    "AdminPassword": {
-                        "value": "[parameters('AdminPassword')]"
-                    },
-                    "AdminUsername": {
-                        "value": "[parameters('AdminUsername')]"
-                    },
+                    "AdminPassword": { "value": "[parameters('AdminPassword')]" },
+                    "AdminUsername": { "value": "[parameters('AdminUsername')]" },
                     "AvailabilityZones": {
                         "value": "[if(empty(parameters('VMSSAvailabilityZones')), createArray(), parameters('VMSSAvailabilityZones'))]"
                     },
-                    "BYOLInstanceCount": {
-                        "value": "[parameters('BYOLInstanceCount')]"
-                    },
+                    "BYOLInstanceCount": { "value": "[parameters('BYOLInstanceCount')]" },
                     "ExternalLBBackendAddressPoolIds": {
                         "value": "[reference('CreateLoadBalancers').outputs.externalLBBackendAddressPoolIds.value]"
                     },
@@ -812,72 +717,38 @@
                     "ExternalLBInboundNatPoolIdsPAYG": {
                         "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPoolIdsPAYG.value]"
                     },
-                    "FunctionAppName": {
-                        "value": "[variables('functionAppName')]"
-                    },
-                    "FunctionAppResourceGroupName": {
-                        "value": "[resourceGroup().name]"
-                    },
+                    "FunctionAppName": { "value": "[variables('functionAppName')]" },
+                    "FunctionAppResourceGroupName": { "value": "[resourceGroup().name]" },
                     "FunctionNameFgtAsHandler": {
                         "value": "[reference('CreateFunctionApp').outputs.functionNameFgtAsHandler.value]"
                     },
                     "FunctionNameLicenseHandler": {
                         "value": "[reference('CreateFunctionApp').outputs.functionNameLicenseHandler.value]"
                     },
-                    "InstanceType": {
-                        "value": "[parameters('InstanceType')]"
-                    },
-                    "LicensingModel": {
-                        "value": "[variables('licensingModel')]"
-                    },
-                    "MaxBYOLInstanceCount": {
-                        "value": "[parameters('MaxBYOLInstanceCount')]"
-                    },
-                    "MaxPAYGInstanceCount": {
-                        "value": "[parameters('MaxPAYGInstanceCount')]"
-                    },
-                    "MinBYOLInstanceCount": {
-                        "value": "[parameters('MinBYOLInstanceCount')]"
-                    },
-                    "MinPAYGInstanceCount": {
-                        "value": "[parameters('MinPAYGInstanceCount')]"
-                    },
-                    "PAYGInstanceCount": {
-                        "value": "[parameters('PAYGInstanceCount')]"
-                    },
-                    "ResourceNamePrefix": {
-                        "value": "[parameters('ResourceNamePrefix')]"
-                    },
-                    "ScaleInThreshold": {
-                        "value": "[parameters('ScaleInThreshold')]"
-                    },
-                    "ScaleOutThreshold": {
-                        "value": "[parameters('ScaleOutThreshold')]"
-                    },
+                    "InstanceType": { "value": "[parameters('InstanceType')]" },
+                    "LicensingModel": { "value": "[variables('licensingModel')]" },
+                    "MaxBYOLInstanceCount": { "value": "[parameters('MaxBYOLInstanceCount')]" },
+                    "MaxPAYGInstanceCount": { "value": "[parameters('MaxPAYGInstanceCount')]" },
+                    "MinBYOLInstanceCount": { "value": "[parameters('MinBYOLInstanceCount')]" },
+                    "MinPAYGInstanceCount": { "value": "[parameters('MinPAYGInstanceCount')]" },
+                    "PAYGInstanceCount": { "value": "[parameters('PAYGInstanceCount')]" },
+                    "ResourceNamePrefix": { "value": "[parameters('ResourceNamePrefix')]" },
+                    "ScaleInThreshold": { "value": "[parameters('ScaleInThreshold')]" },
+                    "ScaleOutThreshold": { "value": "[parameters('ScaleOutThreshold')]" },
                     "SinglePlacementGroup": {
                         "value": "[equals(parameters('VMSSPlacementGroups'), 'single')]"
                     },
-                    "StorageAccountName": {
-                        "value": "[variables('storageAccountName')]"
-                    },
+                    "StorageAccountName": { "value": "[variables('storageAccountName')]" },
                     "SubnetIds": {
                         "value": "[if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.subnetIds.value, variables('subnetIds').subnetIdsCopyIt)]"
                     },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
                     },
-                    "VmImageReferenceFgtBYOL": {
-                        "value": "[variables('vmImgReferenceFgtBYOL')]"
-                    },
-                    "VmImageReferenceFgtPAYG": {
-                        "value": "[variables('vmImgReferenceFgtPAYG')]"
-                    },
-                    "VmssNameBYOL": {
-                        "value": "[variables('vmssNameBYOL')]"
-                    },
-                    "VmssNamePAYG": {
-                        "value": "[variables('vmssNamePAYG')]"
-                    },
+                    "VmImageReferenceFgtBYOL": { "value": "[variables('vmImgReferenceFgtBYOL')]" },
+                    "VmImageReferenceFgtPAYG": { "value": "[variables('vmImgReferenceFgtPAYG')]" },
+                    "VmssNameBYOL": { "value": "[variables('vmssNameBYOL')]" },
+                    "VmssNamePAYG": { "value": "[variables('vmssNamePAYG')]" },
                     "ZoneBalance": {
                         "value": "[if(empty(parameters('VMSSAvailabilityZones')), false(), true())]"
                     }
@@ -908,9 +779,7 @@
                     "CommaSeparatedIPAddressString": {
                         "value": "[concat(parameters('AccessRestrictionIPRange'), if(empty(parameters('AccessRestrictionIPRange')), '', ','), reference('CreateFunctionApp').outputs.functionAppPossibleOutboundIpAddresses.value)]"
                     },
-                    "DatabaseAccountName": {
-                        "value": "[variables('databaseAccountName')]"
-                    }
+                    "DatabaseAccountName": { "value": "[variables('databaseAccountName')]" }
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
@@ -933,42 +802,28 @@
                     "uri": "https://raw.githubusercontent.com/fortinet/fortigate-autoscale-azure/3.5.0/templates/link_template.function_app.setup.json"
                 },
                 "parameters": {
-                    "AdminPortNumber": {
-                        "value": "[variables('adminPortNumberHTTPS')]"
-                    },
+                    "AdminPortNumber": { "value": "[variables('adminPortNumberHTTPS')]" },
                     "AllowAccessFromIPAddresses": {
                         "value": "[if(empty(parameters('AccessRestrictionIPRange')), createArray(), split(parameters('AccessRestrictionIPRange'), ','))]"
                     },
                     "AllowAccessFromSubnetIds": {
                         "value": "[createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.subnet1Id.value, variables('subnet1').id))]"
                     },
-                    "BYOLInstanceCount": {
-                        "value": "[parameters('BYOLInstanceCount')]"
-                    },
-                    "DatabaseAccountName": {
-                        "value": "[variables('databaseAccountName')]"
-                    },
-                    "DatabaseName": {
-                        "value": "[variables('databaseName')]"
-                    },
+                    "BYOLInstanceCount": { "value": "[parameters('BYOLInstanceCount')]" },
+                    "DatabaseAccountName": { "value": "[variables('databaseAccountName')]" },
+                    "DatabaseName": { "value": "[variables('databaseName')]" },
                     "FortiAnalyzerIntegrationOptions": {
                         "value": "[parameters('FortiAnalyzerIntegrationOptions')]"
                     },
                     "FortiAnalyzerPublicIp": {
                         "value": "[if(variables('enableFortiAnalyzer'), reference('FortiAnalyzerIntegrationResources').outputs.fazPublicIp.value, '')]"
                     },
-                    "FortiGatePSKSecret": {
-                        "value": "[parameters('FortiGatePSKSecret')]"
-                    },
+                    "FortiGatePSKSecret": { "value": "[parameters('FortiGatePSKSecret')]" },
                     "FunctionAppInsightName": {
                         "value": "[reference('CreateFunctionApp').outputs.appInsightName.value]"
                     },
-                    "FunctionAppName": {
-                        "value": "[variables('functionAppName')]"
-                    },
-                    "FunctionAppResourceGroupName": {
-                        "value": "[resourceGroup().name]"
-                    },
+                    "FunctionAppName": { "value": "[variables('functionAppName')]" },
+                    "FunctionAppResourceGroupName": { "value": "[resourceGroup().name]" },
                     "FunctionNameFazAuthHandler": {
                         "value": "[reference('CreateFunctionApp').outputs.functionNameFazAuthHandler.value]"
                     },
@@ -978,75 +833,33 @@
                     "HeartBeatDelayAllowance": {
                         "value": "[parameters('HeartBeatDelayAllowance')]"
                     },
-                    "HeartBeatInterval": {
-                        "value": "[parameters('HeartBeatInterval')]"
-                    },
-                    "HeartBeatLossCount": {
-                        "value": "[parameters('HeartBeatLossCount')]"
-                    },
-                    "KeyVaultName": {
-                        "value": "[variables('keyVaultName')]"
-                    },
-                    "LicenseFileDirectory": {
-                        "value": "[variables('licenseFileDirectory')]"
-                    },
-                    "MaxBYOLInstanceCount": {
-                        "value": "[parameters('MaxBYOLInstanceCount')]"
-                    },
-                    "MaxPAYGInstanceCount": {
-                        "value": "[parameters('MaxPAYGInstanceCount')]"
-                    },
-                    "MinBYOLInstanceCount": {
-                        "value": "[parameters('MinBYOLInstanceCount')]"
-                    },
-                    "PAYGInstanceCount": {
-                        "value": "[parameters('PAYGInstanceCount')]"
-                    },
-                    "PackageResURL": {
-                        "value": "[parameters('PackageResURL')]"
-                    },
-                    "PrimaryElectionTimeout": {
-                        "value": "[parameters('PrimaryElectionTimeout')]"
-                    },
-                    "ScaleSetNameBYOL": {
-                        "value": "[variables('vmssNameBYOL')]"
-                    },
-                    "ScaleSetNamePAYG": {
-                        "value": "[variables('vmssNamePAYG')]"
-                    },
-                    "ScaleSetNamePrimary": {
-                        "value": "[variables('vmssNamePrimary')]"
-                    },
-                    "ServicePrincipalAppID": {
-                        "value": "[parameters('ServicePrincipalAppID')]"
-                    },
+                    "HeartBeatInterval": { "value": "[parameters('HeartBeatInterval')]" },
+                    "HeartBeatLossCount": { "value": "[parameters('HeartBeatLossCount')]" },
+                    "KeyVaultName": { "value": "[variables('keyVaultName')]" },
+                    "LicenseFileDirectory": { "value": "[variables('licenseFileDirectory')]" },
+                    "MaxBYOLInstanceCount": { "value": "[parameters('MaxBYOLInstanceCount')]" },
+                    "MaxPAYGInstanceCount": { "value": "[parameters('MaxPAYGInstanceCount')]" },
+                    "MinBYOLInstanceCount": { "value": "[parameters('MinBYOLInstanceCount')]" },
+                    "PAYGInstanceCount": { "value": "[parameters('PAYGInstanceCount')]" },
+                    "PackageResURL": { "value": "[parameters('PackageResURL')]" },
+                    "PrimaryElectionTimeout": { "value": "[parameters('PrimaryElectionTimeout')]" },
+                    "ScaleSetNameBYOL": { "value": "[variables('vmssNameBYOL')]" },
+                    "ScaleSetNamePAYG": { "value": "[variables('vmssNamePAYG')]" },
+                    "ScaleSetNamePrimary": { "value": "[variables('vmssNamePrimary')]" },
+                    "ServicePrincipalAppID": { "value": "[parameters('ServicePrincipalAppID')]" },
                     "ServicePrincipalAppSecret": {
                         "value": "[parameters('ServicePrincipalAppSecret')]"
                     },
-                    "StorageAccountName": {
-                        "value": "[variables('storageAccountName')]"
-                    },
-                    "SyncRecoveryCount": {
-                        "value": "[parameters('SyncRecoveryCount')]"
-                    },
-                    "TerminateUnhealthyVM": {
-                        "value": "[parameters('TerminateUnhealthyVM')]"
-                    },
-                    "TrafficPortNumber": {
-                        "value": "[variables('trafficPortNumber')]"
-                    },
+                    "StorageAccountName": { "value": "[variables('storageAccountName')]" },
+                    "SyncRecoveryCount": { "value": "[parameters('SyncRecoveryCount')]" },
+                    "TerminateUnhealthyVM": { "value": "[parameters('TerminateUnhealthyVM')]" },
+                    "TrafficPortNumber": { "value": "[variables('trafficPortNumber')]" },
                     "UniqueResourceNamePrefix": {
                         "value": "[variables('uniqueResourceNamePrefix')]"
                     },
-                    "VnetAddressSpace": {
-                        "value": "[parameters('VnetAddressSpace')]"
-                    },
-                    "VnetName": {
-                        "value": "[variables('vNetName')]"
-                    },
-                    "VmssResourceGroupName": {
-                        "value": "[resourceGroup().name]"
-                    }
+                    "VnetAddressSpace": { "value": "[parameters('VnetAddressSpace')]" },
+                    "VnetName": { "value": "[variables('vNetName')]" },
+                    "VmssResourceGroupName": { "value": "[resourceGroup().name]" }
                 }
             },
             "subscriptionId": "[subscription().subscriptionId]",
@@ -1090,10 +903,7 @@
             "type": "String",
             "value": "[concat('az account set -s ', subscription().subscriptionId, ';', reference('UpdateVirtualNetwork').outputs.cmdDeleteAll.value)]"
         },
-        "deploymentPackageVersion": {
-            "type": "string",
-            "value": "3.5.0"
-        },
+        "deploymentPackageVersion": { "type": "string", "value": "3.5.0" },
         "externalLBInboundNatPortRanges": {
             "type": "Array",
             "value": "[reference('CreateLoadBalancers').outputs.externalLBInboundNatPortRanges.value]"
@@ -1126,14 +936,8 @@
             "type": "String",
             "value": "[reference('CreateVirtualMachineScaleSet').outputs.paygScaleSetName.value]"
         },
-        "resourceGroupName": {
-            "type": "String",
-            "value": "[resourceGroup().name]"
-        },
-        "storageAccountName": {
-            "type": "String",
-            "value": "[variables('storageAccountName')]"
-        },
+        "resourceGroupName": { "type": "String", "value": "[resourceGroup().name]" },
+        "storageAccountName": { "type": "String", "value": "[variables('storageAccountName')]" },
         "uniqueResourceNamePrefix": {
             "type": "String",
             "value": "[variables('uniqueResourceNamePrefix')]"
