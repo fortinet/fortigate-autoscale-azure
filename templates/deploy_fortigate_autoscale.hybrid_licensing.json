@@ -60,7 +60,7 @@
         },
         "FortiAnalyzerIntegrationOptions": {
             "defaultValue": "yes",
-            "allowedValues": ["yes", "no"],
+            "allowedValues": [ "yes", "no" ],
             "type": "String",
             "metadata": {
                 "description": "Choose 'yes' to incorporate FortiAnalyzer into FortiGate Autoscale for Azure to use extended features that include storing logs into FortiAnalyzer."
@@ -75,7 +75,7 @@
         },
         "FortiAnalyzerVersion": {
             "defaultValue": "6.4.5",
-            "allowedValues": ["6.4.5", "6.2.5"],
+            "allowedValues": [ "6.4.5", "6.2.5" ],
             "type": "String",
             "metadata": {
                 "description": "FortiAnalyzer version supported by FortiGate Autoscale for Azure."
@@ -89,7 +89,7 @@
         },
         "FOSVersion": {
             "defaultValue": "7.2.2",
-            "allowedValues": ["7.2.2"],
+            "allowedValues": [ "7.2.2" ],
             "type": "String",
             "metadata": {
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
@@ -128,8 +128,49 @@
             }
         },
         "InstanceType": {
-            "defaultValue": "Standard_F4",
+            "defaultValue": "Standard_F4s",
             "type": "String",
+            "allowedValues": [
+                "Standard_F4s",
+                "Standard_F8s",
+                "Standard_F16s",
+                "Standard_F4",
+                "Standard_F8",
+                "Standard_F16",
+                "Standard_F8s_v2",
+                "Standard_F16s_v2",
+                "Standard_F32s_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_DS5_v2",
+                "Standard_D8s_v3",
+                "Standard_D16s_v3",
+                "Standard_D32s_v3",
+                "Standard_D8_v4",
+                "Standard_D16_v4",
+                "Standard_D32_v4",
+                "Standard_D8s_v4",
+                "Standard_D16s_v4",
+                "Standard_D32s_v4",
+                "Standard_D8a_v4",
+                "Standard_D16a_v4",
+                "Standard_D32a_v4",
+                "Standard_D8as_v4",
+                "Standard_D16as_v4",
+                "Standard_D32as_v4",
+                "Standard_D8_v5",
+                "Standard_D16_v5",
+                "Standard_D32_v5",
+                "Standard_D8s_v5",
+                "Standard_D16s_v5",
+                "Standard_D32s_v5",
+                "Standard_D8as_v5",
+                "Standard_D16as_v5",
+                "Standard_D32as_v5",
+                "Standard_D8ads_v5",
+                "Standard_D16ads_v5",
+                "Standard_D32ads_v5",
+            ],
             "metadata": {
                 "description": "Size of the VMs in the VMSS. The default is Standard_F4. More options can be found at https://docs.microsoft.com/en-us/azure/virtual-machines/sizes."
             }
@@ -211,7 +252,7 @@
         },
         "ServicePlanTier": {
             "defaultValue": "Premium (P1V2)",
-            "allowedValues": ["Premium (P1V2)", "Free (for demo only)"],
+            "allowedValues": [ "Premium (P1V2)", "Free (for demo only)" ],
             "type": "String",
             "metadata": {
                 "description": "Pricing tier for the function service plan. Note: The Free plan is for trial and demo use only. Do not use it in a production environment."
@@ -237,7 +278,7 @@
         },
         "StorageAccountType": {
             "defaultValue": "Standard_LRS",
-            "allowedValues": ["Standard_LRS", "Standard_GRS", "Standard_RAGRS"],
+            "allowedValues": [ "Standard_LRS", "Standard_GRS", "Standard_RAGRS" ],
             "type": "String",
             "metadata": {
                 "description": "Storage account type."
@@ -316,7 +357,7 @@
         },
         "TerminateUnhealthyVM": {
             "defaultValue": "no",
-            "allowedValues": ["no", "yes"],
+            "allowedValues": [ "no", "yes" ],
             "type": "String",
             "metadata": {
                 "description": "Set to 'yes' to have the Azure Function code (FortiGate Autoscale) determine the health of the VM and delete unhealthy VMs. The default value is 'no' and is the recommended value."
@@ -338,7 +379,7 @@
             }
         },
         "VMSSPlacementGroups": {
-            "allowedValues": ["single", "multiple"],
+            "allowedValues": [ "single", "multiple" ],
             "defaultValue": "single",
             "type": "String",
             "metadata": {
@@ -353,7 +394,7 @@
         },
         "VnetDeploymentMethod": {
             "defaultValue": "create new",
-            "allowedValues": ["create new", "use existing"],
+            "allowedValues": [ "create new", "use existing" ],
             "type": "String",
             "metadata": {
                 "description": "Options for Virtual Network (VNet) deployment. Note: The VNet resource group (specified in the 'VNet Resource Group Name' parameter) must be in the same region as the Autoscale resource group (specified in the 'Resource group' parameter). For requirements when using an existing VNet, refer to the documentation."
@@ -486,8 +527,8 @@
                         "objectId": "[parameters('ServicePrincipalObjectID')]",
                         "tenantId": "[subscription().tenantId]",
                         "permissions": {
-                            "keys": ["List", "Get"],
-                            "secrets": ["List", "Get"]
+                            "keys": [ "List", "Get" ],
+                            "secrets": [ "List", "Get" ]
                         }
                     }
                 ],
@@ -506,7 +547,7 @@
             "apiVersion": "2019-09-01",
             "name": "[concat(variables('keyVaultName'), '/', 'faz-autoscale-admin-username')]",
             "location": "[resourceGroup().location]",
-            "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
+            "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]" ],
             "properties": {
                 "value": "[parameters('FortiAnalyzerAutoscaleAdminUsername')]"
             }
@@ -516,7 +557,7 @@
             "apiVersion": "2019-09-01",
             "name": "[concat(variables('keyVaultName'), '/', 'faz-autoscale-admin-password')]",
             "location": "[resourceGroup().location]",
-            "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
+            "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]" ],
             "properties": {
                 "value": "[parameters('FortiAnalyzerAutoscaleAdminPassword')]"
             }
@@ -525,7 +566,7 @@
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2019-06-01",
             "name": "[concat(variables('storageAccountName'), '/default/', variables('autoscaleAssetContainerName'))]",
-            "dependsOn": ["[variables('storageAccountName')]"]
+            "dependsOn": [ "[variables('storageAccountName')]" ]
         },
         {
             "type": "Microsoft.DocumentDb/databaseAccounts",
@@ -546,7 +587,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "CreateDatabase",
-            "dependsOn": ["[variables('databaseAccountName')]"],
+            "dependsOn": [ "[variables('databaseAccountName')]" ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -604,7 +645,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "dependsOn": ["CreateVirtualNetwork", "CreateLoadBalancers"],
+            "dependsOn": [ "CreateVirtualNetwork", "CreateLoadBalancers" ],
             "name": "UpdateVirtualNetwork",
             "properties": {
                 "mode": "Incremental",
@@ -644,7 +685,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "dependsOn": ["CreateVirtualNetwork"],
+            "dependsOn": [ "CreateVirtualNetwork" ],
             "name": "CreateLoadBalancers",
             "properties": {
                 "mode": "Incremental",
@@ -653,7 +694,7 @@
                 },
                 "parameters": {
                     "ExternalLBBackendPoolNames": {
-                        "value": ["fortigate-vmss-port1"]
+                        "value": [ "fortigate-vmss-port1" ]
                     },
                     "ExternalLBFrontendIPId": {
                         "value": "[parameters('FrontendIPAddressID')]"
@@ -692,7 +733,7 @@
             "apiVersion": "2018-05-01",
             "name": "FortiAnalyzerIntegrationResources",
             "condition": "[variables('enableFortiAnalyzer')]",
-            "dependsOn": ["CreateVirtualNetwork"],
+            "dependsOn": [ "CreateVirtualNetwork" ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -738,7 +779,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "CreateFunctionApp",
-            "dependsOn": ["[variables('storageAccountName')]"],
+            "dependsOn": [ "[variables('storageAccountName')]" ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -775,7 +816,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "CreateVirtualMachineScaleSet",
-            "dependsOn": ["CreateVirtualNetwork", "CreateLoadBalancers", "CreateFunctionApp"],
+            "dependsOn": [ "CreateVirtualNetwork", "CreateLoadBalancers", "CreateFunctionApp" ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
