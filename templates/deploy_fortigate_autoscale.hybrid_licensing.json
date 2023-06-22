@@ -38,7 +38,7 @@
             }
         },
         "FortiAnalyzerAutoscaleAdminUsername": {
-            "defaultValue": "",
+            "defaultValue": "azureadmin",
             "type": "string",
             "metadata": {
                 "description": "Name of the secondary administrator-level account in the FortiAnalyzer. FortiGate Autoscale uses this account to connect to the FortiAnalyzer to authorize any FortiGate device in the Auto Scaling group. To conform to the FortiAnalyzer naming policy, the user name can only contain numbers, lowercase letters, uppercase letters, and hyphens. It cannot start or end with a hyphen (-)."
@@ -52,14 +52,40 @@
             }
         },
         "FortiAnalyzerInstanceType": {
-            "defaultValue": "",
-            "type": "String",
+            "type": "string",
+            "defaultValue": "Standard_D2s_v3",
+            "allowedValues": [
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_DS5_v2",
+                "Standard_D2_v3",
+                "Standard_D4_v3",
+                "Standard_D8_v3",
+                "Standard_D16_v3",
+                "Standard_D2s_v3",
+                "Standard_D4s_v3",
+                "Standard_D8s_v3",
+                "Standard_D16s_v3",
+                "Standard_D2a_v4",
+                "Standard_D4a_v4",
+                "Standard_D8a_v4",
+                "Standard_D16a_v4",
+                "Standard_D2as_v4",
+                "Standard_D4as_v4",
+                "Standard_D8as_v4",
+                "Standard_D16as_v4"
+            ],
             "metadata": {
                 "description": "Size of the FortiAnalyzer-VM. Not all instance types are supported. Review the documentation prior to selecting an instance."
             }
         },
         "FortiAnalyzerIntegrationOptions": {
-            "defaultValue": "yes",
+            "defaultValue": "no",
             "allowedValues": ["yes", "no"],
             "type": "String",
             "metadata": {
@@ -74,8 +100,8 @@
             }
         },
         "FortiAnalyzerVersion": {
-            "defaultValue": "6.4.5",
-            "allowedValues": ["6.4.5", "6.2.5"],
+            "defaultValue": "7.2.2",
+            "allowedValues": ["7.2.2", "7.4.0"],
             "type": "String",
             "metadata": {
                 "description": "FortiAnalyzer version supported by FortiGate Autoscale for Azure."
