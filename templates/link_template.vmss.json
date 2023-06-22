@@ -471,8 +471,6 @@
                             "storageUri": "[concat('https://', parameters('StorageAccountName'), '.blob.core.windows.net')]"
                         }
                     },
-                    "priority": "Low",
-                    "evictionPolicy": "delete",
                     "osProfile": {
                         "computerNamePrefix": "[parameters('VmssNamePAYG')]",
                         "customData": "[base64(concat('{\"config-url\": \"', 'https://', parameters('FunctionAppName'), '.azurewebsites.net/api/', parameters('FunctionNameFgtAsHandler'), '?code=', listKeys(resourceId(subscription().subscriptionId, parameters('FunctionAppResourceGroupName'), 'Microsoft.Web/sites/functions', parameters('FunctionAppName'),  'fgt-as-handler'), '2019-08-01').default, '\"}\n'))]",
