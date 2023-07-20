@@ -169,7 +169,7 @@
                 "Standard_D32as_v5",
                 "Standard_D8ads_v5",
                 "Standard_D16ads_v5",
-                "Standard_D32ads_v5",
+                "Standard_D32ads_v5"
             ],
             "metadata": {
                 "description": "Size of the VMs in the VMSS. The default is Standard_F4. More options can be found at https://docs.microsoft.com/en-us/azure/virtual-machines/sizes."
