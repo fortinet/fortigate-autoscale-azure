@@ -19,6 +19,7 @@
         "declaration": true /* Generates corresponding '.d.ts' file. */,
         "declarationDir": "dist/types",
         "declarationMap": true /* Generates a sourcemap for each corresponding '.d.ts' file. */,
+        "skipLibCheck": true /* Skip type checking all .d.ts files. */,
         "sourceMap": true /* Generates corresponding '.map' file. */,
         // "outFile": "./",                       /* Concatenate and emit output to single file. */
         "outDir": "build",
