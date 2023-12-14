@@ -3,7 +3,6 @@
     "contentVersion": "3.5.2.0",
     "parameters": {
         "AccessRestrictionIPRange": {
-            "defaultValue": "",
             "type": "String",
             "metadata": {
                 "description": "Specify IP ranges (single IPv4 address or CIDR range) to allow access from the Internet or from your on-premises network to the CosmosDB and Function App. Specify at least one entry for security purposes. For multiple entries, each entry must be separated by a comma and no trailing comma is allowed. **WARNING!** 0.0.0.0/0 accepts connections from any IP address. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses."
