@@ -18,16 +18,22 @@
             "value": ""
         },
         "FortiAnalyzerAutoscaleAdminUsername": {
-            "value": ""
+            "value": "azureadmin"
         },
         "FortiAnalyzerCustomPrivateIPAddress": {
             "value": ""
         },
         "FortiAnalyzerInstanceType": {
-            "value": "Standard_D2"
+            "value": "Standard_D2s_v3"
         },
         "FortiAnalyzerVersion": {
-            "value": "6.4.5"
+            "value": "7.2.2"
+        },
+        "FortiAnalyzerIntegrationOptions": {
+            "value": "no"
+        },
+        "FortiAnalyzerPublicIPAddressID": {
+            "value": ""
         },
         "FortiGatePSKSecret": {
             "value": ""
