@@ -320,7 +320,7 @@
                         "name": "[concat('nic-config-subnet', add(copyIndex('networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt'), 1))]",
                         "properties": {
                             "primary": false,
-                            "enableIPForwarding": false,
+                            "enableIPForwarding": true,
                             "ipConfigurations": [
                                 {
                                     "name": "[concat('ip-config-subnet', add(copyIndex('networkInterfaceConfigurationNonLoadBalancingSubnetsCopyIt'), 1))]",
