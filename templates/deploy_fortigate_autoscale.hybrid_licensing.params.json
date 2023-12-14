@@ -45,7 +45,7 @@
             "value": 3
         },
         "InstanceType": {
-            "value": "Standard_F4"
+            "value": "Standard_F4s"
         },
         "MaxBYOLInstanceCount": {
             "value": 2
