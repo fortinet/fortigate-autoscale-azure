@@ -33,13 +33,14 @@ export async function autoscaleHandler(
         env,
         proxy
     );
-    proxy.logAsInfo('Alex is testing 3.6.0 release!!!');
     proxy.logAsInfo('Request:', req);
     const res = await autoscale.handleAutoscaleRequest(proxy, platform, env);
     // NOTE: it requires the following env var to save logs
     if (process.env.DEBUG_SAVE_CUSTOM_LOG) {
         await platform.saveLogs(proxy.allLogs);
     }
+
+    proxy.logAsInfo('Response:', res);
     // pass the response back to Azure Function context
     context.res = res;
     // output bindings
