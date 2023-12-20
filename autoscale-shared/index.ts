@@ -33,6 +33,7 @@ export async function autoscaleHandler(
         env,
         proxy
     );
+    proxy.logAsInfo('Alex is testing 3.6.0 release!!!');
     proxy.logAsInfo('Request:', req);
     const res = await autoscale.handleAutoscaleRequest(proxy, platform, env);
     // NOTE: it requires the following env var to save logs
