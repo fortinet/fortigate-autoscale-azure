@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Context, HttpRequest } from '@azure/functions';
-import { FortiGateAutoscaleServiceRequestSource, JSONable } from '@fortinet/fortigate-autoscale';
 import {
-    AutoscaleEnvironment,
-    AutoscaleServiceRequest,
+    FortiGateAutoscaleServiceRequestSource,
+    FortiGateAutoscaleServiceType
+} from '../fortigate-autoscale';
+import {
     AzureFortiGateAutoscale,
     AzureFortiGateAutoscaleFazAuthHandler,
     AzureFortiGateAutoscaleServiceProvider,
@@ -11,9 +12,10 @@ import {
     AzureFunctionResponse,
     AzureFunctionServiceProviderProxy,
     AzurePlatformAdaptee,
-    AzurePlatformAdapter,
-    FortiGateAutoscaleServiceType
-} from '@fortinet/fortigate-autoscale/dist/azure';
+    AzurePlatformAdapter
+} from '../azure';
+import { AutoscaleEnvironment, AutoscaleServiceRequest, JSONable } from '../core';
+
 /* eslint-enable @typescript-eslint/no-unused-vars */
 export interface TimerInfo {
     schedule: unknown;
@@ -33,6 +35,7 @@ export async function autoscaleHandler(
         env,
         proxy
     );
+    proxy.logAsInfo('Alex is testing core integration. Old npm versions.');
     proxy.logAsInfo('Request:', req);
     const res = await autoscale.handleAutoscaleRequest(proxy, platform, env);
     // NOTE: it requires the following env var to save logs

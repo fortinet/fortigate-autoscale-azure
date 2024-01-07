@@ -1,0 +1,219 @@
+#set vdom-exception for sync exclusions
+config system vdom-exception
+    edit 0
+        set object vpn.ipsec.phase1-interface
+    next
+    edit 0
+        set object vpn.ipsec.phase2-interface
+    next
+    edit 0
+        set object router.bgp
+    next
+    edit 0
+        set object router.route-map
+    next
+    edit 0
+        set object router.prefix-list
+    next
+    edit 0
+        set object firewall.ippool
+    next
+end
+
+#Router Configuration
+config router prefix-list
+    edit "pflist-default-route"
+        config rule
+            edit 1
+                set prefix 0.0.0.0 0.0.0.0
+                unset ge
+                unset le
+            next
+        end
+    next
+    edit "pflist-port1"
+        config rule
+            edit 1
+                set prefix "{@device.networkInterfaces#0.privateIpAddress}" 255.255.255.255
+                unset ge
+                unset le
+            next
+        end
+    next
+end
+
+config router route-map
+    edit "rmap-outbound"
+        config rule
+            edit 1
+                set match-ip-address "pflist-default-route"
+            next
+            edit 2
+                set match-ip-address "pflist-port1"
+            next
+        end
+    next
+end
+
+#IPSec Tunnel #1
+#1: Internet Key Exchange (IKE) Configuration
+config vpn ipsec phase1-interface
+    edit "tgw-vpn-1"
+        set interface "port1"
+        set local-gw "{@device.networkInterfaces#0.privateIpAddress}"
+        set dhgrp 2
+        set proposal aes128-sha1
+        set keylife 28800
+        set net-device enable
+        set remote-gw "{@vpn_connection.ipsec_tunnel.vpn_gateway.tunnel_outside_address.ip_address}"
+        set psksecret "{@vpn_connection.ipsec_tunnel.ike.pre_shared_key}"
+        set dpd-retryinterval 10
+    next
+end
+
+#2: IPSec Configuration
+config vpn ipsec phase2-interface
+    edit "tgw-vpn-1"
+        set phase1name "tgw-vpn-1"
+        set proposal aes128-sha1
+        set dhgrp 2
+        set keylifeseconds 3600
+    next
+end
+
+#3: Tunnel Interface Configuration
+config system interface
+    edit "tgw-vpn-1"
+        set interface "port1"
+        set ip "{@vpn_connection.ipsec_tunnel.customer_gateway.tunnel_inside_address.ip_address}" 255.255.255.255
+        set allowaccess ping
+        set type tunnel
+        set tcp-mss 1379
+        set remote-ip "{@vpn_connection.ipsec_tunnel.vpn_gateway.tunnel_inside_address.ip_address}" "{@vpn_connection.ipsec_tunnel.vpn_gateway.tunnel_inside_address.network_mask}"
+    next
+end
+
+#4: Border Gateway Protocol (BGP) Configuration
+config router bgp
+    set as "{@vpn_connection.ipsec_tunnel.customer_gateway.bgp.asn}"
+    set router-id "{@device.networkInterfaces#0.privateIpAddress}"
+    set ebgp-multipath enable
+    set network-import-check disable
+    config neighbor
+        edit "{@vpn_connection.ipsec_tunnel.vpn_gateway.tunnel_inside_address.ip_address}"
+            set capability-default-originate enable
+            set link-down-failover enable
+            set description "{@vpn_connection.id}-1"
+            set remote-as "{@vpn_connection.ipsec_tunnel.vpn_gateway.bgp.asn}"
+            set route-map-out "rmap-outbound"
+        next
+    end
+    config network
+        edit 1
+            set prefix "{@device.networkInterfaces#0.privateIpAddress}" 255.255.255.255
+        next
+    end
+end
+
+#IPSec Tunnel #2
+#1: Internet Key Exchange (IKE) Configuration
+config vpn ipsec phase1-interface
+    edit "tgw-vpn-2"
+        set interface "port1"
+        set local-gw "{@device.networkInterfaces#0.privateIpAddress}"
+        set dhgrp 2
+        set proposal aes128-sha1
+        set keylife 28800
+        set net-device enable
+        set remote-gw "{@vpn_connection.ipsec_tunnel#1.vpn_gateway.tunnel_outside_address.ip_address}"
+        set psksecret "{@vpn_connection.ipsec_tunnel#1.ike.pre_shared_key}"
+        set dpd-retryinterval 10
+    next
+end
+
+#2: IPSec Configuration
+config vpn ipsec phase2-interface
+    edit "tgw-vpn-2"
+        set phase1name "tgw-vpn-2"
+        set proposal aes128-sha1
+        set dhgrp 2
+        set keylifeseconds 3600
+    next
+end
+
+#3: Tunnel Interface Configuration
+config system interface
+    edit "tgw-vpn-2"
+        set interface "port1"
+        set ip "{@vpn_connection.ipsec_tunnel#1.customer_gateway.tunnel_inside_address.ip_address}" 255.255.255.255
+        set allowaccess ping
+        set type tunnel
+        set tcp-mss 1379
+        set remote-ip "{@vpn_connection.ipsec_tunnel#1.vpn_gateway.tunnel_inside_address.ip_address}" "{@vpn_connection.ipsec_tunnel#1.vpn_gateway.tunnel_inside_address.network_mask}"
+    next
+end
+
+#4: Border Gateway Protocol (BGP) Configuration
+config router bgp
+    set as "{@vpn_connection.ipsec_tunnel.customer_gateway.bgp.asn}"
+    set router-id "{@device.networkInterfaces#0.privateIpAddress}"
+    set ebgp-multipath enable
+    set network-import-check disable
+    config neighbor
+        edit "{@vpn_connection.ipsec_tunnel#1.vpn_gateway.tunnel_inside_address.ip_address}"
+            set capability-default-originate enable
+            set link-down-failover enable
+            set description "{@vpn_connection.id}-2"
+            set remote-as "{@vpn_connection.ipsec_tunnel#1.vpn_gateway.bgp.asn}"
+            set route-map-out "rmap-outbound"
+        next
+    end
+    config network
+        edit 1
+            set prefix "{@device.networkInterfaces#0.privateIpAddress}" 255.255.255.255
+        next
+    end
+end
+
+#Firewall Configuration (do this after the two tunnels have been set)
+
+config firewall ippool
+    edit "ippool"
+        set startip "{@device.networkInterfaces#0.privateIpAddress}"
+        set endip "{@device.networkInterfaces#0.privateIpAddress}"
+    next
+end
+
+config system zone
+    edit "sys-zone-tgw-vpn"
+        set interface "tgw-vpn-1" "tgw-vpn-2"
+    next
+end
+
+#Firewall Policy Configuration
+config firewall policy
+    edit 1
+        set name "vpc-vpc_access"
+        set srcintf "sys-zone-tgw-vpn"
+        set dstintf "sys-zone-tgw-vpn"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set nat enable
+        set ippool enable
+        set poolname "ippool"
+    next
+    edit 2
+        set name "vpc-internet_access"
+        set srcintf "sys-zone-tgw-vpn"
+        set dstintf "port1"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set nat enable
+    next
+end
