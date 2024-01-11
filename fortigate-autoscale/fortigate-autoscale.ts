@@ -41,6 +41,9 @@ export abstract class FortiGateAutoscale<TReq, TContext, TRes> extends Autoscale
             // init the platform. this step is important
             await this.platform.init();
             const requestType = await this.platform.getRequestType();
+
+            this.proxy.logAsInfo('requestType', requestType);
+
             if (requestType === ReqType.LaunchingVm) {
                 responseBody = await this.handleLaunchingVm();
             } else if (requestType === ReqType.LaunchedVm) {

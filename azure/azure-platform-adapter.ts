@@ -428,14 +428,22 @@ export class AzurePlatformAdapter implements PlatformAdapter {
             .value;
         const paygGroupName = this.settings.get(AzureFortiGateAutoscaleSetting.PaygScalingGroupName)
             .value;
+
+        this.proxy.logAsInfo('byolGroupName', byolGroupName);
+        this.proxy.logAsInfo('paygGroupName', paygGroupName);
+
         // try to find vm in the byol scaling group
         let describeInstanceResult: ApiCache<AzureComputeModels.VirtualMachineScaleSetVM>;
         let instance: AzureComputeModels.VirtualMachineScaleSetVM;
         let scalingGroupName: string;
         const vmId: string = await this.getReqVmId();
+        this.proxy.logAsInfo('vmId', vmId);
+
         try {
             scalingGroupName = byolGroupName;
             describeInstanceResult = await this.adaptee.describeInstance(scalingGroupName, vmId);
+            this.proxy.logAsInfo('describeInstanceResult', describeInstanceResult);
+
             // try to find vm in the payg scaling group if not found in byol group
             if (!describeInstanceResult.result) {
                 scalingGroupName = paygGroupName;
@@ -446,6 +454,7 @@ export class AzurePlatformAdapter implements PlatformAdapter {
             }
             // ASSERT: the vm exists in either the byol or the payg scaling group.
             instance = describeInstanceResult.result;
+            this.proxy.logAsInfo('instance', instance);
             if (!instance) {
                 throw new Error(`vm (vmId: ${vmId}) not found in any scaling group.`);
             }

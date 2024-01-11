@@ -7,11 +7,11 @@
         },
         "FunctionExtensionVersion": {
             "type": "String",
-            "defaultValue": "~3"
+            "defaultValue": "~4"
         },
         "NodeJSRuntimeVersion": {
             "type": "String",
-            "defaultValue": "~12"
+            "defaultValue": "~18"
         },
         "PackageResURL": {
             "type": "String"

@@ -1,6 +1,6 @@
 {
   "name": "fortigate-autoscale-azure",
-  "version": "3.5.2",
+  "version": "3.5.2-dev.4",
   "description": "Fortinet FortiGate Autoscale for Azure",
   "main": "dist/transpiled/index.js",
   "types": "dist/types/index.d.ts",
@@ -43,13 +43,14 @@
   },
   "homepage": "https://github.com/fortinet/fortigate-autoscale-azure#readme",
   "dependencies": {
-    "@azure/arm-compute": "^21.3.0",
-    "@azure/arm-network": "^33.0.0",
-    "@azure/cosmos": "^4.0.0",
+    "@azure/arm-compute": "^21.0.0",
+    "@azure/arm-network": "^31.0.0",
+    "@azure/cosmos": "^3.17.3",
     "@azure/functions": "^1.2.3",
-    "@azure/identity": "^4.0.0",
+    "@azure/identity": "^3.2.3",
     "@azure/keyvault-secrets": "^4.7.0",
-    "@azure/storage-blob": "^12.17.0",
+    "@azure/ms-rest-js": "^2.6.6",
+    "@azure/storage-blob": "^12.14.0",
     "@types/node": "^13.13.50",
     "axios": "^1.6.5",
     "http-status-codes": "^1.4.0"
