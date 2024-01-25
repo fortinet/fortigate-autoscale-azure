@@ -126,7 +126,7 @@
         },
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2018-11-01",
+            "apiVersion": "2021-03-01",
             "name": "[parameters('FunctionAppName')]",
             "location": "[resourceGroup().location]",
             "kind": "functionapp",
@@ -149,7 +149,7 @@
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "[parameters('FunctionExtensionVersion')]"
+                            "value": "~4"
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -165,7 +165,7 @@
                         },
                         {
                             "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "[parameters('NodeJSRuntimeVersion')]"
+                            "value": "~18"
                         },
                         {
                             "name": "WEBSITE_RUN_FROM_PACKAGE",

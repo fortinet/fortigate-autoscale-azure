@@ -129,7 +129,7 @@
     "resources": [
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2018-11-01",
+            "apiVersion": "2021-03-01",
             "name": "[parameters('FunctionAppName')]",
             "location": "[resourceGroup().location]",
             "kind": "functionapp",

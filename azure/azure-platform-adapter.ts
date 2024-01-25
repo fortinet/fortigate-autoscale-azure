@@ -333,6 +333,11 @@ export class AzurePlatformAdapter implements PlatformAdapter {
         let state: VirtualMachineState;
         let provisioningState: string;
         let powerState: string;
+
+        this.proxy.logAsInfo('instance in map vm', instance);
+        this.proxy.logAsInfo('Scaling group name', scalingGroupName);
+        this.proxy.logAsInfo('nics in map vm', nics);
+
         if (instance.instanceView && instance.instanceView.statuses) {
             instance.instanceView.statuses.forEach(s => {
                 if (s.code.includes('ProvisioningState')) {
@@ -342,6 +347,8 @@ export class AzurePlatformAdapter implements PlatformAdapter {
                 }
             });
         }
+
+        this.proxy.logAsInfo('powerState', powerState);
         // NOTE: see: https://docs.microsoft.com/en-us/azure/virtual-machines/states-lifecycle
         // there's no terminated state for a vm in Azure because terminated vm will not be visible.
         if (powerState === 'running') {
@@ -363,6 +370,9 @@ export class AzurePlatformAdapter implements PlatformAdapter {
         } else {
             state = VirtualMachineState.Unknown;
         }
+
+        this.proxy.logAsInfo('state', state);
+
         // network interface
         const networkInterfaces = nics.map((nic, index) => {
             return this.mapNic(nic, index);
@@ -398,12 +408,18 @@ export class AzurePlatformAdapter implements PlatformAdapter {
      * @returns {NetworkInterface} the Autoscale NetworkInterface class object
      */
     protected mapNic(eni: AzureNetworkModels.NetworkInterface, index: number): NetworkInterface {
+        this.proxy.logAsInfo('eni', eni);
         const [primaryIpConfiguration] =
             (eni && eni.ipConfigurations.filter(ipConfig => ipConfig.primary)) || [];
+        this.proxy.logAsInfo('primaryIpConfiguration', primaryIpConfiguration);
         const matchVNet = primaryIpConfiguration.subnet.id.match(
             new RegExp('(?<=virtualNetworks/).*(?=/subnets)')
         );
+        this.proxy.logAsInfo('matchVNet', matchVNet);
+
         const matchSubnet = primaryIpConfiguration.subnet.id.match(new RegExp('(?<=subnets/).*'));
+        this.proxy.logAsInfo('matchSubnet', matchSubnet);
+
         const nic: NetworkInterface = {
             id: eni.id,
             privateIpAddress: primaryIpConfiguration && primaryIpConfiguration.privateIPAddress,
@@ -413,6 +429,9 @@ export class AzurePlatformAdapter implements PlatformAdapter {
             attachmentId: undefined, // NOTE: no attachment defined for nic in the Azure platform
             description: undefined // NOTE: no description defined for nic in the Azure platform
         };
+
+        this.proxy.logAsInfo('nic', nic);
+
         return nic;
     }
 
@@ -470,8 +489,13 @@ export class AzurePlatformAdapter implements PlatformAdapter {
             ApiCacheOption.ReadCacheFirst,
             describeInstanceResult.ttl
         );
-        const nics = listNetworkInterfacesResult.result;
+
+        this.proxy.logAsInfo('scalingGroupName', scalingGroupName);
+        this.proxy.logAsInfo('listNetworkInterfacesResult', listNetworkInterfacesResult);
+
+        const nics = listNetworkInterfacesResult.result.filter(nic => nic);
         const vm: VirtualMachine = this.mapVm(instance, scalingGroupName, nics);
+        this.proxy.logAsInfo('vm', vm);
         this.proxy.logAsInfo('called getTargetVm');
         return vm;
     }
@@ -588,9 +612,16 @@ export class AzurePlatformAdapter implements PlatformAdapter {
             ...(await this.listScalingGroupInstances(byolGroupName, listNic)),
             ...(await this.listScalingGroupInstances(paygGroupName, listNic))
         ];
+
+        this.proxy.logAsInfo('byolGroupName', byolGroupName);
+        this.proxy.logAsInfo('paygGroupName', paygGroupName);
+        this.proxy.logAsInfo('instances in listAutoscaleVm', instances);
+
         const vms = instances.map(item =>
             this.mapVm(item.instance, item.scalingGroupName, item.nics)
         );
+
+        this.proxy.logAsInfo('vms', vms);
         this.proxy.logAsInfo('called listAutoscaleVm');
         return vms;
     }
