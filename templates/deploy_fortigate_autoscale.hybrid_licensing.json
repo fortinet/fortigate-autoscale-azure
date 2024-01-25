@@ -815,10 +815,10 @@
                         "value": "[variables('functionAppName')]"
                     },
                     "FunctionExtensionVersion": {
-                        "value": "~3"
+                        "value": "~4"
                     },
                     "NodeJSRuntimeVersion": {
-                        "value": "~12"
+                        "value": "~18"
                     },
                     "PackageResURL": {
                         "value": "[parameters('PackageResURL')]"
