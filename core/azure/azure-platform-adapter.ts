@@ -1,5 +1,5 @@
-import * as AzureComputeModels from '@azure/arm-compute';
-import * as AzureNetworkModels from '@azure/arm-network';
+import * as AzureComputeModels from '@azure/arm-compute/esm/models';
+import * as AzureNetworkModels from '@azure/arm-network/esm/models';
 import path from 'path';
 import {
     ApiCache,
