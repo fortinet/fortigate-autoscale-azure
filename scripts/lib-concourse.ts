@@ -42,10 +42,7 @@ export function mask(str: string): string {
 }
 
 export function createHash(str: string): string {
-    return crypto
-        .createHash('sha256')
-        .update(str, 'utf8')
-        .digest('hex');
+    return crypto.createHash('sha256').update(str, 'utf8').digest('hex');
 }
 
 export function inputFetchAll(): Promise<string> {

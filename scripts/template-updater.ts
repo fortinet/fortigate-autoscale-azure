@@ -18,7 +18,8 @@ function readJSONTemplate(filePath: string): JSONable {
     try {
         return contents !== null && JSON.parse(contents);
     } catch (error) {
-        (error as Error).message = `error in parsing content into JSON object from file: ${filePath}.`;
+        (error as Error).message =
+            `error in parsing content into JSON object from file: ${filePath}.`;
         throw error;
     }
 }
@@ -35,7 +36,8 @@ function extractVersions(filePath: string): string[] {
     try {
         items = contents !== null && JSON.parse(contents);
     } catch (error) {
-        (error as Error).message = `error in parsing content into JSON object, content: ${contents}.`;
+        (error as Error).message =
+            `error in parsing content into JSON object, content: ${contents}.`;
         throw error;
     }
     if (!Array.isArray(items)) {

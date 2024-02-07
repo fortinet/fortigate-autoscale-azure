@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "3.5.5.0",
+    "contentVersion": "3.5.6.0",
     "parameters": {
         "AccessRestrictionIPRange": {
             "value": ""
