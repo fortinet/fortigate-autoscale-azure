@@ -1,6 +1,6 @@
 {
   "name": "fortigate-autoscale-azure",
-  "version": "3.5.8-dev",
+  "version": "3.6.0-dev",
   "description": "Fortinet FortiGate Autoscale for Azure",
   "main": "dist/transpiled/index.js",
   "types": "dist/types/index.d.ts",
