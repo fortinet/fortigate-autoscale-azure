@@ -78,19 +78,19 @@ const deploymentPackageRequiredFileLocations = [
     'README.md',
     'LICENSE',
     {
-        src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/baseconfig',
+        src: 'assets/configset/baseconfig',
         des: 'assets/configset'
     },
     {
-        src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/fazintegration',
+        src: 'assets/configset/fazintegration',
         des: 'assets/configset'
     },
     {
-        src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/port2config',
+        src: 'assets/configset/port2config',
         des: 'assets/configset'
     },
     {
-        src: 'node_modules/@fortinet/fortigate-autoscale/assets/configset/azure/extraports',
+        src: 'assets/configset/azure/extraports',
         des: 'assets/configset'
     }
 ];

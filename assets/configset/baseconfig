@@ -1,0 +1,15 @@
+config system dns
+    unset primary
+    unset secondary
+end
+config system global
+    set admin-sport "{ADMIN_PORT}"
+end
+config system auto-scale
+    set status enable
+    set sync-interface "{SYNC_INTERFACE}"
+    set hb-interval "{HEART_BEAT_INTERVAL}"
+    set role primary
+    set callback-url "{CALLBACK_URL}"
+    set psksecret "{PSK_SECRET}"
+end

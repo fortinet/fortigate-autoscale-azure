@@ -1,0 +1,13 @@
+
+config sys interface
+    edit "port3"
+        set mode dhcp
+        set defaultgw disable
+        set allowaccess ping https ssh fgfm
+    next
+    edit "port4"
+        set mode dhcp
+        set defaultgw disable
+        set allowaccess ping https ssh fgfm
+    next
+end

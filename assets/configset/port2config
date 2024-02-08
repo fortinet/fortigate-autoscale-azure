@@ -1,0 +1,14 @@
+config sys interface
+    edit "port2"
+        set mode dhcp
+        set allowaccess ping https ssh http fgfm
+    next
+end
+
+config router static
+    edit 1
+        set dst "{VIRTUAL_NETWORK_CIDR}"
+        set device "port2"
+        set dynamic-gateway enable
+    next
+end

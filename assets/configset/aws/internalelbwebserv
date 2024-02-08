@@ -1,0 +1,48 @@
+
+config firewall address
+    edit internal-elb-web
+        set type fqdn
+        set fqdn "{INTERNAL_ELB_DNS}"
+        set associated-interface "{EXTERNAL_INTERFACE}"
+    next
+    edit "private-subnet-egress"
+        set associated-interface "{INTERNAL_INTERFACE}"
+    next
+end
+
+config firewall vip
+    edit internal-web
+        set type fqdn
+        set mapped-addr internal-elb-web
+        set portforward enable
+        set extintf "{EXTERNAL_INTERFACE}"
+        set extport "{TRAFFIC_PORT}"
+        set mappedport "{TRAFFIC_PORT}"
+    next
+end
+
+config firewall policy
+    edit 0
+        set name "internal-web-{TRAFFIC_PROTOCOL}-ingress"
+        set srcintf "{EXTERNAL_INTERFACE}"
+        set dstintf "{INTERNAL_INTERFACE}"
+        set srcaddr "all"
+        set dstaddr "internal-web"
+        set action accept
+        set schedule "always"
+        set service "{TRAFFIC_PROTOCOL}"
+        set nat enable
+    next
+    edit 0
+        set name "allow-private-subnet-egress"
+        set srcintf "{INTERNAL_INTERFACE}"
+        set dstintf "{EXTERNAL_INTERFACE}"
+        set srcaddr "private-subnet-egress"
+        set dstaddr "all"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set nat enable
+    next
+end
+
