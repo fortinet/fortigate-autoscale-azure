@@ -963,7 +963,7 @@
                         "value": "[createArray(if(variables('ifCreateVNet'), reference('CreateVirtualNetwork').outputs.subnet1Id.value, variables('subnet1').id))]"
                     },
                     "CommaSeparatedIPAddressString": {
-                        "value": "[concat(parameters('AccessRestrictionIPRange'), if(empty(parameters('AccessRestrictionIPRange')), '', ','), reference('CreateFunctionApp').outputs.functionAppPossibleOutboundIpAddresses.value)]"
+                        "value": "[reference('CreateFunctionApp').outputs.functionAppPossibleOutboundIpAddresses.value]"
                     },
                     "DatabaseAccountName": {
                         "value": "[variables('databaseAccountName')]"
