@@ -149,7 +149,7 @@
         {
             "condition": "[variables('ifCreateExternalLBPublicFrontendIP')]",
             "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2023-04-01",
             "name": "[variables('externalLBFrontendIPName')]",
             "location": "[resourceGroup().location]",
             "sku": {
@@ -164,7 +164,7 @@
         },
         {
             "type": "Microsoft.Network/loadBalancers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2023-04-01",
             "name": "[variables('externalLoadBalancerName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": ["[variables('externalLBFrontendIPName')]"],
@@ -254,7 +254,7 @@
         },
         {
             "type": "Microsoft.Network/loadBalancers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2023-04-01",
             "condition": "[variables('ifCreateInternalLB')]",
             "name": "[variables('internalLoadBalancerName')]",
             "location": "[resourceGroup().location]",

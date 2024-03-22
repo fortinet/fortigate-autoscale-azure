@@ -99,8 +99,8 @@
             }
         },
         "FortiAnalyzerVersion": {
-            "defaultValue": "7.2.2",
-            "allowedValues": ["7.2.2", "7.4.0"],
+            "defaultValue": "7.4.2",
+            "allowedValues": ["7.2.4","7.4.2"],
             "type": "String",
             "metadata": {
                 "description": "FortiAnalyzer version supported by FortiGate Autoscale for Azure."
@@ -113,8 +113,8 @@
             }
         },
         "FOSVersion": {
-            "defaultValue": "7.2.5",
-            "allowedValues": ["7.2.5", "7.4.0", "latest"],
+            "defaultValue": "7.2.8",
+            "allowedValues": ["7.2.7", "7.2.8", "7.4.3", "latest"],
             "type": "String",
             "metadata": {
                 "description": "FortiOS version supported by FortiGate Autoscale for Azure."
@@ -517,7 +517,7 @@
         "vmImgReferenceFgtPAYG": {
             "publisher": "fortinet",
             "offer": "fortinet_fortigate-vm_v5",
-            "sku": "fortinet_fg-vm_payg_2022",
+            "sku": "fortinet_fg-vm_payg_2023",
             "version": "[parameters('FOSVersion')]"
         },
         "vmssNameBYOL": "[concat(variables('uniqueResourceNamePrefix'), '-vmss-byol001')]",
@@ -539,7 +539,7 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-07-01",
             "name": "[variables('keyVaultName')]",
             "location": "[resourceGroup().location]",
             "properties": {
@@ -569,7 +569,7 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-07-01",
             "name": "[concat(variables('keyVaultName'), '/', 'faz-autoscale-admin-username')]",
             "location": "[resourceGroup().location]",
             "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
@@ -579,7 +579,7 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-07-01",
             "name": "[concat(variables('keyVaultName'), '/', 'faz-autoscale-admin-password')]",
             "location": "[resourceGroup().location]",
             "dependsOn": ["[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"],
@@ -595,7 +595,7 @@
         },
         {
             "type": "Microsoft.DocumentDb/databaseAccounts",
-            "apiVersion": "2016-03-31",
+            "apiVersion": "2023-04-15",
             "name": "[variables('databaseAccountName')]",
             "location": "[resourceGroup().location]",
             "properties": {
@@ -610,7 +610,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "CreateDatabase",
             "dependsOn": ["[variables('databaseAccountName')]"],
             "properties": {
@@ -641,7 +641,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "CreateVirtualNetwork",
             "condition": "[variables('ifCreateVNet')]",
             "properties": {
@@ -669,7 +669,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "dependsOn": ["CreateVirtualNetwork", "CreateLoadBalancers"],
             "name": "UpdateVirtualNetwork",
             "properties": {
@@ -709,7 +709,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "dependsOn": ["CreateVirtualNetwork"],
             "name": "CreateLoadBalancers",
             "properties": {
@@ -755,7 +755,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "FortiAnalyzerIntegrationResources",
             "condition": "[variables('enableFortiAnalyzer')]",
             "dependsOn": ["CreateVirtualNetwork"],
@@ -802,7 +802,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "CreateFunctionApp",
             "dependsOn": ["[variables('storageAccountName')]"],
             "properties": {
@@ -839,7 +839,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "CreateVirtualMachineScaleSet",
             "dependsOn": ["CreateVirtualNetwork", "CreateLoadBalancers", "CreateFunctionApp"],
             "properties": {
@@ -945,7 +945,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "UpdateDBAccessRestrictions",
             "dependsOn": [
                 "[variables('databaseAccountName')]",
@@ -975,7 +975,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "SetupFunctionApp",
             "dependsOn": [
                 "[variables('databaseAccountName')]",

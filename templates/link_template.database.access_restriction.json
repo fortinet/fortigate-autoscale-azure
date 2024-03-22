@@ -28,7 +28,7 @@
     },
     "resources": [
         {
-            "apiVersion": "2019-08-01",
+            "apiVersion": "2023-04-15",
             "type": "Microsoft.DocumentDb/databaseAccounts",
             "name": "[parameters('DatabaseAccountName')]",
             "location": "[resourceGroup().location]",
