@@ -32,7 +32,7 @@
                     "name": "iterations",
                     "count": "[length(variables('arrayIPAddresses'))]",
                     "input": {
-                        "ipAddressOrRange": "[variables('arrayIPAddresses')[copyIndex('ipRules')]]"
+                        "ipAddressOrRange": "[variables('arrayIPAddresses')[copyIndex('iterations')]]"
                     }
                 }
             ]
