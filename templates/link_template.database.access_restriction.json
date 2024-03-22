@@ -24,6 +24,18 @@
                     }
                 }
             ]
+        },
+        "arrayIPAddresses": "[split(parameters('CommaSeparatedIPAddressString'), ',')]",
+        "ipRules": {
+            "copy": [
+                {
+                    "name": "iterations",
+                    "count": "[length(variables('arrayIPAddresses'))]",
+                    "input": {
+                        "ipAddressOrRange": "[variables('arrayIPAddresses')[copyIndex('ipRules')]]"
+                    }
+                }
+            ]
         }
     },
     "resources": [
@@ -34,7 +46,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "databaseAccountOfferType": "Standard",
-                "ipRangeFilter": "[parameters('CommaSeparatedIPAddressString')]",
+                "ipRules": "[variables('ipRules').iterations]",
                 "isVirtualNetworkFilterEnabled": true,
                 "virtualNetworkRules": "[variables('virtualNetworkRules').iterations]",
                 "locations": [
