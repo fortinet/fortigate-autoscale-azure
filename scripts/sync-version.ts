@@ -70,9 +70,8 @@ function syncVersionInTemplates(templateDir: string, newVersion: semver.SemVer):
                         key === 'PackageResURL' &&
                         templateJSON.parameters[key].defaultValue !== undefined
                     ) {
-                        templateJSON.parameters[
-                            key
-                        ].defaultValue = `https://github.com/fortinet/fortigate-autoscale-azure/releases/download/${verStr}/fortigate-autoscale-azure-funcapp.zip`;
+                        templateJSON.parameters[key].defaultValue =
+                            `https://github.com/fortinet/fortigate-autoscale-azure/releases/download/${verStr}/fortigate-autoscale-azure-funcapp.zip`;
                         console.log(
                             `Function app zip file url: ${chalk.green(
                                 templateJSON.parameters[key].defaultValue
@@ -91,7 +90,8 @@ function syncVersionInTemplates(templateDir: string, newVersion: semver.SemVer):
                             deployment.properties.templateLink &&
                             deployment.properties.templateLink.uri
                         ) {
-                            const regex = /(?<=https:\/\/raw\.githubusercontent\.com\/fortinet\/fortigate-autoscale-azure\/)(\S*)\/templates\/\S*\.json$/;
+                            const regex =
+                                /(?<=https:\/\/raw\.githubusercontent\.com\/fortinet\/fortigate-autoscale-azure\/)(\S*)\/templates\/\S*\.json$/;
                             const uri = String(deployment.properties.templateLink.uri);
                             const [, ref] = uri.match(regex) || [];
                             if (ref) {
@@ -129,8 +129,10 @@ function syncVersionOnReadMe(newVersion: semver.SemVer): void {
     const filePath = path.resolve(rootDir, './README.md');
     console.log(`updating ${filePath}`);
     const readmeContent = fs.readFileSync(filePath).toString();
-    const regexUrl = /(?<=https:\/\/raw\.githubusercontent\.com\/fortinet\/fortigate-autoscale-azure\/)(\S*)\/templates\/\S*\.json/;
-    const regexEncodedUrl = /(?<=https%3A%2F%2Fraw\.githubusercontent\.com%2Ffortinet%2Ffortigate-autoscale-azure%2F)(\S*)%2Ftemplates%2F\S*\.json/;
+    const regexUrl =
+        /(?<=https:\/\/raw\.githubusercontent\.com\/fortinet\/fortigate-autoscale-azure\/)(\S*)\/templates\/\S*\.json/;
+    const regexEncodedUrl =
+        /(?<=https%3A%2F%2Fraw\.githubusercontent\.com%2Ffortinet%2Ffortigate-autoscale-azure%2F)(\S*)%2Ftemplates%2F\S*\.json/;
     let [place, currentVersion] = readmeContent.match(regexUrl) || [];
     if (!currentVersion) {
         [place, currentVersion] = readmeContent.match(regexEncodedUrl) || [];

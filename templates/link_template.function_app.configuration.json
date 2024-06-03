@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "3.5.2.0",
+    "contentVersion": "3.6.0.0",
     "parameters": {
         "AdminPortNumber": {
             "type": "Int"
@@ -150,7 +150,7 @@
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~3"
+                            "value": "~4"
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -166,7 +166,7 @@
                         },
                         {
                             "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "~12"
+                            "value": "~18"
                         },
                         {
                             "name": "WEBSITE_RUN_FROM_PACKAGE",
