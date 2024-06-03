@@ -224,7 +224,7 @@
         },
         "appInsightWorkspaceName": {
             "type": "String",
-            "value": "[if(variables('enableAzureAppInsights'), variables('appInsightWorkspacName'), '')]"
+            "value": "[if(variables('enableAzureAppInsights'), variables('appInsightWorkspaceName'), '')]"
         },
         "appServicePlanName": {
             "type": "String",
