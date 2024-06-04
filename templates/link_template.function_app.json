@@ -18,7 +18,7 @@
         },
         "ServicePlanTier": {
             "defaultValue": "Premium (P1V2)",
-            "allowedValues": ["Premium (P1V2)", "Free (for demo only)"],
+            "allowedValues": [ "Premium (P1V2)", "Free (for demo only)" ],
             "type": "String"
         },
         "StorageAccountName": {
@@ -87,6 +87,10 @@
             "westus3"
         ],
         "appInsightName": "[concat(parameters('UniqueResourceNamePrefix'),'-appins001')]",
+        "appInsightWorkspaceName": "[concat(parameters('UniqueResourceNamePrefix'),'-appins001-workspace')]",
+        "appInsightWorkspaceSku": "PerGB2018",
+        "appInsightWorkspaceRetentionInDays": 120,
+        "appInsightWorkspaceHeartbeatTableRetentionInDays": 120,
         "appServicePlanName": "[concat(parameters('UniqueResourceNamePrefix'),'-appserplan001')]",
         "servicePlanTierPresets": {
             "Free (for demo only)": {
@@ -130,7 +134,7 @@
             "name": "[parameters('FunctionAppName')]",
             "location": "[resourceGroup().location]",
             "kind": "functionapp",
-            "dependsOn": ["[variables('appServicePlanName')]"],
+            "dependsOn": [ "[variables('appServicePlanName')]" ],
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
                 "siteConfig": {
@@ -177,14 +181,38 @@
             }
         },
         {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2021-12-01-preview",
+            "name": "[variables('appInsightWorkspaceName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "name": "[variables('appInsightWorkspaceSku')]"
+                },
+                "retentionInDays": "[variables('appInsightWorkspaceRetentionInDays')]"
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/tables",
+            "apiVersion": "2021-12-01-preview",
+            "name": "[format('{0}/{1}', variables('appInsightWorkspaceName'), 'Heartbeat')]",
+            "properties": {
+                "retentionInDays": "[variables('appInsightWorkspaceHeartbeatTableRetentionInDays')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('appInsightWorkspaceName'))]"
+            ]
+        },
+        {
             "type": "Microsoft.Insights/components",
-            "apiVersion": "2018-05-01-preview",
+            "apiVersion": "2020-02-02",
             "name": "[variables('appInsightName')]",
             "location": "[resourceGroup().location]",
             "kind": "web",
             "properties": {
                 "Application_Type": "web",
-                "ApplicationId": "[parameters('FunctionAppName')]"
+                "ApplicationId": "[parameters('FunctionAppName')]",
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('appInsightWorkspaceName'))]"
             },
             "condition": "[variables('enableAzureAppInsights')]"
         }
@@ -193,6 +221,10 @@
         "appInsightName": {
             "type": "String",
             "value": "[if(variables('enableAzureAppInsights'), variables('appInsightName'), '')]"
+        },
+        "appInsightWorkspaceName": {
+            "type": "String",
+            "value": "[if(variables('enableAzureAppInsights'), variables('appInsightWorkspaceName'), '')]"
         },
         "appServicePlanName": {
             "type": "String",
