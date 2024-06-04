@@ -28,14 +28,16 @@ To obtain the package, go to the FortiGate Autoscale for Azure [GitHub project r
 
 A deployment guide is available from the Fortinet Document Library:
 
-  + [ FortiGate / FortiOS 6.4 / Deploying auto scaling on Azure](https://docs.fortinet.com/document/fortigate-public-cloud/6.4.0/azure-administration-guide/161167/deploying-autoscaling-on-azure)
-  + [ FortiGate / FortiOS 7.0 / Deploying auto scaling on Azure](https://docs.fortinet.com/document/fortigate-public-cloud/7.0.0/azure-administration-guide/161167/deploying-autoscaling-on-azure)
+  + [ FortiGate / FortiOS 7.2 / Deploying auto scaling on Azure](https://docs.fortinet.com/document/fortigate-public-cloud/7.2.0/azure-administration-guide/161167/deploying-autoscaling-on-azure)
+  + [ FortiGate / FortiOS 7.4 / Deploying auto scaling on Azure](https://docs.fortinet.com/document/fortigate-public-cloud/7.4.0/azure-administration-guide/161167/deploying-autoscaling-on-azure)
 
 ## Technical documentation
 
 * [Azure Application Insights requirement](docs/azure_application_insights.md)
+
 ## Launch a demo
 
+[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffortinet%2Ffortigate-autoscale-azure%2F3.6.0%2Ftemplates%2Fdeploy_fortigate_autoscale.hybrid_licensing.json)
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffortinet%2Ffortigate-autoscale-azure%2F3.6.0%2Ftemplates%2Fdeploy_fortigate_autoscale.hybrid_licensing.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
 # Support
