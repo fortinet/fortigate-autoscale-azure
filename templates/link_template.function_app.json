@@ -173,7 +173,8 @@
                         }
                     ]
                 },
-                "alwaysOn": true
+                "alwaysOn": true,
+                "httpsOnly": true
             }
         },
         {

@@ -134,6 +134,7 @@
             "location": "[resourceGroup().location]",
             "kind": "functionapp",
             "properties": {
+                "httpsOnly": true,
                 "siteConfig": {
                     "appSettings": [
                         {
