@@ -27,7 +27,7 @@
             "value": "Standard_D2s_v3"
         },
         "FortiAnalyzerVersion": {
-            "value": "7.2.2"
+            "value": "7.4.2"
         },
         "FortiAnalyzerIntegrationOptions": {
             "value": "no"
@@ -39,7 +39,7 @@
             "value": ""
         },
         "FOSVersion": {
-            "value": "7.2.5"
+            "value": "7.4.4"
         },
         "HeartBeatDelayAllowance": {
             "value": 30

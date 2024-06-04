@@ -75,7 +75,7 @@
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "CmdDeleteNSGRules",
             "properties": {
                 "mode": "Incremental",
@@ -98,7 +98,7 @@
             "resourceGroup": "[resourceGroup().name]"
         },
         {
-            "apiVersion": "2020-11-01",
+            "apiVersion": "2023-04-01",
             "location": "[resourceGroup().location]",
             "name": "[concat(parameters('VNetName'), '/', parameters('Subnet1Name'))]",
             "properties": {
@@ -121,7 +121,7 @@
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-            "apiVersion": "2020-05-01",
+            "apiVersion": "2023-04-01",
             "condition": "[variables('ifCreateNSGRulesIn')]",
             "name": "[concat(variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][0], '/', if(variables('ifCreateNSGRulesIn'), variables('nsgRulesIn')[copyIndex('nsgRuleInCopyIt')][1], concat('inbound-rule', copyIndex('nsgRuleInCopyIt'))))]",
             "copy": {
@@ -145,7 +145,7 @@
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-            "apiVersion": "2020-05-01",
+            "apiVersion": "2023-04-01",
             "condition": "[variables('ifCreateNSGRulesOut')]",
             "name": "[concat(variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][0], '/', if(variables('ifCreateNSGRulesOut'), variables('nsgRulesOut')[copyIndex('nsgRuleOutCopyIt')][1], concat('outbound-rule', copyIndex('nsgRuleOutCopyIt'))))]",
             "copy": {

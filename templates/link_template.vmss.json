@@ -380,7 +380,7 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachineScaleSets",
-            "apiVersion": "2019-07-01",
+            "apiVersion": "2023-03-01",
             "name": "[parameters('VmssNameBYOL')]",
             "location": "[resourceGroup().location]",
             "plan": {
@@ -436,7 +436,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachineScaleSets",
-            "apiVersion": "2019-07-01",
+            "apiVersion": "2023-03-01",
             "name": "[parameters('VmssNamePAYG')]",
             "location": "[resourceGroup().location]",
             "plan": {
@@ -492,7 +492,7 @@
         },
         {
             "type": "Microsoft.Insights/autoscaleSettings",
-            "apiVersion": "2014-04-01",
+            "apiVersion": "2022-10-01",
             "name": "[variables('autoscaleSettingsNameBYOL')]",
             "location": "[resourceGroup().location]",
             "dependsOn": ["[parameters('VmssNameBYOL')]"],
@@ -515,7 +515,7 @@
         },
         {
             "type": "Microsoft.Insights/autoscaleSettings",
-            "apiVersion": "2014-04-01",
+            "apiVersion": "2022-10-01",
             "name": "[variables('autoscaleSettingsNamePAYG')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [

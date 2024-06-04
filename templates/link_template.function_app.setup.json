@@ -125,7 +125,7 @@
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "UpdateFunctionAppConfigurations",
             "properties": {
                 "mode": "Incremental",
@@ -257,7 +257,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2022-09-01",
             "name": "UpdateFunctionAppAccessRestrictions",
             "dependsOn": ["UpdateFunctionAppConfigurations"],
             "properties": {
