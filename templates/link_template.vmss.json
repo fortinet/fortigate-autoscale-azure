@@ -435,6 +435,7 @@
             "zones": "[parameters('AvailabilityZones')]"
         },
         {
+            "condition": "[not(variables('ifBYOLOnly'))]",
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-07-01",
             "name": "[parameters('VmssNamePAYG')]",
@@ -514,6 +515,7 @@
             }
         },
         {
+            "condition": "[not(variables('ifBYOLOnly'))]",
             "type": "Microsoft.Insights/autoscaleSettings",
             "apiVersion": "2014-04-01",
             "name": "[variables('autoscaleSettingsNamePAYG')]",
