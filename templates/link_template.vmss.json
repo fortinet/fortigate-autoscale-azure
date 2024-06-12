@@ -356,7 +356,6 @@
             }
         },
         "networkInterfaceConfigurationSubnet1PAYG": {
-            "condition": "[not(variables('ifBYOLOnly'))]",
             "name": "nic-config-subnet1",
             "properties": {
                 "primary": true,
